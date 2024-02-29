@@ -10,10 +10,6 @@
         android:title=""
         android:icon="@drawable/insta"/>
     <item
-        android:id="@+id/add"
-        android:title=""
-        android:icon="@drawable/add_circle"/>
-    <item
         android:id="@+id/bell"
         android:title=""
         android:icon="@drawable/bell_outline"/>

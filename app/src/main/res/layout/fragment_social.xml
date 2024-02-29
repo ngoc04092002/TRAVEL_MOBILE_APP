@@ -35,13 +35,20 @@
                     android:text="Bảng tin"
                     android:textSize="32sp"
                     android:textStyle="bold" />
-
+                <ImageButton
+                    android:id="@+id/addButton"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_weight="1"
+                    android:background="@color/white"
+                    android:src="@drawable/add_circle" />
                 <ImageButton
                     android:id="@+id/imageButton"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:layout_marginTop="10dp"
-                    android:layout_marginEnd="28dp"
+                    android:layout_marginEnd="18dp"
                     android:layout_weight="1"
                     android:background="@color/white"
                     android:src="@drawable/bx_search_alt" />
