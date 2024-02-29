@@ -1,14 +1,37 @@
 package com.example.travel_mobile_app;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.os.Bundle;
+import android.widget.Toast;
+
+import com.example.travel_mobile_app.databinding.ActivityMainBinding;
+import com.example.travel_mobile_app.fragments.SocialFragment;
 
 public class MainActivity extends AppCompatActivity {
+
+    ActivityMainBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+
+        binding.readableBottomBar.setOnItemSelectedListener(item -> {
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+            int itemId = item.getItemId();
+
+            if (itemId == R.id.insta) { // Replace this with the correct ID for the social item
+                transaction.replace(R.id.container, new SocialFragment());
+//                Toast.makeText(MainActivity.this, "social", Toast.LENGTH_LONG).show();
+            }
+
+            transaction.commit();
+            return true;
+        });
+
     }
 }
