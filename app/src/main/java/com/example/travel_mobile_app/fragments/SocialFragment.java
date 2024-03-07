@@ -77,23 +77,28 @@ public class SocialFragment extends Fragment implements View.OnClickListener {
 
         ImageButton btnFriends = view.findViewById(R.id.friends);
         btnFriends.setOnClickListener(this);
+        ImageButton btnAdd = view.findViewById(R.id.addButton);
+        btnAdd.setOnClickListener(this);
 
         return view;
     }
 
     @Override
     public void onClick(View v) {
+        FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
         if(v.getId()==R.id.friends){
-            FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
             fragmentTransaction.replace(R.id.container, new FriendsFragment());
-            // Thêm transaction vào back stack (nếu cần)
-            fragmentTransaction.addToBackStack("social_fragment");
+        }else if(v.getId()==R.id.addButton){
+            fragmentTransaction.replace(R.id.container, new CreatePostFragment());
 
-            // Commit transaction
-            fragmentTransaction.commit();
         }
+        // Thêm transaction vào back stack (nếu cần)
+        fragmentTransaction.addToBackStack("social_fragment");
+
+        // Commit transaction
+        fragmentTransaction.commit();
     }
 
     @NonNull

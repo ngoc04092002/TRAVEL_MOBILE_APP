@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".fragments.CreatePostFragment">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingStart="20dp"
+        android:paddingTop="20dp">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/createPost_btnBack"
+            android:layout_width="50dp"
+            android:layout_height="60dp"
+            android:layout_gravity="start"
+            android:layout_marginEnd="10dp"
+            android:clickable="true"
+            android:padding="@dimen/_6mdp"
+            android:src="@drawable/navigate_before"
+            app:civ_border_color="@color/black"
+            app:civ_border_width="3dp" />
+
+        <TextView
+            android:id="@+id/textView4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:text="Tạo bài viết"
+            android:textAlignment="center"
+            android:textSize="@dimen/_24font_mdp"
+            android:textStyle="bold" />
+    </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="@dimen/_24mdp"
+        android:layout_marginBottom="@dimen/_10mdp"
+        >
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/camera"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Camera"
+            android:layout_weight="1"
+            android:fontFamily="sans-serif"
+            android:textSize="@dimen/_16font_mdp"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            app:backgroundTint="@color/white"
+            app:cornerRadius="0dp"
+            app:icon="@drawable/photo_camera"
+            app:iconGravity="textStart"
+            app:iconTint="@color/black"/>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/gallery"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Thư viện"
+            android:layout_weight="1"
+            android:fontFamily="sans-serif"
+            android:textSize="@dimen/_16font_mdp"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            app:backgroundTint="@color/white"
+            app:cornerRadius="0dp"
+            app:icon="@drawable/gallery"
+            app:iconGravity="textStart"
+            app:iconTint="@color/black"/>
+    </LinearLayout>
+    <EditText
+        android:id="@+id/des"
+        android:background="@null"
+        android:layout_width="match_parent"
+        android:minHeight="50dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
+        android:layout_marginBottom="8dp"
+        android:hint="Hãy viết gì đó..."
+        android:textSize="16sp"
+        android:textColor="@color/black"
+        android:ellipsize="end"
+        android:maxLines="6"
+        android:textStyle="bold" />
+
+        <com.makeramen.roundedimageview.RoundedImageView
+            android:id="@+id/postimg"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_220mdp"
+            android:layout_marginLeft="12dp"
+            android:layout_marginRight="12dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/add_photo"
+            app:riv_border_color="#333333"
+            app:riv_border_width="1dip"
+            app:riv_corner_radius="10dip"
+            app:riv_mutate_background="true" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/button_filter_apply"
+        android:layout_width="match_parent"
+        android:layout_height="74dp"
+        android:text="Tạo"
+        android:fontFamily="sans-serif"
+        android:textAllCaps="true"
+        android:textSize="@dimen/_16font_mdp"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        app:backgroundTint="@color/yellow"
+        android:layout_marginTop="50dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
+        app:cornerRadius="4dp"/>
+</LinearLayout>
