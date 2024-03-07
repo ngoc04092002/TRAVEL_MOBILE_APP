@@ -5,6 +5,8 @@
     android:layout_height="wrap_content"
     android:paddingTop="@dimen/_10font_mdp"
     android:paddingBottom="@dimen/_10font_mdp"
+    android:orientation="horizontal"
+    android:background="#FFF612"
     >
 
 
@@ -19,7 +21,7 @@
         app:civ_border_width="2dp" />
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:orientation="vertical">
