@@ -1,25 +1,38 @@
 package com.example.travel_mobile_app.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.viewmodel.CreationExtras;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 
+import com.example.travel_mobile_app.Adapter.DashboardAdapter;
 import com.example.travel_mobile_app.Adapter.StoryAdapter;
+import com.example.travel_mobile_app.MainActivity;
 import com.example.travel_mobile_app.R;
+import com.example.travel_mobile_app.models.DashboardModel;
 import com.example.travel_mobile_app.models.StoryModel;
 
 import java.util.ArrayList;
 
-public class SocialFragment extends Fragment {
+import maes.tech.intentanim.CustomIntent;
 
-    RecyclerView storyRv;
-    ArrayList<StoryModel> list;
+public class SocialFragment extends Fragment implements View.OnClickListener {
+
+    private RecyclerView storyRv, dashboardRv;
+    private ArrayList<StoryModel> list;
+    private ArrayList<DashboardModel> dashboardList;
 
     public SocialFragment() {
         // Required empty public constructor
@@ -41,17 +54,53 @@ public class SocialFragment extends Fragment {
         list = new ArrayList<>();
         list.add(new StoryModel(R.drawable.add_circle, R.drawable.add_circle_fill, "hhh"));
         list.add(new StoryModel(R.drawable.circle, R.drawable.avatar_men, "Ngocvan"));
-        list.add(new StoryModel(R.drawable.circle, R.drawable.avatar_men, "wdd"));
-        list.add(new StoryModel(R.drawable.circle, R.drawable.avatar_men, "Ngocvan"));
+        list.add(new StoryModel(R.drawable.photo_camera, R.drawable.avatar_men, "wdd"));
+        list.add(new StoryModel(R.drawable.bell_fill, R.drawable.avatar_men, "Ngocvan"));
         list.add(new StoryModel(R.drawable.photo_camera, R.drawable.circle, "hhh"));
-        list.add(new StoryModel(R.drawable.add_circle, R.drawable.add_circle_fill, "hhh"));
+        list.add(new StoryModel(R.drawable.comment, R.drawable.add_circle_fill, "hhh"));
 
         StoryAdapter storyAdapter = new StoryAdapter(list, getContext());
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+        storyRv.setHasFixedSize(true);
+        storyRv.setLayoutManager(new StaggeredGridLayoutManager(1, LinearLayoutManager.HORIZONTAL));
         storyRv.setAdapter(storyAdapter);
-        storyRv.setLayoutManager(linearLayoutManager);
-        storyRv.setNestedScrollingEnabled(false);
+
+
+        dashboardRv = view.findViewById(R.id.dashboardRv);
+        dashboardList = new ArrayList<>();
+        dashboardList.add(new DashboardModel(R.drawable.avatar_men, R.drawable.avatar_men, R.drawable.bookmark, "ngocvaw", "12 giờ trước", "123", "40", "50", "check in tai: ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss...."));
+        dashboardList.add(new DashboardModel(R.drawable.avatar_men, R.drawable.avatar_men, R.drawable.bookmark, "ngocvaw", "12 giờ trước", "123", "40", "50", "check in tai: ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss...."));
+        dashboardList.add(new DashboardModel(R.drawable.favorite, R.drawable.avatar_men, R.drawable.bookmark, "ngocvaw", "12 giờ trước", "123", "40", "50", "check in tai: ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss...."));
+        dashboardList.add(new DashboardModel(R.drawable.favorite, R.drawable.avatar_men, R.drawable.bookmark, "ngocvaw", "12 giờ trước", "123", "40", "50", "check in tai: ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss...."));
+
+        DashboardAdapter dashboardAdapter = new DashboardAdapter(dashboardList, getContext());
+        dashboardRv.setHasFixedSize(true);
+        dashboardRv.setLayoutManager(new StaggeredGridLayoutManager(1, LinearLayoutManager.VERTICAL));
+        dashboardRv.setAdapter(dashboardAdapter);
+
+        ImageButton btnFriends = view.findViewById(R.id.friends);
+        btnFriends.setOnClickListener(this);
 
         return view;
+    }
+
+    @Override
+    public void onClick(View v) {
+        if(v.getId()==R.id.friends){
+            FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+            fragmentTransaction.replace(R.id.container, new FriendsFragment());
+            // Thêm transaction vào back stack (nếu cần)
+            fragmentTransaction.addToBackStack(null);
+
+            // Commit transaction
+            fragmentTransaction.commit();
+        }
+    }
+
+    @NonNull
+    @Override
+    public CreationExtras getDefaultViewModelCreationExtras() {
+        return super.getDefaultViewModelCreationExtras();
     }
 }

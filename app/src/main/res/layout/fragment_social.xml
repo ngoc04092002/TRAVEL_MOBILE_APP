@@ -9,9 +9,7 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scrollbars="none"
-        >
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -35,6 +33,7 @@
                     android:text="Bảng tin"
                     android:textSize="32sp"
                     android:textStyle="bold" />
+
                 <ImageButton
                     android:id="@+id/addButton"
                     android:layout_width="48dp"
@@ -43,6 +42,15 @@
                     android:layout_weight="1"
                     android:background="@color/white"
                     android:src="@drawable/add_circle" />
+                <ImageButton
+                    android:id="@+id/friends"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_weight="1"
+                    android:background="@color/white"
+                    android:src="@drawable/group_add" />
+
                 <ImageButton
                     android:id="@+id/imageButton"
                     android:layout_width="48dp"
@@ -61,24 +69,23 @@
                 android:layout_marginTop="4dp"
                 android:background="#45423C3C" />
 
-            <HorizontalScrollView
+            <androidx.core.widget.NestedScrollView
                 android:id="@+id/horizontalScrollView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginTop="6dp"
-                android:scrollbars="none"
-                >
+                android:layout_marginBottom="6dp"
+                android:scrollbars="none">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginLeft="12dp"
+                    android:layout_marginStart="12dp"
                     android:orientation="horizontal">
 
                     <FrameLayout
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        >
+                        android:layout_height="wrap_content">
 
                         <com.makeramen.roundedimageview.RoundedImageView
                             android:id="@+id/story"
@@ -125,12 +132,13 @@
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/storyRv"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_marginLeft="12dp" />
+                        android:layout_marginStart="12dp"
+                        />
                 </LinearLayout>
 
-            </HorizontalScrollView>
+            </androidx.core.widget.NestedScrollView>
 
             <View
                 android:id="@+id/view4"
@@ -139,10 +147,10 @@
                 android:background="#45423C3C" />
 
             <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/dashboardRv"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_margin="12dp"
-                />
+                android:layout_margin="12dp" />
 
         </LinearLayout>
     </ScrollView>

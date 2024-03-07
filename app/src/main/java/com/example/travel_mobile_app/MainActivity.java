@@ -4,9 +4,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.os.Bundle;
-import android.widget.Toast;
 
 import com.example.travel_mobile_app.databinding.ActivityMainBinding;
+import com.example.travel_mobile_app.fragments.NotificationFragment;
 import com.example.travel_mobile_app.fragments.SocialFragment;
 
 public class MainActivity extends AppCompatActivity {
@@ -27,6 +27,8 @@ public class MainActivity extends AppCompatActivity {
             if (itemId == R.id.insta) { // Replace this with the correct ID for the social item
                 transaction.replace(R.id.container, new SocialFragment());
 //                Toast.makeText(MainActivity.this, "social", Toast.LENGTH_LONG).show();
+            } else if(itemId == R.id.bell){
+                transaction.replace(R.id.container, new NotificationFragment());
             }
 
             transaction.commit();
