@@ -36,11 +36,12 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="NgocVan"
+                android:maxLines="1"
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/about"
+                android:id="@+id/followers"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -49,11 +50,11 @@
         </LinearLayout>
 
         <Button
-            android:id="@+id/follow"
+            android:id="@+id/btnFollow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Theo dõi"
+            android:text="Đang theo dõi"
             android:backgroundTint="@color/gray"
             android:layout_gravity="center"
             />

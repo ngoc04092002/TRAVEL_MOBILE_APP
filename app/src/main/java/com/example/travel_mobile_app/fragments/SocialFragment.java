@@ -1,6 +1,5 @@
 package com.example.travel_mobile_app.fragments;
 
-import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -19,7 +18,6 @@ import android.widget.ImageButton;
 
 import com.example.travel_mobile_app.Adapter.DashboardAdapter;
 import com.example.travel_mobile_app.Adapter.StoryAdapter;
-import com.example.travel_mobile_app.MainActivity;
 import com.example.travel_mobile_app.R;
 import com.example.travel_mobile_app.models.DashboardModel;
 import com.example.travel_mobile_app.models.StoryModel;
@@ -91,7 +89,7 @@ public class SocialFragment extends Fragment implements View.OnClickListener {
 
             fragmentTransaction.replace(R.id.container, new FriendsFragment());
             // Thêm transaction vào back stack (nếu cần)
-            fragmentTransaction.addToBackStack(null);
+            fragmentTransaction.addToBackStack("social_fragment");
 
             // Commit transaction
             fragmentTransaction.commit();

@@ -3,64 +3,52 @@ package com.example.travel_mobile_app.fragments;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.travel_mobile_app.Adapter.FollowAdapter;
+import com.example.travel_mobile_app.Adapter.NotificationAdapter;
 import com.example.travel_mobile_app.R;
+import com.example.travel_mobile_app.dto.FollowDTO;
+import com.example.travel_mobile_app.models.NotificationModel;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link FriendFollowingFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import java.util.ArrayList;
+
 public class FriendFollowingFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private RecyclerView followingRv;
+    private ArrayList<FollowDTO> list;
 
     public FriendFollowingFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment FriendFollowingFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static FriendFollowingFragment newInstance(String param1, String param2) {
-        FriendFollowingFragment fragment = new FriendFollowingFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_friend_following, container, false);
+        View view = inflater.inflate(R.layout.fragment_friend_following, container, false);
+
+        followingRv = view.findViewById(R.id.followingRv);
+        list = new ArrayList<>();
+        list.add(new FollowDTO(R.drawable.avatar_men, "ngocvan", 12));
+        list.add(new FollowDTO(R.drawable.avatar_men, "ngocvan2", 20));
+
+        FollowAdapter followAdapter = new FollowAdapter(list, getContext(),true);
+        followingRv.setHasFixedSize(true);
+        followingRv.setLayoutManager(new StaggeredGridLayoutManager(1, LinearLayoutManager.VERTICAL));
+        followingRv.setAdapter(followAdapter);
+        return view;
     }
 }
