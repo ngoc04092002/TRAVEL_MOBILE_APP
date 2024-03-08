@@ -50,7 +50,7 @@
         android:id="@+id/toolbar"
         android:layout_width="50dp"
         android:layout_height="match_parent"
-        app:menu="@menu/save_item_menu"
+        app:menu="@menu/notification_item_menu"
         android:layout_gravity="center"
         />
 
