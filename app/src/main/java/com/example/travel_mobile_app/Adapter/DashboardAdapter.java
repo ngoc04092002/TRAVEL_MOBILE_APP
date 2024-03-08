@@ -1,9 +1,15 @@
 package com.example.travel_mobile_app.Adapter;
 
+import android.app.Dialog;
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -12,6 +18,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.travel_mobile_app.R;
 import com.example.travel_mobile_app.models.DashboardModel;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
 
@@ -55,7 +63,9 @@ public class DashboardAdapter extends RecyclerView.Adapter<DashboardAdapter.view
     public class viewHolder extends RecyclerView.ViewHolder {
 
         ImageView profile, postImage, save;
-        TextView name, about, like, comment, share, des;
+        TextView name, about, des;
+
+        MaterialButton like,comment,share;
 
         public viewHolder(@NonNull View itemView) {
             super(itemView);
@@ -68,6 +78,28 @@ public class DashboardAdapter extends RecyclerView.Adapter<DashboardAdapter.view
             comment = itemView.findViewById(R.id.comment);
             share = itemView.findViewById(R.id.share);
             des = itemView.findViewById(R.id.des);
+
+            comment.setOnClickListener(v -> {
+                showBottomDialog();
+            });
         }
+    }
+
+    private void showBottomDialog(){
+        final BottomSheetDialog dialog = new BottomSheetDialog(context);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.bottomsheet_layout);
+
+        ImageButton bottomsheet_back = dialog.findViewById(R.id.bottomsheet_back);
+
+        bottomsheet_back.setOnClickListener(v -> {
+            dialog.dismiss();
+        });
+
+        dialog.show();
+        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.getWindow().setGravity(Gravity.BOTTOM);
+
     }
 }

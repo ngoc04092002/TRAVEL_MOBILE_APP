@@ -31,6 +31,7 @@ public class SocialFragment extends Fragment implements View.OnClickListener {
     private RecyclerView storyRv, dashboardRv;
     private ArrayList<StoryModel> list;
     private ArrayList<DashboardModel> dashboardList;
+    private ImageButton btnFriends,btnAdd;
 
     public SocialFragment() {
         // Required empty public constructor
@@ -75,9 +76,9 @@ public class SocialFragment extends Fragment implements View.OnClickListener {
         dashboardRv.setLayoutManager(new StaggeredGridLayoutManager(1, LinearLayoutManager.VERTICAL));
         dashboardRv.setAdapter(dashboardAdapter);
 
-        ImageButton btnFriends = view.findViewById(R.id.friends);
+        btnFriends = view.findViewById(R.id.friends);
         btnFriends.setOnClickListener(this);
-        ImageButton btnAdd = view.findViewById(R.id.addButton);
+        btnAdd = view.findViewById(R.id.addButton);
         btnAdd.setOnClickListener(this);
 
         return view;
@@ -106,4 +107,5 @@ public class SocialFragment extends Fragment implements View.OnClickListener {
     public CreationExtras getDefaultViewModelCreationExtras() {
         return super.getDefaultViewModelCreationExtras();
     }
+
 }

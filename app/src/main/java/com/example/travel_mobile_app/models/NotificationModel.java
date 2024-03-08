@@ -3,14 +3,13 @@ package com.example.travel_mobile_app.models;
 public class NotificationModel {
 
     private int profile;
+    private String notification, time;
 
     public NotificationModel(int profile, String notification, String time) {
         this.profile = profile;
         this.notification = notification;
         this.time = time;
     }
-
-    private String notification, time;
 
     public int getProfile() {
         return profile;
