@@ -14,10 +14,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.example.travel_mobile_app.R;
+import com.example.travel_mobile_app.models.CommentModel;
 import com.example.travel_mobile_app.models.DashboardModel;
+import com.example.travel_mobile_app.models.NotificationModel;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.button.MaterialButton;
 
@@ -65,7 +69,7 @@ public class DashboardAdapter extends RecyclerView.Adapter<DashboardAdapter.view
         ImageView profile, postImage, save;
         TextView name, about, des;
 
-        MaterialButton like,comment,share;
+        MaterialButton like, comment, share;
 
         public viewHolder(@NonNull View itemView) {
             super(itemView);
@@ -82,10 +86,11 @@ public class DashboardAdapter extends RecyclerView.Adapter<DashboardAdapter.view
             comment.setOnClickListener(v -> {
                 showBottomDialog();
             });
+
         }
     }
 
-    private void showBottomDialog(){
+    private void showBottomDialog() {
         final BottomSheetDialog dialog = new BottomSheetDialog(context);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.bottomsheet_layout);
@@ -96,8 +101,21 @@ public class DashboardAdapter extends RecyclerView.Adapter<DashboardAdapter.view
             dialog.dismiss();
         });
 
+        ArrayList<CommentModel> comments;
+        RecyclerView commentsRv = dialog.findViewById(R.id.commentsRv);
+
+        comments = new ArrayList<>();
+        comments.add(new CommentModel(R.drawable.avatar_men, "ngocvan", "1", "Cảnh này đẹp quaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaas", "1 phút trước"));
+        comments.add(new CommentModel(R.drawable.avatar_men, "ngocvan", "1", "Cảnh này đẹp quaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaas", "1 phút trước"));
+        comments.add(new CommentModel(R.drawable.avatar_men, "ngocvan", "1", "Cảnh này đẹp quaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaas", "1 phút trước"));
+
+        CommentAdapter commentAdapter = new CommentAdapter(comments, dialog.getContext());
+        commentsRv.setHasFixedSize(true);
+        commentsRv.setLayoutManager(new StaggeredGridLayoutManager(1, LinearLayoutManager.VERTICAL));
+        commentsRv.setAdapter(commentAdapter);
+
         dialog.show();
-        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         dialog.getWindow().setGravity(Gravity.BOTTOM);
 

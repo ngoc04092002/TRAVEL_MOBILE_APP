@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/white"
     android:orientation="vertical">
 
@@ -32,37 +33,85 @@
                 android:id="@+id/like"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="354"
                 android:layout_marginRight="10dp"
                 android:fontFamily="sans-serif"
-                android:textSize="@dimen/_14font_mdp"
+                android:text="354"
                 android:textColor="@color/black"
+                android:textSize="@dimen/_14font_mdp"
                 app:backgroundTint="@color/white"
                 app:cornerRadius="0dp"
                 app:icon="@drawable/favorite"
                 app:iconGravity="textStart"
-                app:iconTint="@color/black"/>
+                app:iconTint="@color/black" />
+
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/share"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="40"
                 android:fontFamily="sans-serif"
-                android:textSize="@dimen/_14font_mdp"
+                android:text="40"
                 android:textColor="@color/black"
+                android:textSize="@dimen/_14font_mdp"
                 app:backgroundTint="@color/white"
                 app:cornerRadius="0dp"
                 app:icon="@drawable/share"
                 app:iconGravity="textStart"
-                app:iconTint="@color/black"/>
+                app:iconTint="@color/black" />
         </LinearLayout>
 
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/commentRv"
-        android:minHeight="@dimen/_450mdp"
+        android:id="@+id/commentsRv"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:minHeight="@dimen/_450mdp"
+        />
+
+
+    <View
+        android:id="@+id/view6"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/gray"
+        />
+
+    <LinearLayout
+        android:id="@+id/box_send_msg"
+        android:layout_width="match_parent"
+        android:layout_height="65dp"
+        android:gravity="bottom"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/comment_message"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:hint="Nhắn gì đó..."
+            android:inputType="text"
+            android:maxLines="1"
+            android:paddingStart="20dp"
+            tools:ignore="Autofill" />
+        <View
+            android:id="@+id/border_left"
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="@color/gray"
+            />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_chat_send"
+            android:layout_width="74dp"
+            android:layout_height="match_parent"
+            android:fontFamily="sans-serif"
+            app:backgroundTint="@color/white"
+            app:cornerRadius="0dp"
+            app:icon="@drawable/send"
+            app:iconSize="@dimen/_20font_mdp"
+            app:iconGravity="textStart"
+            app:iconTint="@color/yellow" />
+
+    </LinearLayout>
 
 </LinearLayout>
