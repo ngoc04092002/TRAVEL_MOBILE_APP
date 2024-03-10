@@ -17,7 +17,7 @@
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/createPost_btnBack"
             android:layout_width="50dp"
-            android:layout_height="60dp"
+            android:layout_height="50dp"
             android:layout_gravity="start"
             android:layout_marginEnd="10dp"
             android:clickable="true"
