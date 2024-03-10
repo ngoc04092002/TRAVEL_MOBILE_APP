@@ -71,7 +71,7 @@ public class SocialFragment extends Fragment implements View.OnClickListener {
         dashboardList.add(new DashboardModel(R.drawable.favorite, R.drawable.avatar_men, R.drawable.bookmark, "ngocvaw", "12 giờ trước", "123", "40", "50", "check in tai: ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss...."));
         dashboardList.add(new DashboardModel(R.drawable.favorite, R.drawable.avatar_men, R.drawable.bookmark, "ngocvaw", "12 giờ trước", "123", "40", "50", "check in tai: ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss...."));
 
-        DashboardAdapter dashboardAdapter = new DashboardAdapter(dashboardList, getContext());
+        DashboardAdapter dashboardAdapter = new DashboardAdapter(dashboardList, getContext(),requireActivity().getSupportFragmentManager());
         dashboardRv.setHasFixedSize(true);
         dashboardRv.setLayoutManager(new StaggeredGridLayoutManager(1, LinearLayoutManager.VERTICAL));
         dashboardRv.setAdapter(dashboardAdapter);
