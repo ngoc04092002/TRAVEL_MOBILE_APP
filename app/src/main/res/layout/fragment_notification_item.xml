@@ -5,6 +5,8 @@
     android:layout_height="wrap_content"
     android:paddingTop="@dimen/_8mdp"
     android:paddingBottom="@dimen/_8mdp"
+    android:paddingStart="@dimen/_6mdp"
+    android:paddingEnd="@dimen/_6mdp"
     android:orientation="horizontal"
     android:background="#8AFFF612"
     >
