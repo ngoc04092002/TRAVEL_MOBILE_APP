@@ -1,13 +1,20 @@
 package com.example.travel_mobile_app.Adapter;
 
+import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
+import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -32,17 +39,19 @@ import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
 
-public class DashboardAdapter extends RecyclerView.Adapter<DashboardAdapter.viewHolder>{
+public class DashboardAdapter extends RecyclerView.Adapter<DashboardAdapter.viewHolder> {
 
     ArrayList<DashboardModel> list;
     Context context;
 
     FragmentManager fragmentManager;
+    Activity activity;
 
-    public DashboardAdapter(ArrayList<DashboardModel> list, Context context, FragmentManager fragmentManager) {
+    public DashboardAdapter(ArrayList<DashboardModel> list, Context context, FragmentManager fragmentManager, Activity activity) {
         this.list = list;
         this.context = context;
-        this.fragmentManager =fragmentManager;
+        this.fragmentManager = fragmentManager;
+        this.activity = activity;
     }
 
     @NonNull
@@ -50,7 +59,7 @@ public class DashboardAdapter extends RecyclerView.Adapter<DashboardAdapter.view
     public viewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(context).inflate(R.layout.dashboard_rv, parent, false);
 
-        return new viewHolder(view,fragmentManager);
+        return new viewHolder(view, fragmentManager);
     }
 
     @Override
@@ -100,6 +109,9 @@ public class DashboardAdapter extends RecyclerView.Adapter<DashboardAdapter.view
 
             profile.setOnClickListener(this);
             postUserName.setOnClickListener(this);
+            postImage.setOnClickListener(v -> {
+                showCenterDialog();
+            });
 
             comment.setOnClickListener(v -> {
                 showBottomDialog();
@@ -111,7 +123,7 @@ public class DashboardAdapter extends RecyclerView.Adapter<DashboardAdapter.view
         public void onClick(View v) {
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
-            if(v.getId()==R.id.profile_image||v.getId()==R.id.post_user_name){
+            if (v.getId() == R.id.profile_image || v.getId() == R.id.post_user_name) {
                 fragmentTransaction.replace(R.id.container, new SocialUserDetailInfoFragment(1));
             }
             // Thêm transaction vào back stack (nếu cần)
@@ -122,6 +134,7 @@ public class DashboardAdapter extends RecyclerView.Adapter<DashboardAdapter.view
         }
     }
 
+    //comments UI
     private void showBottomDialog() {
         final BottomSheetDialog dialog = new BottomSheetDialog(context);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -156,28 +169,89 @@ public class DashboardAdapter extends RecyclerView.Adapter<DashboardAdapter.view
         comments.add(new CommentModel(R.drawable.avatar_men, "ngocvan", "1", "Cảnh này đẹp quaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaas", "1 phút trước"));
         comments.add(new CommentModel(R.drawable.avatar_men, "ngocvan", "1", "Cảnh này đẹp quaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaas", "1 phút trước"));
         comments.add(new CommentModel(R.drawable.avatar_men, "ngocvan", "1", "Cảnh này đẹp quaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaas", "1 phút trước"));
-        comments.add(new CommentModel(R.drawable.avatar_men, "ngocvan", "1", "Cảnh này đẹp quaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaas", "1 phút trước"));
-        comments.add(new CommentModel(R.drawable.avatar_men, "ngocvan", "1", "Cảnh này đẹp quaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaas", "1 phút trước"));
-        comments.add(new CommentModel(R.drawable.avatar_men, "ngocvan", "1", "Cảnh này đẹp quaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaas", "1 phút trước"));
-        comments.add(new CommentModel(R.drawable.avatar_men, "ngocvan", "1", "Cảnh này đẹp quaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaas", "1 phút trước"));
-        comments.add(new CommentModel(R.drawable.avatar_men, "ngocvan", "1", "Cảnh này đẹp quaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaas", "1 phút trước"));
-        comments.add(new CommentModel(R.drawable.avatar_men, "ngocvan", "1", "Cảnh này đẹp quaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaas", "1 phút trước"));
-        comments.add(new CommentModel(R.drawable.avatar_men, "ngocvan", "1", "Cảnh này đẹp quaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaas", "1 phút trước"));
-        comments.add(new CommentModel(R.drawable.avatar_men, "ngocvan", "1", "Cảnh này đẹp quaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaas", "1 phút trước"));
-        comments.add(new CommentModel(R.drawable.avatar_men, "ngocvan", "1", "Cảnh này đẹp quaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaas", "1 phút trước"));
-        comments.add(new CommentModel(R.drawable.avatar_men, "ngocvan", "1", "Cảnh này đẹp quaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaas", "1 phút trước"));
-        comments.add(new CommentModel(R.drawable.avatar_men, "ngocvan", "1", "Cảnh này đẹp quaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaas", "1 phút trước"));
 
         CommentAdapter commentAdapter = new CommentAdapter(comments, dialog.getContext());
         commentsRv.setHasFixedSize(true);
         commentsRv.setLayoutManager(new StaggeredGridLayoutManager(1, LinearLayoutManager.VERTICAL));
         commentsRv.setAdapter(commentAdapter);
 
-        dialog.show();
         dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         dialog.getWindow().setGravity(Gravity.BOTTOM);
+        dialog.show();
+    }
+
+    private ImageView imageView;
+    private float x, y, dx, dy, initX, initY, limitCoordinatesY1, limitCoordinatesY2, limitCoordinatesX;
+
+    //hieenr thị ảnh lên toàn màn hình khi click vào ảnh bài post
+    private void showCenterDialog() {
+        final Dialog dialog = new Dialog(activity);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.centersheet_image);
+
+        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.getWindow().setGravity(Gravity.BOTTOM);
+
+        imageView = dialog.findViewById(R.id.postimg);
+        handleOnTouchImageOfPost(dialog, imageView);
+
+        dialog.show();
+    }
+
+    private void handleOnTouchImageOfPost(Dialog dialog, ImageView imageView) {
+        // Đặt độ mờ ban đầu là 0
+        WindowManager.LayoutParams layoutParams = dialog.getWindow().getAttributes();
+        layoutParams.dimAmount = 1;
+        dialog.getWindow().setAttributes(layoutParams);
+
+
+        imageView.setOnTouchListener((v, event) -> {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    x = event.getRawX();
+                    y = event.getRawY();
+                    initX = imageView.getX();
+                    initY = imageView.getY();
+                    limitCoordinatesY1 = -imageView.getHeight() / 2;
+                    limitCoordinatesY2 = initY + imageView.getHeight() / 2;
+                    limitCoordinatesX = imageView.getWidth() / 2;
+                    break;
+                case MotionEvent.ACTION_MOVE:
+                    dx = event.getRawX() - x;
+                    dy = event.getRawY() - y;
+
+                    float edgeX = imageView.getX() + dx;
+                    float edgeY = imageView.getY() + dy;
+                    float acreage1 = (Math.abs(edgeY) - initY + (imageView.getHeight() / 2)) * (Math.abs(edgeX) + (imageView.getWidth() / 2));
+                    float acreage2 = limitCoordinatesX * 2 * (limitCoordinatesY2 - limitCoordinatesY1);
+                    // Áp dụng độ mờ cho dialog
+                    layoutParams.dimAmount = (acreage2 - acreage1) / acreage2;
+                    dialog.getWindow().setAttributes(layoutParams);
+
+                    imageView.setX(edgeX);
+                    imageView.setY(edgeY);
+                    x = event.getRawX();
+                    y = event.getRawY();
+                    break;
+                case MotionEvent.ACTION_UP:
+
+                    if (Math.abs(imageView.getX()) >= limitCoordinatesX || imageView.getY() >= limitCoordinatesY2 || imageView.getY() <= limitCoordinatesY1) {
+                        dialog.dismiss();
+                    } else {
+                        imageView.setX(initX);
+                        imageView.setY(initY);
+                        layoutParams.dimAmount = 1;
+                        dialog.getWindow().setAttributes(layoutParams);
+                    }
+                    break;
+            }
+            return true;
+        });
 
     }
 
+
 }
+

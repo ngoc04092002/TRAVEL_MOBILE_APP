@@ -49,4 +49,6 @@ dependencies {
     compileOnly("org.projectlombok:lombok:1.18.30")
     compileOnly("com.github.hajiyevelnur92:intentanimation:1.0")
     implementation("com.github.OMARIHAMZA:StoryView:1.0.2-alpha")
+    implementation("com.github.MikeOrtiz:TouchImageView:1.4.1")
+
 }

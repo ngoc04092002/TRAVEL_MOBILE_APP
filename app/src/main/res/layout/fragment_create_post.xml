@@ -92,7 +92,17 @@
         android:maxLines="6"
         android:textStyle="bold" />
 
-        <com.makeramen.roundedimageview.RoundedImageView
+<!--    <FrameLayout-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content">-->
+<!--        <VideoView-->
+<!--            android:id="@+id/videoView"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="@dimen/_220mdp" />-->
+<!--    </FrameLayout>-->
+
+
+    <com.makeramen.roundedimageview.RoundedImageView
             android:id="@+id/postimg"
             android:layout_width="match_parent"
             android:layout_height="@dimen/_220mdp"

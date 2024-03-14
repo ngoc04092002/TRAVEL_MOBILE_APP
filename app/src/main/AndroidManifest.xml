@@ -15,9 +15,11 @@
         android:theme="@style/Theme.TRAVEL_MOBILE_APP"
         tools:targetApi="31">
         <activity
-            android:name=".SocialUserDetailInfoFragment"
+            android:name=".FullScreenActivity"
             android:exported="false" />
-        <!-- <activity -->
+        <activity
+            android:name=".SocialUserDetailInfoFragment"
+            android:exported="false" /> <!-- <activity -->
         <!-- android:name=".components.HomeActivity" -->
         <!-- android:exported="false" /> -->
         <activity
