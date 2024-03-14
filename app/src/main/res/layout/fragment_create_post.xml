@@ -92,15 +92,18 @@
         android:maxLines="6"
         android:textStyle="bold" />
 
-<!--    <FrameLayout-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content">-->
-<!--        <VideoView-->
-<!--            android:id="@+id/videoView"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="@dimen/_220mdp" />-->
-<!--    </FrameLayout>-->
-
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <VideoView
+            android:id="@+id/videoView"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_220mdp"
+            android:layout_marginLeft="12dp"
+            android:layout_marginRight="12dp"
+            android:visibility="gone"
+            />
+    </FrameLayout>
 
     <com.makeramen.roundedimageview.RoundedImageView
             android:id="@+id/postimg"

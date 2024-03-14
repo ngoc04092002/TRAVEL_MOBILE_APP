@@ -50,5 +50,6 @@ dependencies {
     compileOnly("com.github.hajiyevelnur92:intentanimation:1.0")
     implementation("com.github.OMARIHAMZA:StoryView:1.0.2-alpha")
     implementation("com.github.MikeOrtiz:TouchImageView:1.4.1")
+    implementation("com.github.dhaval2404:imagepicker:2.1")
 
 }
