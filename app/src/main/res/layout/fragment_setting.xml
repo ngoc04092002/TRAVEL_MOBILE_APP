@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".fragments.SettingFragment">
+
+    <FrameLayout
+        android:id="@+id/top_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingStart="20dp"
+        android:paddingTop="20dp">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/createPost_btnBack"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="start"
+            android:layout_marginEnd="10dp"
+            android:clickable="true"
+            android:padding="@dimen/_6mdp"
+            android:src="@drawable/navigate_before"
+            app:civ_border_color="@color/black"
+            app:civ_border_width="3dp" />
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/imv_avatar"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="end"
+            android:layout_marginEnd="10dp"
+            android:clickable="true"
+            android:padding="@dimen/_6mdp"
+            android:src="@drawable/navigate_before"
+            app:civ_border_color="@color/black"
+            app:civ_border_width="3dp" />
+
+    </FrameLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/top_bar"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="21dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/textView5"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"
+                android:fontFamily="@font/montserrat_bold"
+                android:text="Cài Đặt"
+                android:textSize="30sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:id="@+id/icn_profile"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:layout_marginLeft="20dp"
+                            android:src="@drawable/icn_profile"></ImageView>
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="20dp"
+                            android:text="Profile"
+                            android:textSize="20sp"
+                            app:fontFamily="@font/montserrat_bold">
+
+                        </androidx.appcompat.widget.AppCompatTextView>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginRight="20dp"
+                        android:background="@drawable/account_bgr_card"
+                        android:elevation="10dp"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/tvEditInfo"
+                            android:layout_width="match_parent"
+                            android:layout_height="50dp"
+                            android:layout_marginLeft="20dp"
+                            android:fontFamily="@font/montserrat_bold"
+                            android:text="Sửa thông tin"
+                            android:textSize="20sp"
+                            android:gravity="center_vertical" />
+
+                        <TextView
+                            android:id="@+id/tvChangePass"
+                            android:layout_width="match_parent"
+                            android:layout_height="50dp"
+                            android:layout_marginLeft="20dp"
+                            android:fontFamily="@font/montserrat_bold"
+                            android:text="Thay đổi mật khẩu"
+                            android:textSize="20sp"
+                            android:gravity="center_vertical" />
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginTop="20dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:id="@+id/icn_notification"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:layout_marginLeft="20dp"
+                            android:src="@drawable/icn_notification" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="20dp"
+                            android:text="Thông báo"
+                            android:textSize="20sp"
+                            app:fontFamily="@font/montserrat_bold">
+
+                        </androidx.appcompat.widget.AppCompatTextView>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginRight="20dp"
+                        android:background="@drawable/account_bgr_card"
+                        android:elevation="10dp"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="50dp"
+                                android:layout_weight="1"
+                                android:layout_marginLeft="20dp"
+                                android:fontFamily="@font/montserrat_bold"
+                                android:text="Thông báo"
+                                android:textSize="20sp"
+                                android:gravity="center_vertical" />
+                            <Switch
+                                android:id="@+id/swNotification"
+                                android:layout_width="47dp"
+                                android:layout_height="23dp"
+                                android:layout_marginRight="10dp">
+                            </Switch>
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="50dp"
+                                android:layout_marginLeft="20dp"
+                                android:layout_weight="1"
+                                android:fontFamily="@font/montserrat_bold"
+                                android:text="Cập nhật"
+                                android:textSize="20sp"
+                                android:gravity="center_vertical" />
+                            <Switch
+                                android:id="@+id/swUpdate"
+                                android:layout_width="47dp"
+                                android:layout_height="23dp"
+                                android:layout_marginRight="10dp">
+                            </Switch>
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginTop="20dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:id="@+id/difference"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:layout_marginLeft="20dp"
+                            android:src="@drawable/icn_setting_small" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="20dp"
+                            android:text="Khác"
+                            android:textSize="20sp"
+                            app:fontFamily="@font/montserrat_bold">
+
+                        </androidx.appcompat.widget.AppCompatTextView>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginRight="20dp"
+                        android:background="@drawable/account_bgr_card"
+                        android:elevation="10dp"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="50dp"
+                                android:layout_weight="1"
+                                android:layout_marginLeft="20dp"
+                                android:fontFamily="@font/montserrat_bold"
+                                android:text="Ngôn ngữ"
+                                android:textSize="20sp"
+                                android:gravity="center_vertical" />
+                            <TextView
+                                android:layout_width="80dp"
+                                android:layout_height="wrap_content"
+                                android:text="Việt Nam"
+                                android:textAlignment="center"
+                                android:layout_marginRight="20dp"
+                                android:fontFamily="@font/montserrat_bold"
+                                android:background="@color/white"/>
+
+                        </LinearLayout>
+
+
+                    </LinearLayout>
+
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+
+</RelativeLayout>

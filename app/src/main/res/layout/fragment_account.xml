@@ -141,6 +141,7 @@
                 android:divider="@drawable/space_between"
                 android:showDividers="middle">
                 <LinearLayout
+                    android:id="@+id/btnSaved"
                     android:layout_width="match_parent"
                     android:layout_height="74dp"
                     android:orientation="horizontal"
@@ -167,6 +168,7 @@
                         android:textStyle="bold"/>
                 </LinearLayout>
                 <LinearLayout
+                    android:id="@+id/btnSetting"
                     android:layout_width="match_parent"
                     android:layout_height="74dp"
                     android:orientation="horizontal"
@@ -181,7 +183,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:background="@color/transparent"
-                        android:src="@drawable/icn_setting" />
+                        android:src="@drawable/icn_setting_small" />
 
                     <TextView
                         android:id="@+id/setting"
@@ -193,6 +195,7 @@
                         android:textStyle="bold"/>
                 </LinearLayout>
                 <LinearLayout
+                    android:id="@+id/btnManagePost"
                     android:layout_width="match_parent"
                     android:layout_height="74dp"
                     android:orientation="horizontal"
@@ -219,6 +222,7 @@
                         android:textStyle="bold"/>
                 </LinearLayout>
                 <LinearLayout
+                    android:id="@+id/btnLogout"
                     android:layout_width="match_parent"
                     android:layout_height="74dp"
                     android:orientation="horizontal"
