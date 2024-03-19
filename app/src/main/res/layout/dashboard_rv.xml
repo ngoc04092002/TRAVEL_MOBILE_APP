@@ -175,7 +175,6 @@
                 app:iconGravity="textStart"
                 app:iconTint="@color/black" />
         </LinearLayout>
-
     </LinearLayout>
 
     <View

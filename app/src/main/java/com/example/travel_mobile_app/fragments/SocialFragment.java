@@ -31,7 +31,7 @@ public class SocialFragment extends Fragment implements View.OnClickListener {
     private RecyclerView storyRv, dashboardRv;
     private ArrayList<StoryModel> list;
     private ArrayList<DashboardModel> dashboardList;
-    private ImageButton btnFriends,btnAdd;
+    private ImageButton btnFriends,btnAdd, btnSearch;
 
     public SocialFragment() {
         // Required empty public constructor
@@ -80,6 +80,8 @@ public class SocialFragment extends Fragment implements View.OnClickListener {
         btnFriends.setOnClickListener(this);
         btnAdd = view.findViewById(R.id.addButton);
         btnAdd.setOnClickListener(this);
+        btnSearch = view.findViewById(R.id.btnSearch);
+        btnSearch.setOnClickListener(this);
 
         return view;
     }
@@ -93,7 +95,8 @@ public class SocialFragment extends Fragment implements View.OnClickListener {
             fragmentTransaction.replace(R.id.container, new FriendsFragment());
         }else if(v.getId()==R.id.addButton){
             fragmentTransaction.replace(R.id.container, new CreatePostFragment());
-
+        }else if(v.getId()==R.id.btnSearch){
+            fragmentTransaction.replace(R.id.container, new SocialSearchPostFragment());
         }
         // Thêm transaction vào back stack (nếu cần)
         fragmentTransaction.addToBackStack("social_fragment");
