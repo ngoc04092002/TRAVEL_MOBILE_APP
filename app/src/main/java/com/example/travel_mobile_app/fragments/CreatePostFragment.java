@@ -11,18 +11,33 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.viewmodel.CreationExtras;
 
-import android.provider.MediaStore;
-import android.util.TypedValue;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.example.travel_mobile_app.R;
+import com.example.travel_mobile_app.models.PostModel;
 import com.github.dhaval2404.imagepicker.ImagePicker;
+import com.github.ybq.android.spinkit.sprite.Sprite;
+import com.github.ybq.android.spinkit.style.WanderingCubes;
 import com.google.android.material.button.MaterialButton;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.Date;
+import java.util.UUID;
 
 public class CreatePostFragment extends Fragment implements View.OnClickListener {
 
@@ -30,6 +45,15 @@ public class CreatePostFragment extends Fragment implements View.OnClickListener
     private MaterialButton btnCamera, btnGallery;
     private ImageView postimg;
     private VideoView videoView;
+    private Uri uri = null;
+    private FirebaseStorage storage;
+    private MaterialButton btnCreatePost;
+    private EditText des;
+    FirebaseAuth mAuth;
+    private FirebaseFirestore db;
+
+    ProgressBar progressBar;
+    LinearLayout backdrop;
 
     public CreatePostFragment() {
         // Required empty public constructor
@@ -38,6 +62,9 @@ public class CreatePostFragment extends Fragment implements View.OnClickListener
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mAuth = FirebaseAuth.getInstance();
+        storage = FirebaseStorage.getInstance();
+        db = FirebaseFirestore.getInstance();
     }
 
     @Override
@@ -51,11 +78,16 @@ public class CreatePostFragment extends Fragment implements View.OnClickListener
         btnCamera = view.findViewById(R.id.camera);
         btnGallery = view.findViewById(R.id.gallery);
         postimg = view.findViewById(R.id.postimg);
-        videoView=view.findViewById(R.id.videoView);
+        videoView = view.findViewById(R.id.videoView);
+        btnCreatePost = view.findViewById(R.id.btn_create_post);
+        des = view.findViewById(R.id.des);
+        progressBar = view.findViewById(R.id.spin_kit);
+        backdrop = view.findViewById(R.id.backdrop);
 
         btnBack.setOnClickListener(this);
         btnCamera.setOnClickListener(this);
         btnGallery.setOnClickListener(this);
+        btnCreatePost.setOnClickListener(this);
 
         return view;
     }
@@ -71,12 +103,17 @@ public class CreatePostFragment extends Fragment implements View.OnClickListener
                        .crop()
                        .start();
         } else if (v.getId() == R.id.gallery) {
-            Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-            startActivityForResult(intent,1);
-//            ImagePicker.with(this)
-//                       .galleryOnly()
-//                       .crop()
-//                       .start();
+            Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+            intent.setType("image/*");
+            intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+            startActivityForResult(intent, 1);
+
+        } else if (v.getId() == R.id.btn_create_post) {
+            String userId = UUID.randomUUID().toString().replace("-", "");
+            final StorageReference reference = storage.getReference().child("posts")
+                                                      .child(userId)
+                                                      .child(new Date().getTime() + "");
+            createNewPost(reference, userId);
         }
     }
 
@@ -90,7 +127,7 @@ public class CreatePostFragment extends Fragment implements View.OnClickListener
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == Activity.RESULT_OK) {
-            Uri uri = data.getData();
+            uri = data.getData();
             String mimeType = getContext().getContentResolver().getType(uri);
 
             if (mimeType.contains("jpeg") || mimeType.contains("jpg") || mimeType.contains("png")) {
@@ -116,5 +153,74 @@ public class CreatePostFragment extends Fragment implements View.OnClickListener
         } else {
             Toast.makeText(getContext(), "Nhiệm vụ đã được hủy", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void createNewPost(StorageReference reference, String userId) {
+        if (des.getText().toString().trim().equals("") && uri == null) {
+            Toast.makeText(getContext(), "Lỗi khi tạo", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        System.out.println("uri::"+des.getText().toString().trim());
+        System.out.println("uri::"+uri);
+
+        showProgressBar();
+        String postId = UUID.randomUUID().toString().replace("-", "");
+
+        PostModel post = new PostModel();
+        post.setPostId(postId);
+        post.setPostDescription(des.getText().toString().trim());
+        post.setPostedBy(userId);
+        post.setPostedAt(new Date().getTime());
+
+        CollectionReference posts = db.collection("posts");
+
+        if (uri != null) {
+            reference.putFile(uri).addOnSuccessListener(taskSnapshot -> {
+                reference.getDownloadUrl().addOnSuccessListener(uri -> {
+                    post.setPostImage(uri.toString());
+                    saveNewPost(posts, post);
+                    dismissProgressBar();
+                }).addOnFailureListener(e -> {
+                    Toast.makeText(getContext(), "Đã có lỗi khi tạo ảnh", Toast.LENGTH_SHORT).show();
+                    dismissProgressBar();
+                });
+            }).addOnFailureListener(e -> {
+                Toast.makeText(getContext(), "Đã có lỗi khi tạo ảnh", Toast.LENGTH_SHORT).show();
+                dismissProgressBar();
+            });
+        } else {
+            saveNewPost(posts, post);
+        }
+    }
+
+    private void saveNewPost(CollectionReference posts, PostModel post) {
+        posts.document(post.getPostId()).set(post).addOnSuccessListener(unused -> {
+            resetValue();
+            Toast.makeText(getContext(), "Tạo thành công", Toast.LENGTH_SHORT).show();
+            dismissProgressBar();
+        }).addOnFailureListener(e -> {
+            Log.e("ERROR", "[ERROR-CREATE-POST]", e);
+            Toast.makeText(getContext(), "Đã có lỗi xảy ra.", Toast.LENGTH_SHORT).show();
+            dismissProgressBar();
+        });
+    }
+
+    private void resetValue() {
+        uri = null;
+        des.setText("");
+        videoView.setVideoURI(null);
+        postimg.setImageURI(null);
+    }
+
+    private void showProgressBar() {
+        backdrop.setVisibility(View.VISIBLE);
+
+        Sprite wanderingCubes = new WanderingCubes();
+        progressBar.setIndeterminateDrawable(wanderingCubes);
+    }
+
+    private void dismissProgressBar() {
+        backdrop.setVisibility(View.GONE);
     }
 }

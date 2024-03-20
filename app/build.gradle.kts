@@ -52,6 +52,9 @@ dependencies {
     implementation("com.github.OMARIHAMZA:StoryView:1.0.2-alpha")
     implementation("com.github.MikeOrtiz:TouchImageView:1.4.1")
     implementation("com.github.dhaval2404:imagepicker:2.1")
+    implementation("com.github.ybq:Android-SpinKit:1.4.0")
+    compileOnly("com.android.support:support-v4:+")
+    compileOnly("org.apache.commons:commons-lang3:3.0")
 
 
     // Import the Firebase BoM
@@ -59,4 +62,8 @@ dependencies {
     implementation("com.google.firebase:firebase-auth")
     implementation("com.google.firebase:firebase-firestore")
     implementation("com.google.firebase:firebase-storage")
+    implementation("com.google.firebase:firebase-analytics")
+    implementation("com.google.firebase:firebase-database")
+    implementation("com.google.firebase:firebase-core:9.6.1")
+
 }
