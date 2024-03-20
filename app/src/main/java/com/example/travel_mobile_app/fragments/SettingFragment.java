@@ -94,7 +94,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
             fragmentTransaction.replace(R.id.container, new EditInfoFragment());
         }
         else if(v.getId()==R.id.tvChangePass){
-            fragmentTransaction.replace(R.id.container, new SettingFragment());
+            fragmentTransaction.replace(R.id.container, new ChangePasswordFragment());
         }
         else if(v.getId()==R.id.swNotification){
 //            fragmentTransaction.replace(R.id.container, new SettingFragment());
