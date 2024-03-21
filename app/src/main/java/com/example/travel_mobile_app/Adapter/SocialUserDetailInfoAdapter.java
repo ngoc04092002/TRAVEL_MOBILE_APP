@@ -50,7 +50,6 @@ public class SocialUserDetailInfoAdapter{
         this.dashboardModel = dashboardModel;
         profile = itemView.findViewById(R.id.profile_image);
         postImage = itemView.findViewById(R.id.postimg);
-        save = itemView.findViewById(R.id.save);
         name = itemView.findViewById(R.id.username);
         about = itemView.findViewById(R.id.followers);
         like = itemView.findViewById(R.id.like);

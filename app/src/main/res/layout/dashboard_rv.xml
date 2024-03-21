@@ -28,12 +28,12 @@
 
             <LinearLayout
                 android:id="@+id/post_user_name"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginLeft="@dimen/_4mdp"
                 android:layout_marginRight="6dp"
-                android:layout_weight="2"
+                android:layout_weight="1"
                 android:clickable="true"
                 android:orientation="vertical">
 
@@ -55,13 +55,12 @@
 
             </LinearLayout>
 
-            <ImageView
+            <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/more"
-                android:layout_width="10dp"
-                android:layout_height="27dp"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_gravity="center"
-                android:layout_weight="1"
-                android:src="@drawable/more_vert" />
+                app:menu="@menu/post_item_menu" />
 
 
         </LinearLayout>
@@ -76,7 +75,7 @@
             android:layout_weight="1"
             android:ellipsize="end"
             android:maxLines="4"
-            android:text="check in tai: ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss...."
+            android:text=""
             android:textSize="16sp"
             android:textStyle="bold" />
 
@@ -97,8 +96,7 @@
                     android:id="@+id/postvideo"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:visibility="invisible"
-                    />
+                    android:visibility="invisible" />
             </androidx.cardview.widget.CardView>
 
             <com.makeramen.roundedimageview.RoundedImageView
@@ -112,15 +110,6 @@
                 app:riv_border_width="1dip"
                 app:riv_corner_radius="10dip"
                 app:riv_mutate_background="true" />
-
-            <ImageView
-                android:id="@+id/save"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_gravity="end"
-                android:layout_marginTop="4dp"
-                android:layout_marginRight="14dp"
-                android:src="@drawable/bookmark" />
         </FrameLayout>
 
         <LinearLayout

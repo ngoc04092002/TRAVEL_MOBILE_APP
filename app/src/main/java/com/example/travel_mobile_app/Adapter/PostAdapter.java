@@ -5,9 +5,8 @@ import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.os.Build;
-import android.util.DisplayMetrics;
-import android.util.Log;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -19,8 +18,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentManager;
@@ -29,25 +26,26 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
+import com.bumptech.glide.Glide;
 import com.example.travel_mobile_app.R;
+import com.example.travel_mobile_app.databinding.DashboardRvBinding;
 import com.example.travel_mobile_app.fragments.SocialUserDetailInfoFragment;
 import com.example.travel_mobile_app.models.CommentModel;
-import com.example.travel_mobile_app.models.DashboardModel;
+import com.example.travel_mobile_app.models.PostModel;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
-import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
 
-public class DashboardAdapter extends RecyclerView.Adapter<DashboardAdapter.viewHolder> {
+public class PostAdapter extends RecyclerView.Adapter<PostAdapter.viewHolder> {
 
-    ArrayList<DashboardModel> list;
+    ArrayList<PostModel> list;
     Context context;
 
     FragmentManager fragmentManager;
     Activity activity;
 
-    public DashboardAdapter(ArrayList<DashboardModel> list, Context context, FragmentManager fragmentManager, Activity activity) {
+    public PostAdapter(ArrayList<PostModel> list, Context context, FragmentManager fragmentManager, Activity activity) {
         this.list = list;
         this.context = context;
         this.fragmentManager = fragmentManager;
@@ -64,16 +62,24 @@ public class DashboardAdapter extends RecyclerView.Adapter<DashboardAdapter.view
 
     @Override
     public void onBindViewHolder(@NonNull viewHolder holder, int position) {
-        DashboardModel dashboardModel = list.get(position);
+        PostModel post = list.get(position);
 
-        holder.profile.setImageResource(dashboardModel.getProfile());
-        holder.postImage.setImageResource(dashboardModel.getPostImage());
-        holder.name.setText(dashboardModel.getName());
-        holder.about.setText(dashboardModel.getAbout());
-        holder.like.setText(dashboardModel.getLike());
-        holder.comment.setText(dashboardModel.getComment());
-        holder.share.setText(dashboardModel.getShare());
-        holder.des.setText(dashboardModel.getDes());
+        //load image
+        if (post.getPostImage() == null) {
+            Glide.with(context).clear(holder.binding.postimg);
+            holder.binding.postimg.setImageURI(null);
+            holder.binding.postimg.setVisibility(View.GONE);
+
+        } else {
+            Glide.with(context)
+                 .load(Uri.parse(post.getPostImage()))
+                 .centerCrop()
+                 .placeholder(R.drawable.shimmer)
+                 .into(holder.binding.postimg);
+        }
+
+
+
     }
 
     @Override
@@ -82,36 +88,21 @@ public class DashboardAdapter extends RecyclerView.Adapter<DashboardAdapter.view
     }
 
     public class viewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-
-        ImageView profile, postImage;
-        TextView name, about, des;
-
-        MaterialButton like, comment, share;
-
-        LinearLayout postUserName;
-
         FragmentManager fragmentManager;
+        DashboardRvBinding binding;
 
         public viewHolder(@NonNull View itemView, FragmentManager fragmentManager) {
             super(itemView);
+            binding = DashboardRvBinding.bind(itemView);
             this.fragmentManager = fragmentManager;
-            profile = itemView.findViewById(R.id.profile_image);
-            postImage = itemView.findViewById(R.id.postimg);
-            name = itemView.findViewById(R.id.username);
-            about = itemView.findViewById(R.id.followers);
-            like = itemView.findViewById(R.id.like);
-            comment = itemView.findViewById(R.id.comment);
-            share = itemView.findViewById(R.id.share);
-            des = itemView.findViewById(R.id.des);
-            postUserName = itemView.findViewById(R.id.post_user_name);
 
-            profile.setOnClickListener(this);
-            postUserName.setOnClickListener(this);
-            postImage.setOnClickListener(v -> {
-                showCenterDialog();
+            binding.profileImage.setOnClickListener(this);
+            binding.postUserName.setOnClickListener(this);
+            binding.postimg.setOnClickListener(v -> {
+                showCenterDialog(binding.postimg.getDrawable());
             });
 
-            comment.setOnClickListener(v -> {
+            binding.comment.setOnClickListener(v -> {
                 showBottomDialog();
             });
 
@@ -183,7 +174,7 @@ public class DashboardAdapter extends RecyclerView.Adapter<DashboardAdapter.view
     private float x, y, dx, dy, initX, initY, limitCoordinatesY1, limitCoordinatesY2, limitCoordinatesX;
 
     //hieenr thị ảnh lên toàn màn hình khi click vào ảnh bài post
-    private void showCenterDialog() {
+    private void showCenterDialog(Drawable drawable) {
         final Dialog dialog = new Dialog(activity);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.centersheet_image);
@@ -193,7 +184,13 @@ public class DashboardAdapter extends RecyclerView.Adapter<DashboardAdapter.view
         dialog.getWindow().setGravity(Gravity.BOTTOM);
 
         imageView = dialog.findViewById(R.id.postimg);
+        imageView.setImageDrawable(drawable);
         handleOnTouchImageOfPost(dialog, imageView);
+
+        ImageButton btnCloseDialog = dialog.findViewById(R.id.btnClose_dialog);
+        btnCloseDialog.setOnClickListener(v -> {
+            dialog.dismiss();
+        });
 
         dialog.show();
     }

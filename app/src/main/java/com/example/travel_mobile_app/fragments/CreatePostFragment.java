@@ -104,7 +104,7 @@ public class CreatePostFragment extends Fragment implements View.OnClickListener
                        .start();
         } else if (v.getId() == R.id.gallery) {
             Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-            intent.setType("image/*");
+            intent.setType("*/*");
             intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
             startActivityForResult(intent, 1);
 
@@ -160,9 +160,6 @@ public class CreatePostFragment extends Fragment implements View.OnClickListener
             Toast.makeText(getContext(), "Lỗi khi tạo", Toast.LENGTH_SHORT).show();
             return;
         }
-
-        System.out.println("uri::"+des.getText().toString().trim());
-        System.out.println("uri::"+uri);
 
         showProgressBar();
         String postId = UUID.randomUUID().toString().replace("-", "");

@@ -63,7 +63,7 @@ public class SocialSearchPostFragment extends Fragment implements View.OnClickLi
     public void onClick(View v) {
         if(v.getId()==R.id.searchPost_btnBack){
             FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
-            fragmentManager.popBackStack("social_fragment", FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
         }
     }
 

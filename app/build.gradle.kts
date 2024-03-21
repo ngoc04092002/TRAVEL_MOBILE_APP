@@ -47,7 +47,6 @@ dependencies {
     implementation("com.github.MrNouri:DynamicSizes:1.0")
     implementation("de.hdodenhof:circleimageview:3.1.0")
     implementation("com.makeramen:roundedimageview:2.3.0")
-    compileOnly("org.projectlombok:lombok:1.18.30")
     compileOnly("com.github.hajiyevelnur92:intentanimation:1.0")
     implementation("com.github.OMARIHAMZA:StoryView:1.0.2-alpha")
     implementation("com.github.MikeOrtiz:TouchImageView:1.4.1")
@@ -55,6 +54,8 @@ dependencies {
     implementation("com.github.ybq:Android-SpinKit:1.4.0")
     compileOnly("com.android.support:support-v4:+")
     compileOnly("org.apache.commons:commons-lang3:3.0")
+    implementation("com.github.bumptech.glide:glide:4.16.0")
+    implementation("com.facebook.shimmer:shimmer:0.5.0")
 
 
     // Import the Firebase BoM
