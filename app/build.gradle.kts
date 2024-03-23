@@ -56,6 +56,9 @@ dependencies {
     compileOnly("org.apache.commons:commons-lang3:3.0")
     implementation("com.github.bumptech.glide:glide:4.16.0")
     implementation("com.facebook.shimmer:shimmer:0.5.0")
+    implementation("com.firebaseui:firebase-ui-firestore:8.0.0")
+    implementation("io.reactivex.rxjava3:rxjava:3.1.5")
+    implementation("io.reactivex.rxjava3:rxandroid:3.0.2")
 
 
     // Import the Firebase BoM

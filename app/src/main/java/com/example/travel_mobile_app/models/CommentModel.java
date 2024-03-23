@@ -3,17 +3,30 @@ package com.example.travel_mobile_app.models;
 public class CommentModel {
     private int profile;
     private String commentBy;
-    private String commentAt;
     private String content;
-    private String createAt;
+    private long createAt;
+    private String commentId;
 
-    public CommentModel(int profile, String commentBy, String commentAt, String content, String createAt) {
+    public CommentModel(String commentId, int profile, String commentBy, String content, long createAt) {
         this.profile = profile;
         this.commentBy = commentBy;
-        this.commentAt = commentAt;
         this.content = content;
         this.createAt = createAt;
+        this.commentId = commentId;
     }
+
+    public CommentModel(){
+
+    }
+
+    public String getCommentId() {
+        return commentId;
+    }
+
+    public void setCommentId(String commentId) {
+        this.commentId = commentId;
+    }
+
 
     public int getProfile() {
         return profile;
@@ -31,14 +44,6 @@ public class CommentModel {
         this.commentBy = commentBy;
     }
 
-    public String getCommentAt() {
-        return commentAt;
-    }
-
-    public void setCommentAt(String commentAt) {
-        this.commentAt = commentAt;
-    }
-
     public String getContent() {
         return content;
     }
@@ -47,11 +52,11 @@ public class CommentModel {
         this.content = content;
     }
 
-    public String getCreateAt() {
+    public long getCreateAt() {
         return createAt;
     }
 
-    public void setCreateAt(String createAt) {
+    public void setCreateAt(long createAt) {
         this.createAt = createAt;
     }
 }

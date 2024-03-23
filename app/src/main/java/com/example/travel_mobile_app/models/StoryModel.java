@@ -1,37 +1,73 @@
 package com.example.travel_mobile_app.models;
 
 
+import java.util.ArrayList;
+
 public class StoryModel {
-    private int story,profile;
-    private String name;
+   private String storyId;
+   private String storyBy;
+   private long storyAt;
+   private String uri;
+   private ArrayList<UserStory> userStories;
 
-    public int getStory() {
-        return story;
+    public StoryModel() {
     }
 
-    public void setStory(int story) {
-        this.story = story;
+    public StoryModel(String storyId, String storyBy, long storyAt, String uri) {
+        this.storyId = storyId;
+        this.storyBy = storyBy;
+        this.storyAt = storyAt;
+        this.uri = uri;
     }
 
-    public int getProfile() {
-        return profile;
+    public ArrayList<UserStory> getUserStories() {
+        return userStories;
     }
 
-    public void setProfile(int profile) {
-        this.profile = profile;
+    public void setUserStories(ArrayList<UserStory> userStories) {
+        this.userStories = userStories;
     }
 
-    public String getName() {
-        return name;
+    public String getStoryId() {
+        return storyId;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setStoryId(String storyId) {
+        this.storyId = storyId;
     }
 
-    public StoryModel(int story, int profile, String name) {
-        this.story = story;
-        this.profile = profile;
-        this.name = name;
+    public String getStoryBy() {
+        return storyBy;
+    }
+
+    public void setStoryBy(String storyBy) {
+        this.storyBy = storyBy;
+    }
+
+    public long getStoryAt() {
+        return storyAt;
+    }
+
+    public void setStoryAt(long storyAt) {
+        this.storyAt = storyAt;
+    }
+
+    public String getUri() {
+        return uri;
+    }
+
+    public void setUri(String uri) {
+        this.uri = uri;
+    }
+
+    @Override
+    public String toString() {
+        return "StoryModel{" +
+                "storyId='" + storyId + '\'' +
+                ", storyBy='" + storyBy + '\'' +
+                ", storyAt=" + storyAt +
+                ", uri='" + uri + '\'' +
+                ", userStories=" + userStories +
+                '}';
     }
 }

@@ -9,21 +9,28 @@ public class PostModel {
     private String postDescription;
     private long postedAt;
 
-    private List<String> likes, comment, share, save;
+    private List<String> likes, share, save;
 
+    private List<CommentModel> comments;
     public PostModel() {
     }
-
-    public PostModel(String postId, String postImage, String postedBy, String postDescription, long postedAt, List<String> likes, List<String> comment, List<String> share, List<String> save) {
+    public PostModel(String postId, String postImage, String postedBy, String postDescription, long postedAt, List<String> likes, List<String> share, List<String> save) {
         this.postId = postId;
         this.postImage = postImage;
         this.postedBy = postedBy;
         this.postDescription = postDescription;
         this.postedAt = postedAt;
         this.likes = likes;
-        this.comment = comment;
         this.share = share;
         this.save = save;
+    }
+
+    public List<CommentModel> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<CommentModel> comments) {
+        this.comments = comments;
     }
 
     public String getPostId() {
@@ -74,14 +81,6 @@ public class PostModel {
         this.likes = likes;
     }
 
-    public List<String> getComment() {
-        return comment;
-    }
-
-    public void setComment(List<String> comment) {
-        this.comment = comment;
-    }
-
     public List<String> getShare() {
         return share;
     }
@@ -107,9 +106,9 @@ public class PostModel {
                 ", postDescription='" + postDescription + '\'' +
                 ", postedAt=" + postedAt +
                 ", likes=" + likes +
-                ", comment=" + comment +
                 ", share=" + share +
                 ", save=" + save +
+                ", comments=" + comments +
                 '}';
     }
 }

@@ -6,19 +6,13 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.viewmodel.CreationExtras;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 
-import com.example.travel_mobile_app.Adapter.DashboardAdapter;
 import com.example.travel_mobile_app.Adapter.SocialUserDetailInfoAdapter;
 import com.example.travel_mobile_app.R;
 import com.example.travel_mobile_app.models.DashboardModel;
