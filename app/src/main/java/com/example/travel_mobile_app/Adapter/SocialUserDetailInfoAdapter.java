@@ -59,7 +59,6 @@ public class SocialUserDetailInfoAdapter {
 
         profile.setImageResource(dashboardModel.getProfile());
         postImage.setImageResource(dashboardModel.getPostImage());
-        save.setImageResource(dashboardModel.getSave());
         name.setText(dashboardModel.getName());
         about.setText(dashboardModel.getAbout());
         like.setText(dashboardModel.getLike());

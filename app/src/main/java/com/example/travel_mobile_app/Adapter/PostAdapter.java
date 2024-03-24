@@ -3,6 +3,7 @@ package com.example.travel_mobile_app.Adapter;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -219,10 +220,12 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.viewHolder> {
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.bottomsheet_layout);
 
-        View bottomSheetView = dialog.findViewById(com.google.android.material.R.id.design_bottom_sheet);
-        BottomSheetBehavior<View> bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetView);
-        bottomSheetBehavior.setPeekHeight(bottomSheetView.getHeight());
-        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+        dialog.setOnShowListener(dialog1 -> {
+            View bottomSheetView = dialog.findViewById(com.google.android.material.R.id.design_bottom_sheet);
+            BottomSheetBehavior<View> bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetView);
+            bottomSheetBehavior.setPeekHeight(bottomSheetView.getHeight());
+            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+        });
 
 
         ImageButton bottomsheet_back = dialog.findViewById(R.id.bottomsheet_back);
@@ -259,6 +262,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.viewHolder> {
             String msg = commentEditText.getText().toString().trim();
             if (msg.equals("")) return;
             String commentId = UUID.randomUUID().toString().replace("-", "");
+
             CommentModel comment = new CommentModel(commentId, R.drawable.avatar_men, "8c89d98007c54f34b44f2f619a8684b3", msg, new Date().getTime());
             List<CommentModel> commentModelList = new ArrayList<>();
             if (post.getComments() != null) {
@@ -266,6 +270,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.viewHolder> {
             }
             commentModelList.add(comment);
             post.setComments(commentModelList);
+
             posts.document(post.getPostId()).set(post).addOnSuccessListener(unused -> {
                 commentEditText.setText("");
             }).addOnFailureListener(e -> {
@@ -307,6 +312,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.viewHolder> {
         bottomsheet_back.setOnClickListener(v -> {
             dialog.dismiss();
         });
+
     }
 
     private void refreshBtnLikeDialog(MaterialButton btnLike, final boolean[] isLike, PostModel post, int cnt) {
