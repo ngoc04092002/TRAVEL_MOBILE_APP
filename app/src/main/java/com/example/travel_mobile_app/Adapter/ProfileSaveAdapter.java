@@ -38,7 +38,7 @@ public class ProfileSaveAdapter extends RecyclerView.Adapter<ProfileSaveAdapter.
         SaveItemModel model = list.get(position);
 
         holder.profile.setImageResource(model.getProfile());
-        holder.title.setText(HtmlCompat.fromHtml(model.getTitle(),HtmlCompat.FROM_HTML_MODE_LEGACY));
+//        holder.title.setText(HtmlCompat.fromHtml(model.getTitle(),HtmlCompat.FROM_HTML_MODE_LEGACY));
         holder.time.setText(model.getTime());
     }
 

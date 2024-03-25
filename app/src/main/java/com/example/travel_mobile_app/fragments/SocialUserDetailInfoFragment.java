@@ -82,6 +82,7 @@ public class SocialUserDetailInfoFragment extends Fragment implements View.OnCli
         if(v.getId()==R.id.uInfo_btnBack){
             FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
             fragmentManager.popBackStack("userDetailInfo_fragment", FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            fragmentManager.popBackStack("account_fragment", FragmentManager.POP_BACK_STACK_INCLUSIVE);
         }
     }
 

@@ -75,30 +75,30 @@ public class AccountFragment extends Fragment implements View.OnClickListener{
         btnLogout = view.findViewById(R.id.btnLogout);
         btnLogout.setOnClickListener(this);
 
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        if(currentUser != null){
-            Log.d("abc","haha");
-        } else {
-            Log.d("abc","haha");
-        }
-        mAuth.createUserWithEmailAndPassword("abcd@gmail.com", "123456")
-                .addOnCompleteListener(requireActivity(), new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d(TAG, "createUserWithEmail:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            updateUI(user);
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                            Toast.makeText(getContext(), "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
-                            updateUI(null);
-                        }
-                    }
-                });
+//        FirebaseUser currentUser = mAuth.getCurrentUser();
+//        if(currentUser != null){
+//            Log.d("abc","haha");
+//        } else {
+//            Log.d("abc","haha");
+//        }
+//        mAuth.createUserWithEmailAndPassword("abcd@gmail.com", "123456")
+//                .addOnCompleteListener(requireActivity(), new OnCompleteListener<AuthResult>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<AuthResult> task) {
+//                        if (task.isSuccessful()) {
+//                            // Sign in success, update UI with the signed-in user's information
+//                            Log.d(TAG, "createUserWithEmail:success");
+//                            FirebaseUser user = mAuth.getCurrentUser();
+//                            updateUI(user);
+//                        } else {
+//                            // If sign in fails, display a message to the user.
+//                            Log.w(TAG, "createUserWithEmail:failure", task.getException());
+//                            Toast.makeText(getContext(), "Authentication failed.",
+//                                    Toast.LENGTH_SHORT).show();
+//                            updateUI(null);
+//                        }
+//                    }
+//                });
         return view;
     }
     private void updateUI(FirebaseUser user) {
@@ -110,13 +110,13 @@ public class AccountFragment extends Fragment implements View.OnClickListener{
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
         if(v.getId()==R.id.btnSaved){
-//            fragmentTransaction.replace(R.id.container, new FriendsFragment());
+            fragmentTransaction.replace(R.id.container, new ProfileSaveFragment());
         }
         else if(v.getId()==R.id.btnSetting){
             fragmentTransaction.replace(R.id.container, new SettingFragment());
         }
         else if(v.getId()==R.id.btnManagePost){
-//            fragmentTransaction.replace(R.id.container, new SettingFragment());
+            fragmentTransaction.replace(R.id.container, new SocialUserDetailInfoFragment());
         }
         else if(v.getId()==R.id.btnLogout){
 //            fragmentTransaction.replace(R.id.container, new SettingFragment());
