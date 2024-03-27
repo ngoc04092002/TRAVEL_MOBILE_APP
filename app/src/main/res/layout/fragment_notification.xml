@@ -34,6 +34,16 @@
 
     </LinearLayout>
 
+    <com.github.ybq.android.spinkit.SpinKitView xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/spin_kit"
+        style="@style/SpinKitView.Circle"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="6dp"
+        android:visibility="gone"
+        app:SpinKit_Color="@color/yellow" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/notification_itemsRv"
         android:layout_width="match_parent"

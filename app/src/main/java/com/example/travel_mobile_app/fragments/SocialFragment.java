@@ -132,7 +132,7 @@ public class SocialFragment extends Fragment implements View.OnClickListener {
         } else if (v.getId() == R.id.btnSearch) {
             Intent i = new Intent(getActivity(), SocialSearchPost.class);
             startActivity(i);
-            ((Activity) getActivity()).overridePendingTransition(0, 0);
+            getActivity().overridePendingTransition(0, 0);
         } else if (v.getId() == R.id.createStory) {
             ImagePicker.with(this)
                        .galleryOnly()

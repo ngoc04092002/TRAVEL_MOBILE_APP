@@ -53,7 +53,7 @@
         android:layout_gravity="center"
         android:layout_marginTop="6dp"
         android:visibility="gone"
-        app:SpinKit_Color="@color/black" />
+        app:SpinKit_Color="@color/yellow" />
 
     <TextView
         android:id="@+id/not_found"

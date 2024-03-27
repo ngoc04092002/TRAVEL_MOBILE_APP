@@ -37,6 +37,7 @@ import com.example.travel_mobile_app.R;
 import com.example.travel_mobile_app.databinding.DashboardRvBinding;
 import com.example.travel_mobile_app.fragments.SocialUserDetailInfoFragment;
 import com.example.travel_mobile_app.models.CommentModel;
+import com.example.travel_mobile_app.models.NotificationModel;
 import com.example.travel_mobile_app.models.PostModel;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
@@ -185,14 +186,27 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.viewHolder> {
                 likes.addAll(post.getLikes());
             }
             likes.add("8c89d98007c54f34b44f2f619a8684b3");
+            pushNotification(post, "like");
         }
         isLike[0] = !isLike[0];
         if (likes != null) {
             post.setLikes(likes);
             posts.document(post.getPostId()).set(post);
         }
-
         notifyDataSetChanged();
+    }
+
+    private void pushNotification(PostModel post, String type) {
+        //fix 8c89d98007c54f34b44f2f619a8684b3 is userID
+        NotificationModel notification = new NotificationModel();
+        notification.setNotificationBy("8c89d98007c54f34b44f2f619a8684b3");
+        notification.setNotificationAt(new Date().getTime());
+        notification.setPostId(post.getPostId());
+        notification.setPostedBy(post.getPostedBy());
+        notification.setType(type);
+
+        CollectionReference notifications = db.collection("notifications");
+        notifications.add(notification);
     }
 
     private void getLikeInfo(MaterialButton button, final boolean[] isLike, String postId) {
@@ -219,14 +233,12 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.viewHolder> {
         final BottomSheetDialog dialog = new BottomSheetDialog(context);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.bottomsheet_layout);
-
         dialog.setOnShowListener(dialog1 -> {
             View bottomSheetView = dialog.findViewById(com.google.android.material.R.id.design_bottom_sheet);
             BottomSheetBehavior<View> bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetView);
             bottomSheetBehavior.setPeekHeight(bottomSheetView.getHeight());
             bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
         });
-
 
         ImageButton bottomsheet_back = dialog.findViewById(R.id.bottomsheet_back);
         MaterialButton btnSend = dialog.findViewById(R.id.btn_chat_send);
@@ -273,6 +285,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.viewHolder> {
 
             posts.document(post.getPostId()).set(post).addOnSuccessListener(unused -> {
                 commentEditText.setText("");
+                pushNotification(post, "comment");
             }).addOnFailureListener(e -> {
                 Toast.makeText(context, "Mạng kém", Toast.LENGTH_SHORT).show();
             });

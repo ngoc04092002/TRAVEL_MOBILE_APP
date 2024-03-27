@@ -3,12 +3,72 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:gravity="center"
     android:orientation="vertical">
 
     <LinearLayout
+        android:id="@+id/topbar_share"
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="horizontal">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/profile_image_share"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:layout_margin="4dp"
+            android:clickable="true"
+            android:src="@drawable/avatar_men"
+            app:civ_border_color="@color/yellow"
+            app:civ_border_width="2dp" />
+
+        <LinearLayout
+            android:id="@+id/post_user_name_share"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginLeft="@dimen/_4mdp"
+            android:layout_marginRight="6dp"
+            android:layout_weight="1"
+            android:clickable="true"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/username_share"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="NgocVan"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/followers_share"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="10 phút trước" />
+
+        </LinearLayout>
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/more_share"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            app:menu="@menu/post_item_menu" />
+
+
+    </LinearLayout>
+
+<!--    380dp-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="10dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -55,6 +115,7 @@
 
             </LinearLayout>
 
+            <!--android:visibility="gone"-->
             <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/more"
                 android:layout_width="wrap_content"
@@ -164,6 +225,60 @@
                 app:iconGravity="textStart"
                 app:iconTint="@color/black" />
         </LinearLayout>
+    </LinearLayout>
+<!--    component share-->
+    <LinearLayout
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="12dp"
+        android:orientation="horizontal">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/like_share"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:fontFamily="sans-serif"
+            android:text="354"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_14font_mdp"
+            app:backgroundTint="@color/white"
+            app:cornerRadius="0dp"
+            app:icon="@drawable/favorite"
+            app:iconGravity="textStart"
+            app:iconTint="@color/black" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/comment_share"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:layout_weight="1"
+            android:clickable="true"
+            android:fontFamily="sans-serif"
+            android:text="54"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_14font_mdp"
+            app:backgroundTint="@color/white"
+            app:cornerRadius="0dp"
+            app:icon="@drawable/comment"
+            app:iconGravity="textStart"
+            app:iconTint="@color/black" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/share_share"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif"
+            android:text="40"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_14font_mdp"
+            app:backgroundTint="@color/white"
+            app:cornerRadius="0dp"
+            app:icon="@drawable/share"
+            app:iconGravity="textStart"
+            app:iconTint="@color/black" />
     </LinearLayout>
 
     <View

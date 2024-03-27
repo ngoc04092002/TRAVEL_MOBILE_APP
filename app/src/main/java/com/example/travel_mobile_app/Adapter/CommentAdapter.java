@@ -10,9 +10,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -23,14 +21,10 @@ import com.example.travel_mobile_app.R;
 import com.example.travel_mobile_app.databinding.CommentItemBinding;
 import com.example.travel_mobile_app.models.CommentModel;
 import com.example.travel_mobile_app.models.PostModel;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
+import com.example.travel_mobile_app.utils.CustomDateTime;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
 
-import java.time.Duration;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -66,7 +60,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.viewHold
         CommentModel model = list.get(position);
         holder.binding.profileImage.setImageResource(model.getProfile());
         holder.binding.content.setText(HtmlCompat.fromHtml("<b>" + model.getCommentBy() + "</b><br> " + model.getContent(), HtmlCompat.FROM_HTML_MODE_LEGACY));
-        holder.binding.createAt.setText(formatDate(model.getCreateAt()));
+        holder.binding.createAt.setText(CustomDateTime.formatDate(model.getCreateAt()));
 
         //fix compare if comment yourself
         handleLongPress(holder.binding.commentItem, model.getCommentId());
@@ -134,35 +128,5 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.viewHold
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         dialog.getWindow().setGravity(Gravity.BOTTOM);
         dialog.show();
-    }
-
-    private String formatDate(long previousTimeMillis) {
-        long currentTimeMillis = System.currentTimeMillis();
-
-        Instant currentInstant = Instant.ofEpochMilli(currentTimeMillis);
-        Instant previousInstant = Instant.ofEpochMilli(previousTimeMillis);
-
-        Duration duration = Duration.between(previousInstant, currentInstant);
-
-        long seconds = duration.getSeconds();
-        long minutes = seconds / 60;
-        long hours = minutes / 60;
-        long days = hours / 24;
-        long months = days / 30;
-        long years = days / 365;
-
-        if (years > 0) {
-            return years + " năm trước";
-        } else if (months > 0) {
-            return months + " tháng trước";
-        } else if (days > 0) {
-            return days + " ngày trước";
-        } else if (hours > 0) {
-            return hours + " giờ trước";
-        } else if (minutes > 0) {
-            return minutes + " phút trước";
-        } else {
-            return seconds + " giây trước";
-        }
     }
 }
