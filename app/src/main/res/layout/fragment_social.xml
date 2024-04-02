@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/fragment_social"
@@ -9,7 +9,8 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:scrollbars="none">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -42,6 +43,7 @@
                     android:layout_weight="1"
                     android:background="@color/white"
                     android:src="@drawable/add_circle" />
+
                 <ImageButton
                     android:id="@+id/friends"
                     android:layout_width="48dp"
@@ -52,7 +54,7 @@
                     android:src="@drawable/group_add" />
 
                 <ImageButton
-                    android:id="@+id/imageButton"
+                    android:id="@+id/btnSearch"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:layout_marginTop="10dp"
@@ -84,6 +86,7 @@
                     android:orientation="horizontal">
 
                     <FrameLayout
+                        android:id="@+id/createStory"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content">
 
@@ -129,13 +132,28 @@
                             android:textColor="@color/white"
                             android:textStyle="bold" />
                     </FrameLayout>
+                    <com.facebook.shimmer.ShimmerFrameLayout
+                        android:id="@+id/shimmer_layout_story"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone"
+                        >
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+                            <include layout="@layout/shimmer_story" />
+                            <include layout="@layout/shimmer_story" />
+                            <include layout="@layout/shimmer_story" />
+                            <include layout="@layout/shimmer_story" />
+                        </LinearLayout>
 
+                    </com.facebook.shimmer.ShimmerFrameLayout>
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/storyRv"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_marginStart="8dp"
-                        />
+                        android:layout_marginStart="8dp" />
                 </LinearLayout>
 
             </androidx.core.widget.NestedScrollView>
@@ -146,6 +164,24 @@
                 android:layout_height="1dp"
                 android:background="#45423C3C" />
 
+            <com.facebook.shimmer.ShimmerFrameLayout
+                android:id="@+id/shimmer_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                >
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <include layout="@layout/shimmer_post" />
+                    <include layout="@layout/shimmer_post" />
+                    <include layout="@layout/shimmer_post" />
+                    <include layout="@layout/shimmer_post" />
+                </LinearLayout>
+
+            </com.facebook.shimmer.ShimmerFrameLayout>
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/dashboardRv"
                 android:layout_width="match_parent"
@@ -154,4 +190,23 @@
 
         </LinearLayout>
     </ScrollView>
-</androidx.constraintlayout.widget.ConstraintLayout>
+
+    <LinearLayout
+        android:id="@+id/backdrop"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:layout_centerHorizontal="true"
+        android:background="#3CA8A8A8"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+        <com.github.ybq.android.spinkit.SpinKitView xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/spin_kit"
+            style="@style/SpinKitView.WanderingCubes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:SpinKit_Color="@color/yellow" />
+    </LinearLayout>
+</RelativeLayout>

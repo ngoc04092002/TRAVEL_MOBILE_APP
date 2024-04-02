@@ -15,6 +15,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import com.example.travel_mobile_app.R;
+import com.example.travel_mobile_app.models.UserModel;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -22,38 +23,12 @@ import com.example.travel_mobile_app.R;
  * create an instance of this fragment.
  */
 public class SettingFragment extends Fragment implements View.OnClickListener {
-
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
     private TextView tvEditInfo, tvChangePass;
     @SuppressLint("UseSwitchCompatOrMaterialCode")
     private Switch swNotification, swUpdate;
-    public SettingFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment SettingFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static SettingFragment newInstance(String param1, String param2) {
-        SettingFragment fragment = new SettingFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
+    private UserModel currentUser;
+    public SettingFragment(UserModel user) {
+        this.currentUser = user;
     }
 
     @Override
@@ -91,10 +66,10 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
         if(v.getId()==R.id.tvEditInfo){
-            fragmentTransaction.replace(R.id.container, new EditInfoFragment());
+            fragmentTransaction.replace(R.id.container, new EditInfoFragment(currentUser));
         }
         else if(v.getId()==R.id.tvChangePass){
-            fragmentTransaction.replace(R.id.container, new ChangePasswordFragment());
+            fragmentTransaction.replace(R.id.container, new ChangePasswordFragment(currentUser));
         }
         else if(v.getId()==R.id.swNotification){
 //            fragmentTransaction.replace(R.id.container, new SettingFragment());

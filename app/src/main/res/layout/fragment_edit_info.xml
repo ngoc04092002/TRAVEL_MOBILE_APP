@@ -1,183 +1,196 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".fragments.EditInfoFragment">
-
-    <FrameLayout
-        android:id="@+id/top_bar"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:paddingStart="20dp"
-        android:paddingTop="20dp">
-
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/createPost_btnBack"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_gravity="start"
-            android:layout_marginEnd="10dp"
-            android:clickable="true"
-            android:padding="@dimen/_6mdp"
-            android:src="@drawable/navigate_before"
-            app:civ_border_color="@color/black"
-            app:civ_border_width="3dp" />
-        <TextView
-            android:id="@+id/textView4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_weight="1"
-            android:text="Sửa thông tin"
-            android:textAlignment="center"
-            android:textSize="25sp"
-            android:textStyle="bold"
-            android:fontFamily="@font/montserrat_bold"/>
-    </FrameLayout>
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/top_bar"
-        android:layout_alignParentBottom="true"
-        android:layout_marginTop="0dp"
-        android:layout_marginBottom="21dp">
-        <LinearLayout
+        android:layout_height="match_parent">
+        <FrameLayout
+            android:id="@+id/top_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="horizontal"
+            android:paddingStart="20dp"
+            android:paddingTop="20dp">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/createPost_btnBack"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_gravity="start"
+                android:layout_marginEnd="10dp"
+                android:clickable="true"
+                android:padding="@dimen/_6mdp"
+                android:src="@drawable/navigate_before"
+                app:civ_border_color="@color/black"
+                app:civ_border_width="3dp" />
+            <TextView
+                android:id="@+id/textView4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:text="Sửa thông tin"
+                android:textAlignment="center"
+                android:textSize="25sp"
+                android:textStyle="bold"
+                android:fontFamily="@font/montserrat_bold"/>
+        </FrameLayout>
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/top_bar"
+            android:layout_alignParentBottom="true"
+            android:layout_marginTop="0dp"
+            android:scrollbars="none"
+            android:layout_marginBottom="21dp">
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
-                <ImageView
-                    android:id="@+id/avataImageView"
-                    android:layout_width="150dp"
-                    android:layout_height="150dp"
-                    android:layout_gravity="center"
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/imv_avatar"
+                        app:civ_border_color="@color/black"
+                        app:civ_border_width="2dp"
+                        android:layout_width="150dp"
+                        android:layout_height="150dp"
+                        android:layout_gravity="center"
+                        android:layout_marginEnd="10dp"
+                        android:src="@drawable/avatar_men" />
+
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginTop="15dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="18sp"
+                        android:text="Tên đăng nhập"
+                        android:fontFamily="@font/montserrat_bold"
+                        android:layout_marginLeft="30dp"
+                        android:layout_marginBottom="2dp"/>
+                    <EditText
+                        android:id="@+id/editUsername"
+                        android:layout_width="match_parent"
+                        android:layout_height="56dp"
+                        android:layout_marginLeft="30dp"
+                        android:layout_marginRight="30dp"
+                        android:hint="Your username"
+                        android:textColorHint="#A9A9A9"
+                        android:padding="15dp"
+                        android:textColor="@color/black"
+                        android:maxLines="1"
+                        android:background="@drawable/edit_text_setting"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginTop="15dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="18sp"
+                        android:text="Tên"
+                        android:fontFamily="@font/montserrat_bold"
+                        android:layout_marginLeft="30dp"
+                        android:layout_marginBottom="2dp"/>
+                    <EditText
+                        android:id="@+id/editName"
+                        android:layout_width="match_parent"
+                        android:layout_height="56dp"
+                        android:layout_marginLeft="30dp"
+                        android:layout_marginRight="30dp"
+                        android:hint="Your name"
+                        android:textColorHint="#A9A9A9"
+                        android:padding="15dp"
+                        android:textColor="@color/black"
+                        android:background="@drawable/edit_text_setting"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginTop="15dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="18sp"
+                        android:text="Email"
+                        android:fontFamily="@font/montserrat_bold"
+                        android:layout_marginLeft="30dp"
+                        android:layout_marginBottom="2dp"/>
+                    <EditText
+                        android:id="@+id/editEmail"
+                        android:layout_width="match_parent"
+                        android:layout_height="56dp"
+                        android:layout_marginLeft="30dp"
+                        android:layout_marginRight="30dp"
+                        android:hint="Your Email"
+                        android:textColorHint="#A9A9A9"
+                        android:padding="15dp"
+                        android:textColor="@color/black"
+                        android:background="@drawable/edit_text_setting"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginTop="10dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="18sp"
+                        android:text="Địa chỉ"
+                        android:fontFamily="@font/montserrat_bold"
+                        android:layout_marginLeft="30dp"
+                        android:layout_marginBottom="5dp"/>
+                    <EditText
+                        android:id="@+id/editAddress"
+                        android:layout_width="match_parent"
+                        android:layout_height="56dp"
+                        android:layout_marginLeft="30dp"
+                        android:layout_marginRight="30dp"
+                        android:hint="Your Username"
+                        android:textColorHint="#A9A9A9"
+                        android:padding="15dp"
+                        android:textColor="@color/black"
+                        android:background="@drawable/edit_text_setting"/>
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/btnUpdate"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginRight="30dp"
                     android:layout_marginTop="20dp"
-                    android:src="@drawable/icn_profile"/>
+                    android:text="Cập nhật"
+                    android:fontFamily="@font/montserrat_bold"
+                    android:gravity="center"
+                    android:textColor="@color/black"
+                    android:textSize="20sp"
+                    android:layout_marginBottom="30dp"
+                    android:background="@drawable/btn_border_yellow"/>
 
             </LinearLayout>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginTop="15dp">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="18sp"
-                    android:text="Tên đăng nhập"
-                    android:fontFamily="@font/montserrat_bold"
-                    android:layout_marginLeft="30dp"
-                    android:layout_marginBottom="2dp"/>
-                <EditText
-                    android:id="@+id/editUsername"
-                    android:layout_width="match_parent"
-                    android:layout_height="56dp"
-                    android:layout_marginLeft="30dp"
-                    android:layout_marginRight="30dp"
-                    android:hint="Your username"
-                    android:textColorHint="#A9A9A9"
-                    android:padding="15dp"
-                    android:textColor="@color/black"
-                    android:maxLines="1"
-                    android:background="@drawable/edit_text_setting"/>
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginTop="15dp">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="18sp"
-                    android:text="Tên"
-                    android:fontFamily="@font/montserrat_bold"
-                    android:layout_marginLeft="30dp"
-                    android:layout_marginBottom="2dp"/>
-                <EditText
-                    android:id="@+id/editName"
-                    android:layout_width="match_parent"
-                    android:layout_height="56dp"
-                    android:layout_marginLeft="30dp"
-                    android:layout_marginRight="30dp"
-                    android:hint="Your name"
-                    android:textColorHint="#A9A9A9"
-                    android:padding="15dp"
-                    android:textColor="@color/black"
-                    android:background="@drawable/edit_text_setting"/>
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginTop="15dp">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="18sp"
-                    android:text="Email"
-                    android:fontFamily="@font/montserrat_bold"
-                    android:layout_marginLeft="30dp"
-                    android:layout_marginBottom="2dp"/>
-                <EditText
-                    android:id="@+id/editEmail"
-                    android:layout_width="match_parent"
-                    android:layout_height="56dp"
-                    android:layout_marginLeft="30dp"
-                    android:layout_marginRight="30dp"
-                    android:hint="Your Email"
-                    android:textColorHint="#A9A9A9"
-                    android:padding="15dp"
-                    android:textColor="@color/black"
-                    android:background="@drawable/edit_text_setting"/>
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginTop="10dp">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="18sp"
-                    android:text="Địa chỉ"
-                    android:fontFamily="@font/montserrat_bold"
-                    android:layout_marginLeft="30dp"
-                    android:layout_marginBottom="5dp"/>
-                <EditText
-                    android:id="@+id/editAddress"
-                    android:layout_width="match_parent"
-                    android:layout_height="56dp"
-                    android:layout_marginLeft="30dp"
-                    android:layout_marginRight="30dp"
-                    android:hint="Your Username"
-                    android:textColorHint="#A9A9A9"
-                    android:padding="15dp"
-                    android:textColor="@color/black"
-                    android:background="@drawable/edit_text_setting"/>
-            </LinearLayout>
+        </ScrollView>
 
-            <TextView
-                android:id="@+id/btnUpdate"
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:layout_marginLeft="30dp"
-                android:layout_marginRight="30dp"
-                android:layout_marginTop="20dp"
-                android:text="Cập nhật"
-                android:fontFamily="@font/montserrat_bold"
-                android:gravity="center"
-                android:textColor="@color/black"
-                android:textSize="20sp"
-                android:layout_marginBottom="30dp"
-                android:background="@drawable/btn_border_yellow"/>
+    </RelativeLayout>
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"/>
 
-        </LinearLayout>
-    </ScrollView>
-</RelativeLayout>
+</FrameLayout>

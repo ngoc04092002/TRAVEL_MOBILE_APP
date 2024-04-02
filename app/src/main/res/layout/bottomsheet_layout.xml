@@ -3,10 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:background="@color/white"
-    android:orientation="vertical">
-
+    android:orientation="vertical"
+    >
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="70dp"
@@ -61,25 +61,35 @@
 
     </LinearLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/commentsRv"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:minHeight="@dimen/_450mdp"
-        />
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:scrollbars="none"
+        >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/commentsRv"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:minHeight="@dimen/_350mdp"
+                />
 
-
-    <View
-        android:id="@+id/view6"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/gray"
-        />
-
+            <View
+                android:id="@+id/view6"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/gray"
+                />
+        </LinearLayout>
+    </ScrollView>
     <LinearLayout
         android:id="@+id/box_send_msg"
         android:layout_width="match_parent"
-        android:layout_height="65dp"
+        android:layout_height="72dp"
         android:gravity="bottom"
         android:orientation="horizontal">
 
@@ -91,7 +101,7 @@
             android:background="@android:color/transparent"
             android:hint="Nhắn gì đó..."
             android:inputType="text"
-            android:maxLines="1"
+            android:maxLines="3"
             android:paddingStart="20dp"
             tools:ignore="Autofill" />
         <View
@@ -102,7 +112,7 @@
             />
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_chat_send"
-            android:layout_width="74dp"
+            android:layout_width="70dp"
             android:layout_height="match_parent"
             android:fontFamily="sans-serif"
             app:backgroundTint="@color/white"
@@ -111,7 +121,6 @@
             app:iconSize="@dimen/_20font_mdp"
             app:iconGravity="textStart"
             app:iconTint="@color/yellow" />
-
     </LinearLayout>
 
 </LinearLayout>

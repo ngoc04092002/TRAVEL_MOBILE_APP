@@ -29,7 +29,7 @@ import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
 
-public class SocialUserDetailInfoAdapter{
+public class SocialUserDetailInfoAdapter {
 
     DashboardModel model;
     Context context;
@@ -46,11 +46,10 @@ public class SocialUserDetailInfoAdapter{
 
     DashboardModel dashboardModel;
 
-    public View onCreateView(@NonNull View itemView, DashboardModel dashboardModel){
+    public View onCreateView(@NonNull View itemView, DashboardModel dashboardModel) {
         this.dashboardModel = dashboardModel;
         profile = itemView.findViewById(R.id.profile_image);
         postImage = itemView.findViewById(R.id.postimg);
-        save = itemView.findViewById(R.id.save);
         name = itemView.findViewById(R.id.username);
         about = itemView.findViewById(R.id.followers);
         like = itemView.findViewById(R.id.like);
@@ -60,7 +59,6 @@ public class SocialUserDetailInfoAdapter{
 
         profile.setImageResource(dashboardModel.getProfile());
         postImage.setImageResource(dashboardModel.getPostImage());
-        save.setImageResource(dashboardModel.getSave());
         name.setText(dashboardModel.getName());
         about.setText(dashboardModel.getAbout());
         like.setText(dashboardModel.getLike());
@@ -90,14 +88,14 @@ public class SocialUserDetailInfoAdapter{
         RecyclerView commentsRv = dialog.findViewById(R.id.commentsRv);
 
         comments = new ArrayList<>();
-        comments.add(new CommentModel(R.drawable.avatar_men, "ngocvan", "1", "Cảnh này đẹp quaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaas", "1 phút trước"));
-        comments.add(new CommentModel(R.drawable.avatar_men, "ngocvan", "1", "Cảnh này đẹp quaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaas", "1 phút trước"));
-        comments.add(new CommentModel(R.drawable.avatar_men, "ngocvan", "1", "Cảnh này đẹp quaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaas", "1 phút trước"));
+        comments.add(new CommentModel("1", R.drawable.avatar_men, "ngocvan", "Cảnh này đẹp quaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaas", 1710946229849L));
+        comments.add(new CommentModel("2", R.drawable.avatar_men, "ngocvan", "Cảnh này đẹp quaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaas", 1710946229849L));
+        comments.add(new CommentModel("3", R.drawable.avatar_men, "ngocvan", "Cảnh này đẹp quaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaas", 1710946229849L));
 
-        CommentAdapter commentAdapter = new CommentAdapter(comments, dialog.getContext());
-        commentsRv.setHasFixedSize(true);
-        commentsRv.setLayoutManager(new StaggeredGridLayoutManager(1, LinearLayoutManager.VERTICAL));
-        commentsRv.setAdapter(commentAdapter);
+//        CommentAdapter commentAdapter = new CommentAdapter(comments, dialog.getContext());
+//        commentsRv.setHasFixedSize(true);
+//        commentsRv.setLayoutManager(new StaggeredGridLayoutManager(1, LinearLayoutManager.VERTICAL));
+//        commentsRv.setAdapter(commentAdapter);
 
         dialog.show();
         dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);

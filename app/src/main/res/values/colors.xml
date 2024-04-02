@@ -7,4 +7,5 @@
     <color name="colorPrimary">#FFBD12</color>
     <color name="colorPrimaryRipple">#DEE688</color>
     <color name="transparent">#00FFFFFF</color>
+    <color name="shimmerColor">#C2C2C2</color>
 </resources>

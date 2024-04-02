@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "159818122342",
+    "firebase_url": "https://travel-app-130de-default-rtdb.firebaseio.com",
     "project_id": "travel-app-130de",
     "storage_bucket": "travel-app-130de.appspot.com"
   },
