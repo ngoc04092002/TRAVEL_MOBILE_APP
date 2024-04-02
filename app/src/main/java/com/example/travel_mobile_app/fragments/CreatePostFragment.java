@@ -109,7 +109,7 @@ public class CreatePostFragment extends Fragment implements View.OnClickListener
             startActivityForResult(intent, 1);
 
         } else if (v.getId() == R.id.btn_create_post) {
-            String userId = UUID.randomUUID().toString().replace("-", "");
+            String userId = "8c89d98007c54f34b44f2f619a8684b3";
             final StorageReference reference = storage.getReference().child("posts")
                                                       .child(userId)
                                                       .child(new Date().getTime() + "");

@@ -45,7 +45,7 @@
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/followers_share"
+                android:id="@+id/timestamp_share"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -68,6 +68,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        android:id="@+id/container"
         android:padding="10dp">
 
         <LinearLayout
@@ -107,7 +108,7 @@
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/followers"
+                    android:id="@+id/timestamp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -174,6 +175,7 @@
         </FrameLayout>
 
         <LinearLayout
+            android:id="@+id/btns"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="12dp"
@@ -185,7 +187,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginRight="10dp"
                 android:fontFamily="sans-serif"
-                android:text="354"
+                android:text=""
                 android:textColor="@color/black"
                 android:textSize="@dimen/_14font_mdp"
                 app:backgroundTint="@color/white"
@@ -202,7 +204,7 @@
                 android:layout_weight="1"
                 android:clickable="true"
                 android:fontFamily="sans-serif"
-                android:text="54"
+                android:text=""
                 android:textColor="@color/black"
                 android:textSize="@dimen/_14font_mdp"
                 app:backgroundTint="@color/white"
@@ -216,7 +218,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif"
-                android:text="40"
+                android:text=""
                 android:textColor="@color/black"
                 android:textSize="@dimen/_14font_mdp"
                 app:backgroundTint="@color/white"
@@ -228,6 +230,7 @@
     </LinearLayout>
 <!--    component share-->
     <LinearLayout
+        android:id="@+id/btns_share"
         android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -240,7 +243,7 @@
             android:layout_height="wrap_content"
             android:layout_marginRight="10dp"
             android:fontFamily="sans-serif"
-            android:text="354"
+            android:text=""
             android:textColor="@color/black"
             android:textSize="@dimen/_14font_mdp"
             app:backgroundTint="@color/white"
@@ -257,7 +260,7 @@
             android:layout_weight="1"
             android:clickable="true"
             android:fontFamily="sans-serif"
-            android:text="54"
+            android:text=""
             android:textColor="@color/black"
             android:textSize="@dimen/_14font_mdp"
             app:backgroundTint="@color/white"
@@ -271,7 +274,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="sans-serif"
-            android:text="40"
+            android:text=""
             android:textColor="@color/black"
             android:textSize="@dimen/_14font_mdp"
             app:backgroundTint="@color/white"

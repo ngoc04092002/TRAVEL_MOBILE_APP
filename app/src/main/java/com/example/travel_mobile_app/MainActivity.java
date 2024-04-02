@@ -1,5 +1,6 @@
 package com.example.travel_mobile_app;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -11,17 +12,11 @@ import com.example.travel_mobile_app.fragments.AccountFragment;
 import com.example.travel_mobile_app.fragments.NotificationFragment;
 import com.example.travel_mobile_app.fragments.SocialFragment;
 import com.example.travel_mobile_app.models.NotificationModel;
-import com.example.travel_mobile_app.services.MyFirebaseMessagingService;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.WriteBatch;
-
-import org.json.JSONException;
-
-import java.io.IOException;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -38,6 +33,15 @@ public class MainActivity extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
 
+        //screen change from search screen to social screen
+        String previousFragment = getIntent().getStringExtra("previous_fragment");
+        if (previousFragment != null && previousFragment.equals("social_screen")) {
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            binding.readableBottomBar.setSelectedItemId(R.id.insta);
+            transaction.replace(R.id.container, new SocialFragment());
+            transaction.commit();
+            return;
+        }
 
         binding.readableBottomBar.setOnItemSelectedListener(item -> {
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -47,17 +51,6 @@ public class MainActivity extends AppCompatActivity {
             if (itemId == R.id.insta) { // Replace this with the correct ID for the social item
                 transaction.replace(R.id.container, new SocialFragment());
             } else if (itemId == R.id.bell) {
-                new Thread(()->{
-                    try {
-                        //fix
-                        MyFirebaseMessagingService.pushNotification("fbYprQZSRB-ImtzTv3sKEO:APA91bFLFI96HDbL3rqkegPcRodHzwk65XOoBKvfxdui9w2FcbiS355gawCxz3mTp24xPaCUPBw-UC3wFVRIWg1nHOecYy_9Lc6Dchv_2aqBszDR8ShtWFWcplR4QFLSVs-gpZz0L1OU","test1", "test2", "", "like");
-                    } catch (JSONException e) {
-                        throw new RuntimeException(e);
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                }).start();
-
                 transaction.replace(R.id.container, new NotificationFragment());
                 updateNotificationCheckOpen();
             } else if (itemId == R.id.user) {
@@ -67,29 +60,6 @@ public class MainActivity extends AppCompatActivity {
             transaction.commit();
             return true;
         });
-        String email = "example@example.com";
-        String password = "password123";
-        // Sign in success, update UI with the signed-in user's information
-        FirebaseUser user = mAuth.getCurrentUser();
-        user.getIdToken(true)
-            .addOnCompleteListener(t -> {
-                System.out.println("LOG::" + 3);
-                if (t.isSuccessful()) {
-                    String token = t.getResult().getToken();
-                    System.out.println("TOKEN::" + token);
-                }
-            });
-
-//
-//
-//        mAuth.createUserWithEmailAndPassword(email, password)
-//             .addOnCompleteListener(task -> {
-//                 if (task.isSuccessful()) {
-//                     FirebaseUser user = mAuth.getCurrentUser();
-//                     System.out.println("TOKEN::"+user.getIdToken(true));
-//                 }
-//             });
-
 
         fetchNotificationBadge();
     }
@@ -137,4 +107,9 @@ public class MainActivity extends AppCompatActivity {
           });
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+
+    }
 }

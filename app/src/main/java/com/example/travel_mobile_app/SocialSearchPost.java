@@ -6,13 +6,13 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
 import com.example.travel_mobile_app.Adapter.PostAdapter;
 import com.example.travel_mobile_app.databinding.ActivitySocialSearchPostBinding;
-import com.example.travel_mobile_app.fragments.SocialFragment;
 import com.example.travel_mobile_app.models.PostModel;
 import com.github.ybq.android.spinkit.sprite.Sprite;
 import com.github.ybq.android.spinkit.style.Circle;
@@ -58,12 +58,14 @@ public class SocialSearchPost extends AppCompatActivity implements View.OnClickL
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.searchPost_btnBack) {
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.replace(R.id.container, new SocialFragment());
-            transaction.commit();
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.putExtra("previous_fragment", "social_screen");
+            startActivity(intent);
+            overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
         }
     }
 
+    //debounce
     private Disposable getDisposable(SearchView search) {
         return Observable.create(emitter -> {
                              search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
