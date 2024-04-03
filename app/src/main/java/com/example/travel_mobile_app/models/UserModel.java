@@ -1,8 +1,22 @@
 package com.example.travel_mobile_app.models;
 
+import java.util.List;
+
 public class UserModel {
     private String id, fullName,username,email,address,password, avatarURL;
-    private int following, followers;
+    private List<String> following, followers;
+
+    public UserModel(String id, String fullName, String username, String email, String address, String password, String avatarURL, List<String> following, List<String> followers) {
+        this.id = id;
+        this.fullName = fullName;
+        this.username = username;
+        this.email = email;
+        this.address = address;
+        this.password = password;
+        this.avatarURL = avatarURL;
+        this.following = following;
+        this.followers = followers;
+    }
 
     public String getId() {
         return id;
@@ -12,48 +26,12 @@ public class UserModel {
         this.id = id;
     }
 
-    public int getFollowing() {
-        return following;
-    }
-
-    public void setFollowing(int following) {
-        this.following = following;
-    }
-
-    public int getFollowers() {
-        return followers;
-    }
-
-    public void setFollowers(int followers) {
-        this.followers = followers;
-    }
-
-    public UserModel(String id, String fullName, String username, String email, String address, String password, String avatarURL, int followers, int following) {
-        this.id = id;
-        this.fullName = fullName;
-        this.username = username;
-        this.email = email;
-        this.address = address;
-        this.password = password;
-        this.avatarURL = avatarURL;
-        this.followers = followers;
-        this.following = following;
-    }
-
     public String getFullName() {
         return fullName;
     }
 
     public void setFullName(String fullName) {
         this.fullName = fullName;
-    }
-
-    public String getAvatarURL() {
-        return avatarURL;
-    }
-
-    public void setAvatarURL(String avataURL) {
-        this.avatarURL = avataURL;
     }
 
     public String getUsername() {
@@ -86,5 +64,29 @@ public class UserModel {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getAvatarURL() {
+        return avatarURL;
+    }
+
+    public void setAvatarURL(String avatarURL) {
+        this.avatarURL = avatarURL;
+    }
+
+    public List<String> getFollowing() {
+        return following;
+    }
+
+    public void setFollowing(List<String> following) {
+        this.following = following;
+    }
+
+    public List<String> getFollowers() {
+        return followers;
+    }
+
+    public void setFollowers(List<String> followers) {
+        this.followers = followers;
     }
 }

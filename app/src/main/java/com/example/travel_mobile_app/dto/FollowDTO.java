@@ -1,22 +1,22 @@
 package com.example.travel_mobile_app.dto;
 
 public class FollowDTO {
-    private int profile;
+    private String profileImage;
     private String username;
-    private Integer numberOfFollowers;
+    private int numberOfFollowers;
 
-    public FollowDTO(int profile, String username, Integer numberOfFollowers) {
-        this.profile = profile;
+    public FollowDTO(String profileImage, String username, int numberOfFollowers) {
+        this.profileImage = profileImage;
         this.username = username;
         this.numberOfFollowers = numberOfFollowers;
     }
 
-    public int getProfile() {
-        return profile;
+    public String getProfileImage() {
+        return profileImage;
     }
 
-    public void setProfile(int profile) {
-        this.profile = profile;
+    public void setProfileImage(String profileImage) {
+        this.profileImage = profileImage;
     }
 
     public String getUsername() {
@@ -27,11 +27,11 @@ public class FollowDTO {
         this.username = username;
     }
 
-    public Integer getNumberOfFollowers() {
+    public int getNumberOfFollowers() {
         return numberOfFollowers;
     }
 
-    public void setNumberOfFollowers(Integer numberOfFollowers) {
+    public void setNumberOfFollowers(int numberOfFollowers) {
         this.numberOfFollowers = numberOfFollowers;
     }
 }

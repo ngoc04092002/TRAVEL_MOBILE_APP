@@ -110,10 +110,9 @@ public class SocialUserDetailInfoFragment extends Fragment implements View.OnCli
 
                                                userInfos.addView(viewSubLayout);
                                            }
-                                           dismissProgressBar();
-                                       } else {
-                                           dismissProgressBar();
                                        }
+                                       dismissProgressBar();
+
                                    }).
 
              addOnFailureListener(e ->
