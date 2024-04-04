@@ -8,11 +8,11 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.bumptech.glide.Glide;
 import com.example.travel_mobile_app.models.UserModel;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -24,20 +24,23 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.travel_mobile_app.R;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.auth.User;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ChangePasswordFragment extends Fragment implements View.OnClickListener {
     private EditText editCurrentPass, editNewPass, editConfirmNewPass;
     private ImageButton btnEyeCurrentPass, btnEyeNewPass, btnEyeConfirmNewPass;
-    private TextView btnUpdate;
-    private ImageView avataImageView;
+    private TextView btnUpdate, tvName, tvUsername;
+    private CircleImageView avataImageView;
+    private ProgressBar progressBar;
+
     private boolean isCurrentPassVisible = false;
     private boolean isNewPassVisible = false;
     private boolean isConfirmNewPassVisible = false;
@@ -54,6 +57,7 @@ public class ChangePasswordFragment extends Fragment implements View.OnClickList
         this.currentUser = user;
     }
 
+    @SuppressLint("MissingInflatedId")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -63,8 +67,14 @@ public class ChangePasswordFragment extends Fragment implements View.OnClickList
         mAuth = FirebaseAuth.getInstance();
 // I    //Initialize Firestore
         mFirestore = FirebaseFirestore.getInstance();
-        avataImageView = view.findViewById(R.id.avataImageView);
-        avataImageView.setOnClickListener(this);
+
+        progressBar = view.findViewById(R.id.progress_bar);
+        progressBar.setVisibility(View.GONE);
+
+        avataImageView = view.findViewById(R.id.imv_avatar);
+
+        tvName = view.findViewById(R.id.tvName);
+        tvUsername = view.findViewById(R.id.tvUsername);
 
         editCurrentPass = view.findViewById(R.id.editCurrentPass);
         editCurrentPass.setSingleLine();
@@ -94,8 +104,15 @@ public class ChangePasswordFragment extends Fragment implements View.OnClickList
 
         ImageView btnBack = view.findViewById(R.id.createPost_btnBack);
         btnBack.setOnClickListener(this);
-//        loginUser("ngocngu@gmail.com", "123456");
+
+        setUpUI();
         return view;
+    }
+
+    private void setUpUI() {
+        tvName.setText(currentUser.getFullName());
+        tvUsername.setText("@" + currentUser.getUsername());
+        Glide.with(getContext()).load(currentUser.getAvatarURL()).into(avataImageView);
     }
 
     @Override
@@ -103,9 +120,7 @@ public class ChangePasswordFragment extends Fragment implements View.OnClickList
         FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
-        if (v.getId() == R.id.avataImageView) {
-
-        } else if (v.getId() == R.id.btnUpdate) {
+        if (v.getId() == R.id.btnUpdate) {
             changePassword();
         }  else if (v.getId() == R.id.createPost_btnBack) {
             fragmentManager.popBackStack("setting_fragment", FragmentManager.POP_BACK_STACK_INCLUSIVE);
@@ -137,13 +152,13 @@ public class ChangePasswordFragment extends Fragment implements View.OnClickList
     }
 
     private void changePassword() {
-        FirebaseUser user = mAuth.getCurrentUser();
-        if (user != null) {
-            String currentPassword = editCurrentPass.getText().toString().trim();
-            String newPassword = editNewPass.getText().toString().trim();
-            String confirmPassword = editConfirmNewPass.getText().toString().trim();
+        String currentPassword = editCurrentPass.getText().toString().trim();
+        String newPassword = editNewPass.getText().toString().trim();
+        String confirmPassword = editConfirmNewPass.getText().toString().trim();
+        if (currentPassword.equals(currentUser.getPassword())) {
             if (newPassword.equals(confirmPassword)) {
-                // Prompt the user to re-authenticate
+                progressBar.setVisibility(View.VISIBLE);
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 AuthCredential credential = EmailAuthProvider.getCredential(user.getEmail(), currentPassword);
 
                 user.reauthenticate(credential)
@@ -162,20 +177,26 @@ public class ChangePasswordFragment extends Fragment implements View.OnClickList
                                                         Toast.makeText(getContext(), "Password updated successfully", Toast.LENGTH_SHORT).show();
 //                                                        finish(); // Finish the activity
                                                     } else {
+                                                        progressBar.setVisibility(View.GONE);
                                                         Log.e(TAG, "Error updating password", task.getException());
                                                         Toast.makeText(getContext(), "Failed to update password", Toast.LENGTH_SHORT).show();
                                                     }
                                                 }
                                             });
                                 } else {
+                                    progressBar.setVisibility(View.GONE);
                                     Log.e(TAG, "Error re-authenticating", task.getException());
                                     Toast.makeText(getContext(), "Failed to re-authenticate", Toast.LENGTH_SHORT).show();
                                 }
                             }
                         });
             } else {
-                Toast.makeText(getContext(), "New password and confirm password do not match", Toast.LENGTH_SHORT).show();
+                Log.e(TAG, "Confirm Password Not Match!");
+                Toast.makeText(getContext(), "Confirm Password Not Match!", Toast.LENGTH_SHORT).show();
             }
+        } else {
+            Log.e(TAG, "Current Password Not Correct!");
+            Toast.makeText(getContext(), "Current Password Not Correct!", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -188,6 +209,7 @@ public class ChangePasswordFragment extends Fragment implements View.OnClickList
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
+                        progressBar.setVisibility(View.GONE);
                         if (task.isSuccessful()) {
                             Log.d(TAG, "Password updated in Firestore");
                         } else {

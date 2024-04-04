@@ -62,24 +62,20 @@ public class EditInfoFragment extends Fragment implements View.OnClickListener {
         View view = inflater.inflate(R.layout.fragment_edit_info, container, false);
         progressBar = view.findViewById(R.id.progress_bar);
         progressBar.setVisibility(View.GONE);
+
         avataImageView = view.findViewById(R.id.imv_avatar);
         avataImageView.setOnClickListener(this);
-        Glide.with(getContext()).load(currentUser.getAvataURL()).into(avataImageView);
 
         editUsername = view.findViewById(R.id.editUsername);
-        editUsername.setText(currentUser.getUsername());
         editUsername.setSingleLine();
 
         editAddress = view.findViewById(R.id.editAddress);
-        editAddress.setText(currentUser.getAddress());
         editAddress.setSingleLine();
 
         editName = view.findViewById(R.id.editName);
-        editName.setText(currentUser.getName());
         editName.setSingleLine();
 
         editEmail = view.findViewById(R.id.editEmail);
-        editEmail.setText(currentUser.getEmail());
         editEmail.setSingleLine();
         editEmail.setFocusable(false);
 
@@ -88,9 +84,19 @@ public class EditInfoFragment extends Fragment implements View.OnClickListener {
 
         ImageView btnBack = view.findViewById(R.id.createPost_btnBack);
         btnBack.setOnClickListener(this);
+
+        setUpUI();
         return view;
     }
 
+    private void setUpUI() {
+        editUsername.setText(currentUser.getUsername());
+        editAddress.setText(currentUser.getAddress());
+        editName.setText(currentUser.getFullName());
+        editEmail.setText(currentUser.getEmail());
+
+        Glide.with(getContext()).load(currentUser.getAvatarURL()).into(avataImageView);
+    }
     @Override
     public void onClick(View v) {
         FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
@@ -105,7 +111,7 @@ public class EditInfoFragment extends Fragment implements View.OnClickListener {
             String newAddress = String.valueOf(editAddress.getText());
             currentUser.setUsername(newUsername);
             currentUser.setAddress(newAddress);
-            currentUser.setName(newName);
+            currentUser.setFullName(newName);
             progressBar.setVisibility(View.VISIBLE);
             if (newUri != null) {
                 uploadImageToFirebaseStorage(newUri, currentUser);
@@ -144,7 +150,7 @@ public class EditInfoFragment extends Fragment implements View.OnClickListener {
                     imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
                         String downloadUrl = uri.toString();
                         // Step 2: Update User Document in Firestore with download URL
-                        user.setAvataURL(downloadUrl);
+                        user.setAvatarURL(downloadUrl);
                         updateUserInfo(user);
                     });
                 })
@@ -182,9 +188,9 @@ public class EditInfoFragment extends Fragment implements View.OnClickListener {
 
         Map<String, Object> updates = new HashMap<>();
         updates.put("username", user.getUsername());
-        updates.put("fullName", user.getName());
+        updates.put("fullName", user.getFullName());
         updates.put("address", user.getAddress());
-        updates.put("avatarURL", user.getAvataURL());
+        updates.put("avatarURL", user.getAvatarURL());
 
         userRef.update(updates)
                 .addOnSuccessListener(aVoid -> {

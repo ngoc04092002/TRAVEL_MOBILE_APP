@@ -1,9 +1,11 @@
 package com.example.travel_mobile_app.models;
 
-public class UserModel {
-    private String id, name,username,email,address,password, avataURL;
-    private int following, followers;
+import java.util.List;
 
+public class UserModel {
+    private String id, fullName, username, email, address, password, avatarURL;
+    private List<String> following, followers;
+    private boolean enableNotification, enableUpdate;
     public String getId() {
         return id;
     }
@@ -11,49 +13,69 @@ public class UserModel {
     public void setId(String id) {
         this.id = id;
     }
-
-    public int getFollowing() {
-        return following;
+    public UserModel() { 
+        // Default constructor required for Firestore deserialization
     }
-
-    public void setFollowing(int following) {
-        this.following = following;
-    }
-
-    public int getFollowers() {
-        return followers;
-    }
-
-    public void setFollowers(int followers) {
-        this.followers = followers;
-    }
-
-    public UserModel(String id, String name, String username, String email, String address, String password, String avataURL, int followers, int following) {
+    public UserModel(String id, String fullName, String username, String email, String address, String password, String avatarURL, List<String> followers, List<String> following, boolean enableNotification, boolean enableUpdate) {
         this.id = id;
-        this.name = name;
+        this.fullName = fullName;
         this.username = username;
         this.email = email;
         this.address = address;
         this.password = password;
-        this.avataURL = avataURL;
+        this.avatarURL = avatarURL;
         this.followers = followers;
+        this.following = following;
+        this.enableNotification = enableNotification;
+        this.enableUpdate = enableUpdate;
+    }
+
+    public boolean isEnableNotification() {
+        return enableNotification;
+    }
+
+    public void setEnableNotification(boolean enableNotification) {
+        this.enableNotification = enableNotification;
+    }
+
+    public boolean isEnableUpdate() {
+        return enableUpdate;
+    }
+
+    public void setEnableUpdate(boolean enableUpdate) {
+        this.enableUpdate = enableUpdate;
+    }
+
+    public List<String> getFollowing() {
+        return following;
+    }
+
+    public void setFollowing(List<String> following) {
         this.following = following;
     }
 
-    public String getName() {
-        return name;
+    public List<String> getFollowers() {
+        return followers;
     }
 
-    public String getAvataURL() {
-        return avataURL;
+    public void setFollowers(List<String> followers) {
+        this.followers = followers;
     }
 
-    public void setAvataURL(String avataURL) {
-        this.avataURL = avataURL;
+    public String getFullName() {
+        return fullName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public String getAvatarURL() {
+        return avatarURL;
+    }
+
+    public void setAvatarURL(String avatarURL) {
+        this.avatarURL= avatarURL;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
     }
 
     public String getUsername() {

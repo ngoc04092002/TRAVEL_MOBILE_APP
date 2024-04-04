@@ -1,15 +1,11 @@
 package com.example.travel_mobile_app.fragments;
 
-import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
-
 import android.annotation.SuppressLint;
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -18,22 +14,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.RequestOptions;
-import com.example.travel_mobile_app.MainActivity;
 import com.example.travel_mobile_app.R;
 import com.example.travel_mobile_app.models.UserModel;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
@@ -41,10 +31,6 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.Executor;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -143,13 +129,15 @@ public class AccountFragment extends Fragment implements View.OnClickListener{
 
     }
 
+    @SuppressLint("SetTextI18n")
     private void  updateUI(UserModel user) {
-        tvFullname.setText(user.getName());
+        System.out.println("NAME: " + user.getFullName());
+        tvFullname.setText(user.getFullName());
         tvUsername.setText("@" + user.getUsername());
         tvEmail.setText(user.getEmail());
-        tvFollower.setText(String.valueOf(user.getFollowers()));
-        tvFollowing.setText(String.valueOf(user.getFollowing()));
-        Glide.with(getContext()).load(user.getAvataURL()).into(imvAvatar);
+        tvFollower.setText(String.valueOf(user.getFollowers().size()));
+        tvFollowing.setText(String.valueOf(user.getFollowing().size()));
+        Glide.with(requireContext()).load(user.getAvatarURL()).into(imvAvatar);
     }
     private void getUserDataById(String userId) {
         DocumentReference docRef = firestore.collection("users").document(userId);
@@ -162,18 +150,21 @@ public class AccountFragment extends Fragment implements View.OnClickListener{
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
                         // Lấy dữ liệu từ Firestore
-                        String name = document.getString("fullName");
-                        String username = document.getString("username");
-                        String email = document.getString("email");
-                        String address = document.getString("address");
-                        String password = document.getString("password");
-                        String avataURL = document.getString("avatarURL");
-                        long following = document.getLong("following");
-                        long followers = document.getLong("followers");
+                        UserModel userModel = document.toObject(UserModel.class);
+
+//                        String name = document.getString("fullName");
+//                        String username = document.getString("username");
+//                        String email = document.getString("email");
+//                        String address = document.getString("address");
+//                        String password = document.getString("password");
+//                        String avataURL = document.getString("avatarURL");
+//                        String[] following = document.get("following");
+//                        String[] followers = document.getLong("followers");
 
                         // Tạo một đối tượng UserModel
-                        UserModel userModel = new UserModel(userId, name, username, email, address, password, avataURL, (int) followers, (int) following);
+//                        UserModel userModel = new UserModel(userId, name, username, email, address, password, avataURL, (int) followers, (int) following);
                         currentUser = userModel;
+                        assert userModel != null;
                         updateUI(userModel);
                     } else {
                         Log.e(TAG, "Document userid not exist!");

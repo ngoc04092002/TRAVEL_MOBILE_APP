@@ -48,7 +48,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="@dimen/_4mdp"
-                        android:text="NgocVan"
+                        android:text="Full Name"
                         android:textSize="@dimen/_22font_mdp"
                         android:textStyle="bold" />
 
@@ -57,14 +57,14 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="@dimen/_4mdp"
-                        android:text="\@NgocVan"
+                        android:text="\@Username"
                         android:textSize="@dimen/_16font_mdp" />
 
                     <TextView
                         android:id="@+id/detail_info_address"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Bắc Ninh"
+                        android:text="Email"
                         android:textSize="@dimen/_14font_mdp" />
                 </LinearLayout>
 
@@ -89,7 +89,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="@dimen/_4mdp"
-                        android:text="120+"
+                        android:text="0"
                         android:textSize="@dimen/_16font_mdp"
                         android:textStyle="bold" />
 
@@ -120,7 +120,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="@dimen/_4mdp"
-                        android:text="120+"
+                        android:text="0"
                         android:textSize="@dimen/_16font_mdp"
                         android:textStyle="bold" />
 
