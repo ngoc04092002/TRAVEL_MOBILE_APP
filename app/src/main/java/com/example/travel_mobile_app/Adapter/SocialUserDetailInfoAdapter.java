@@ -3,68 +3,109 @@ package com.example.travel_mobile_app.Adapter;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
+import com.bumptech.glide.Glide;
 import com.example.travel_mobile_app.R;
-import com.example.travel_mobile_app.fragments.SocialUserDetailInfoFragment;
 import com.example.travel_mobile_app.models.CommentModel;
-import com.example.travel_mobile_app.models.DashboardModel;
+import com.example.travel_mobile_app.models.PostModel;
+import com.example.travel_mobile_app.models.UserModel;
+import com.example.travel_mobile_app.utils.CustomDateTime;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.button.MaterialButton;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.auth.User;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class SocialUserDetailInfoAdapter {
 
-    DashboardModel model;
+    PostModel model;
     Context context;
+    FirebaseFirestore db;
 
-    public SocialUserDetailInfoAdapter(DashboardModel model, Context context) {
+    public SocialUserDetailInfoAdapter(PostModel model, Context context, FirebaseFirestore db) {
         this.model = model;
         this.context = context;
+        this.db = db;
     }
 
-    ImageView profile, postImage, save;
+    ImageView postImage, postimg;
     TextView name, about, des;
 
     MaterialButton like, comment, share;
 
-    DashboardModel dashboardModel;
+    PostModel postModel;
 
-    public View onCreateView(@NonNull View itemView, DashboardModel dashboardModel) {
-        this.dashboardModel = dashboardModel;
-        profile = itemView.findViewById(R.id.profile_image);
-        postImage = itemView.findViewById(R.id.postimg);
+    public View onCreateView(@NonNull View itemView, PostModel postModel) {
+        this.postModel = postModel;
+        postimg = itemView.findViewById(R.id.postimg);
+        postImage = itemView.findViewById(R.id.profile_image);
         name = itemView.findViewById(R.id.username);
-        about = itemView.findViewById(R.id.followers);
+        about = itemView.findViewById(R.id.timestamp);
         like = itemView.findViewById(R.id.like);
         comment = itemView.findViewById(R.id.comment);
         share = itemView.findViewById(R.id.share);
         des = itemView.findViewById(R.id.des);
 
-        profile.setImageResource(dashboardModel.getProfile());
-        postImage.setImageResource(dashboardModel.getPostImage());
-        name.setText(dashboardModel.getName());
-        about.setText(dashboardModel.getAbout());
-        like.setText(dashboardModel.getLike());
-        comment.setText(dashboardModel.getComment());
-        share.setText(dashboardModel.getShare());
-        des.setText(dashboardModel.getDes());
+        CollectionReference users = db.collection("users");
+        users.document(postModel.getPostedBy())
+             .get()
+             .addOnCompleteListener(taskUser -> {
+                 if (taskUser.isSuccessful() && taskUser.getResult() != null) {
+                     UserModel userModel = taskUser.getResult().toObject(UserModel.class);
+                     name.setText(userModel.getFullName());
+                     if (userModel.getAvatarURL() != null) {
+                         Glide.with(context)
+                              .load(Uri.parse(userModel.getAvatarURL()))
+                              .centerCrop()
+                              .placeholder(R.drawable.avatar_men)
+                              .into(postimg);
+                     }
+                 }
+             });
+
+        about.setText(CustomDateTime.formatDate(postModel.getPostedAt()));
+
+        if (postModel.getLikes() != null) {
+            like.setText(postModel.getLikes().size());
+        }
+        if (postModel.getComments() != null) {
+            comment.setText(postModel.getComments().size());
+        }
+
+        CollectionReference posts = db.collection("posts");
+        posts.whereEqualTo("share", true)
+             .whereNotEqualTo("originPostId", postModel.getOriginPostId())
+             .get()
+             .addOnCompleteListener(task -> {
+                 if (task.isSuccessful() && task.getResult() != null) {
+                     share.setText(task.getResult().size());
+                 }
+             });
+        des.setText(postModel.getPostDescription());
+
+        if (postModel.getPostImage() != null) {
+            Glide.with(context)
+                 .load(Uri.parse(postModel.getPostImage()))
+                 .centerCrop()
+                 .placeholder(R.drawable.avatar_men)
+                 .into(postimg);
+        }
+
 
         comment.setOnClickListener(v -> {
             showBottomDialog();

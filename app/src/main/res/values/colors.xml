@@ -8,4 +8,6 @@
     <color name="colorPrimaryRipple">#DEE688</color>
     <color name="transparent">#00FFFFFF</color>
     <color name="shimmerColor">#C2C2C2</color>
+    <color name="unread">#8AFFF612</color>
+    <color name="red">#FF2727</color>
 </resources>

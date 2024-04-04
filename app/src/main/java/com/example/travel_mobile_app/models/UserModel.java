@@ -13,7 +13,7 @@ public class UserModel {
     public void setId(String id) {
         this.id = id;
     }
-    public UserModel() { 
+    public UserModel() {
         // Default constructor required for Firestore deserialization
     }
     public UserModel(String id, String fullName, String username, String email, String address, String password, String avatarURL, List<String> followers, List<String> following, boolean enableNotification, boolean enableUpdate) {

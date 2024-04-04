@@ -132,7 +132,7 @@ public class SocialFragment extends Fragment implements View.OnClickListener {
         } else if (v.getId() == R.id.btnSearch) {
             Intent i = new Intent(getActivity(), SocialSearchPost.class);
             startActivity(i);
-            ((Activity) getActivity()).overridePendingTransition(0, 0);
+            getActivity().overridePendingTransition(0, 0);
         } else if (v.getId() == R.id.createStory) {
             ImagePicker.with(this)
                        .galleryOnly()
@@ -177,7 +177,7 @@ public class SocialFragment extends Fragment implements View.OnClickListener {
           .whereEqualTo("storyBy", "8c89d98007c54f34b44f2f619a8684b3")
           .get()
           .addOnCompleteListener(task -> {
-              if (task.isSuccessful()) {
+              if (task.isSuccessful() && task.getResult() != null) {
                   ArrayList<UserStory> userStories = new ArrayList<>();
                   for (QueryDocumentSnapshot document : task.getResult()) {
                       Date currentTime = new Date();
@@ -187,10 +187,12 @@ public class SocialFragment extends Fragment implements View.OnClickListener {
                           userStories.add(new UserStory(storyModel.getUri(), storyModel.getStoryAt()));
                       }
                   }
-                  StoryModel storyModel = new StoryModel();
-                  storyModel.setUserStories(userStories);
-                  storyModel.setStoryBy("8c89d98007c54f34b44f2f619a8684b3");
-                  list.add(storyModel);
+                  if(userStories.size()>0){
+                      StoryModel storyModel = new StoryModel();
+                      storyModel.setUserStories(userStories);
+                      storyModel.setStoryBy("8c89d98007c54f34b44f2f619a8684b3");
+                      list.add(storyModel);
+                  }
 
                   shimmerFrameLayoutStory.showShimmer(false);
                   shimmerFrameLayoutStory.setVisibility(View.GONE);

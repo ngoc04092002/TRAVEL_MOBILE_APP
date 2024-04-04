@@ -9,28 +9,44 @@ public class PostModel {
     private String postDescription;
     private long postedAt;
 
-    private List<String> likes, share, save;
+    private List<String> likes, save;
+    private String shareBy;
+    private Boolean isShare;
+    private long shareAt;
+    private String originPostId;
+
+    public String getOriginPostId() {
+        return originPostId;
+    }
+
+    public void setOriginPostId(String originPostId) {
+        this.originPostId = originPostId;
+    }
 
     private List<CommentModel> comments;
+
     public PostModel() {
     }
-    public PostModel(String postId, String postImage, String postedBy, String postDescription, long postedAt, List<String> likes, List<String> share, List<String> save) {
+
+    public PostModel(String postId, String postImage, String postedBy, String postDescription, long postedAt, List<String> likes, List<String> save, String shareBy, Boolean isShare, List<CommentModel> comments) {
         this.postId = postId;
         this.postImage = postImage;
         this.postedBy = postedBy;
         this.postDescription = postDescription;
         this.postedAt = postedAt;
         this.likes = likes;
-        this.share = share;
         this.save = save;
-    }
-
-    public List<CommentModel> getComments() {
-        return comments;
-    }
-
-    public void setComments(List<CommentModel> comments) {
+        this.shareBy = shareBy;
+        this.isShare = isShare;
         this.comments = comments;
+    }
+
+    public long getShareAt() {
+        return shareAt;
+    }
+
+    public void setShareAt(long shareAt) {
+        this.shareAt = shareAt;
     }
 
     public String getPostId() {
@@ -81,20 +97,36 @@ public class PostModel {
         this.likes = likes;
     }
 
-    public List<String> getShare() {
-        return share;
-    }
-
-    public void setShare(List<String> share) {
-        this.share = share;
-    }
-
     public List<String> getSave() {
         return save;
     }
 
     public void setSave(List<String> save) {
         this.save = save;
+    }
+
+    public String getShareBy() {
+        return shareBy;
+    }
+
+    public void setShareBy(String shareBy) {
+        this.shareBy = shareBy;
+    }
+
+    public Boolean getShare() {
+        return isShare;
+    }
+
+    public void setShare(Boolean share) {
+        isShare = share;
+    }
+
+    public List<CommentModel> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<CommentModel> comments) {
+        this.comments = comments;
     }
 
     @Override
@@ -106,8 +138,9 @@ public class PostModel {
                 ", postDescription='" + postDescription + '\'' +
                 ", postedAt=" + postedAt +
                 ", likes=" + likes +
-                ", share=" + share +
                 ", save=" + save +
+                ", shareBy='" + shareBy + '\'' +
+                ", isShare=" + isShare +
                 ", comments=" + comments +
                 '}';
     }

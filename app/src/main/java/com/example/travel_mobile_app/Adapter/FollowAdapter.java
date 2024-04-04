@@ -1,6 +1,7 @@
 package com.example.travel_mobile_app.Adapter;
 
 import android.content.Context;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.travel_mobile_app.R;
 import com.example.travel_mobile_app.dto.FollowDTO;
 
@@ -40,7 +42,14 @@ public class FollowAdapter extends RecyclerView.Adapter<FollowAdapter.viewHolder
     public void onBindViewHolder(@NonNull viewHolder holder, int position) {
         FollowDTO model = list.get(position);
 
-        holder.profile.setImageResource(model.getProfile());
+        if (model.getProfileImage() != null) {
+            Glide.with(context)
+                 .load(Uri.parse(model.getProfileImage()))
+                 .centerCrop()
+                 .placeholder(R.drawable.avatar_men)
+                 .into(holder.profile);
+        }
+
         holder.username.setText(model.getUsername());
         holder.followers.setText(model.getNumberOfFollowers() +"người theo dõi");
         if(!isFollow){
