@@ -5,47 +5,30 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFE0"
     tools:context=".MainActivity">
 
-    <!-- Tiêu đề -->
     <TextView
-        android:id="@+id/textViewTitle"
+        android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Tỉnh Thành"
-        android:textSize="36sp"
-        android:textColor="#8B8000"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        android:text="Welcom to DashBoard!"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="24dp"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- Ô tìm kiếm -->
-    <EditText
-        android:id="@+id/editTextSearch"
-        android:layout_width="0dp"
+    <Button
+        android:id="@+id/logout_button"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:hint="Nhập tỉnh/thành phố cần tìm kiếm"
-        android:textColorHint="#8B8000"
-        android:background="#FFFACD"
-        android:padding="12dp"
-        android:textSize="18sp"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="41dp"
+        android:onClick="logout"
+        android:text="Logout"
+        android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textViewTitle"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView"
+        tools:ignore="OnClick" />
 
-    <!-- Danh sách gợi ý -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerViewSuggestions"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="16dp"
-        android:background="#FFFACD"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/editTextSearch"
-        app:layout_constraintBottom_toBottomOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,4 +1,4 @@
-package com.bnb.apptravel;
+package com.example.travel_mobile_app;
 
 import org.junit.Test;
 

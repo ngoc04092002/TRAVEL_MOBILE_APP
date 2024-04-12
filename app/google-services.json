@@ -1,21 +1,22 @@
 {
   "project_info": {
-    "project_number": "712180406522",
-    "project_id": "apptravel-f02b3",
-    "storage_bucket": "apptravel-f02b3.appspot.com"
+    "project_number": "159818122342",
+    "firebase_url": "https://travel-app-130de-default-rtdb.firebaseio.com",
+    "project_id": "travel-app-130de",
+    "storage_bucket": "travel-app-130de.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:712180406522:android:2c19d64cb228c06c4c9143",
+        "mobilesdk_app_id": "1:159818122342:android:a888bb4c24ff717b0759a7",
         "android_client_info": {
-          "package_name": "com.bnb.apptravel"
+          "package_name": "com.example.travel_mobile_app"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyDyPBjGdEZCjeFaT9wRjbystby73LlAQjc"
+          "current_key": "AIzaSyCgfF-cSo9R72aY8rRg4vuRV_f0krQ6jNw"
         }
       ],
       "services": {

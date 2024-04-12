@@ -1,4 +1,4 @@
-package com.bnb.apptravel;
+package com.example.travel_mobile_app;
 
 import android.content.Context;
 
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
     public void useAppContext() {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        assertEquals("com.bnb.apptravel", appContext.getPackageName());
+        assertEquals("com.example.travel_mobile_app", appContext.getPackageName());
     }
 }
