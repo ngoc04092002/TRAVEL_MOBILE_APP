@@ -1,0 +1,12 @@
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="@color/white" /> <!-- Màu nền của BottomNavigationView -->
+<!--    <corners android:radius="8dp" /> &lt;!&ndash; Độ cong của góc &ndash;&gt;-->
+    <padding
+        android:left="8dp"
+        android:right="8dp"
+        android:top="8dp"
+        android:bottom="8dp" /> <!-- Khoảng cách giữa nội dung và viền -->
+    <stroke
+        android:width="2dp"
+        android:color="#36000000" /> <!-- Kích thước và màu sắc của đường viền -->
+</shape>

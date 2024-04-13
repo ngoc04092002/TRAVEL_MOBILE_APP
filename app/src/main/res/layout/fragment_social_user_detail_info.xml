@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".fragments.SocialUserDetailInfoFragment">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingStart="14dp"
+        android:paddingTop="8dp">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/uInfo_btnBack"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="start"
+            android:layout_marginEnd="10dp"
+            android:clickable="true"
+            android:padding="@dimen/_6mdp"
+            android:src="@drawable/navigate_before"
+            app:civ_border_color="@color/black"
+            app:civ_border_width="3dp" />
+    </FrameLayout>
+
+    <ScrollView
+        android:id="@+id/uInfo_scroll"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:id="@+id/uInfo_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/profile_image"
+                    android:layout_width="138dp"
+                    android:layout_height="138dp"
+                    android:layout_gravity="center"
+                    android:layout_marginEnd="10dp"
+                    android:src="@drawable/avatar_men"
+                    app:civ_border_color="@color/black"
+                    app:civ_border_width="2dp" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/detail_info_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/_4mdp"
+                        android:text="NgocVan"
+                        android:textSize="@dimen/_22font_mdp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/detail_info_username"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/_4mdp"
+                        android:text="\@NgocVan"
+                        android:textSize="@dimen/_16font_mdp" />
+
+                    <TextView
+                        android:id="@+id/detail_info_address"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Bắc Ninh"
+                        android:textSize="@dimen/_14font_mdp" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_20font_mdp"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/detail_info_following_cnt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/_4mdp"
+                        android:text="120+"
+                        android:textSize="@dimen/_16font_mdp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/detail_info_following"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/_4mdp"
+                        android:text="Đang theo dõi"
+                        android:textSize="@dimen/_14font_mdp" />
+                </LinearLayout>
+
+                <View
+                    android:id="@+id/border_left"
+                    android:layout_width="2dp"
+                    android:layout_height="match_parent"
+                    android:background="@color/gray" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/detail_info_follower_cnt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/_4mdp"
+                        android:text="120+"
+                        android:textSize="@dimen/_16font_mdp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/detail_info_follower"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/_4mdp"
+                        android:text="Người theo dõi"
+                        android:textSize="@dimen/_14font_mdp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_20mdp"
+                android:layout_marginTop="@dimen/_16font_mdp"
+                android:text="Chi tiết"
+                android:textSize="@dimen/_22font_mdp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/_10mdp"
+                android:layout_marginRight="@dimen/_10mdp"
+                android:background="@drawable/shapebgsearch"
+                android:orientation="horizontal"
+                android:padding="10dp">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:divider="@drawable/space_between"
+                    android:orientation="vertical"
+                    android:showDividers="middle">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/_24mdp"
+                        android:gravity="start|center"
+                        android:text="Tên:"
+                        android:textSize="@dimen/_16font_mdp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/_24mdp"
+                        android:gravity="start|center"
+                        android:text="Tên đăng nhập:"
+                        android:textSize="@dimen/_16font_mdp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/_24mdp"
+                        android:gravity="start|center"
+                        android:text="Email:"
+                        android:textSize="@dimen/_16font_mdp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/_24mdp"
+                        android:gravity="start|center"
+                        android:text="Địa chỉ:"
+                        android:textSize="@dimen/_16font_mdp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:divider="@drawable/space_between"
+                    android:orientation="vertical"
+                    android:showDividers="middle">
+
+                    <TextView
+                        android:id="@+id/uInfo_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/_24mdp"
+                        android:ellipsize="end"
+                        android:gravity="center"
+                        android:maxLines="1"
+                        android:text="NgocVan"
+                        android:textSize="@dimen/_12font_mdp" />
+
+                    <TextView
+                        android:id="@+id/uInfo_username"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/_24mdp"
+                        android:gravity="center"
+                        android:text="NgocVan"
+                        android:textSize="@dimen/_12font_mdp" />
+
+                    <TextView
+                        android:id="@+id/uInfo_email"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/_24mdp"
+                        android:gravity="center"
+                        android:text="vanngoc@gmail.com"
+                        android:textSize="@dimen/_12font_mdp" />
+
+                    <TextView
+                        android:id="@+id/uInfo_address"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/_24mdp"
+                        android:gravity="center"
+                        android:text="Bắc Ninh"
+                        android:textSize="@dimen/_12font_mdp" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_20mdp"
+                android:layout_marginTop="@dimen/_16font_mdp"
+                android:text="Bài đăng"
+                android:textSize="@dimen/_22font_mdp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+    </ScrollView>
+    <TextView
+        android:id="@+id/bad_request"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Đã có lỗi xáy ra"
+        android:textAlignment="center"
+        android:textSize="@dimen/_16font_mdp"
+        android:visibility="gone"/>
+
+    <com.github.ybq.android.spinkit.SpinKitView xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/spin_kit"
+        style="@style/SpinKitView.Circle"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="6dp"
+        android:visibility="gone"
+        app:SpinKit_Color="@color/yellow" />
+
+</LinearLayout>

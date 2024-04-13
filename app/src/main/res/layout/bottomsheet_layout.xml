@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:orientation="vertical"
+    >
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/bottomsheet_back"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_marginLeft="20dp"
+            android:background="@color/white"
+            android:clickable="true"
+            android:src="@drawable/arrow_back" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="end|center"
+            android:orientation="horizontal"
+            android:paddingEnd="20dp">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/like"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="10dp"
+                android:fontFamily="sans-serif"
+                android:text="354"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_14font_mdp"
+                app:backgroundTint="@color/white"
+                app:cornerRadius="0dp"
+                app:icon="@drawable/favorite"
+                app:iconGravity="textStart"
+                app:iconTint="@color/black" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/share"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif"
+                android:text="40"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_14font_mdp"
+                app:backgroundTint="@color/white"
+                app:cornerRadius="0dp"
+                app:icon="@drawable/share"
+                app:iconGravity="textStart"
+                app:iconTint="@color/black" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:scrollbars="none"
+        >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/commentsRv"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:minHeight="@dimen/_350mdp"
+                />
+
+            <View
+                android:id="@+id/view6"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/gray"
+                />
+        </LinearLayout>
+    </ScrollView>
+    <LinearLayout
+        android:id="@+id/box_send_msg"
+        android:layout_width="match_parent"
+        android:layout_height="72dp"
+        android:gravity="bottom"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/comment_message"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:hint="Nhắn gì đó..."
+            android:inputType="text"
+            android:maxLines="3"
+            android:paddingStart="20dp"
+            tools:ignore="Autofill" />
+        <View
+            android:id="@+id/border_left"
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="@color/gray"
+            />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_chat_send"
+            android:layout_width="70dp"
+            android:layout_height="match_parent"
+            android:fontFamily="sans-serif"
+            app:backgroundTint="@color/white"
+            app:cornerRadius="0dp"
+            app:icon="@drawable/send"
+            app:iconSize="@dimen/_20font_mdp"
+            app:iconGravity="textStart"
+            app:iconTint="@color/yellow" />
+    </LinearLayout>
+
+</LinearLayout>

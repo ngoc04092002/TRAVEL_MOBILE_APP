@@ -6,7 +6,6 @@
     </style>
 
     <style name="Theme.TRAVEL_MOBILE_APP" parent="Base.Theme.TRAVEL_MOBILE_APP" />
-
     <style name="ThemeOverlay.TRAVEL_MOBILE_APP.FullscreenContainer" parent="">
         <item name="fullscreenBackgroundColor">@color/light_blue_600</item>
         <item name="fullscreenTextColor">@color/light_blue_A200</item>

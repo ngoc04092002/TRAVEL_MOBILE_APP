@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingTop="@dimen/_20font_mdp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".fragments.AccountFragment">
+
+    <ScrollView
+        android:id="@+id/uInfo_scroll"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:id="@+id/uInfo_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="25dp"
+                android:paddingRight="25dp"
+
+                android:orientation="horizontal">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/profile_image"
+                    app:civ_border_color="@color/black"
+                    app:civ_border_width="2dp"
+                    android:layout_width="138dp"
+                    android:layout_height="138dp"
+                    android:layout_gravity="center"
+                    android:layout_marginEnd="10dp"
+                    android:src="@drawable/avatar_men" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="15dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/detail_info_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/_4mdp"
+                        android:text="Full Name"
+                        android:textSize="@dimen/_22font_mdp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/detail_info_username"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/_4mdp"
+                        android:text="\@Username"
+                        android:textSize="@dimen/_16font_mdp" />
+
+                    <TextView
+                        android:id="@+id/detail_info_address"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Email"
+                        android:textSize="@dimen/_14font_mdp" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_20font_mdp"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/detail_info_following_cnt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/_4mdp"
+                        android:text="0"
+                        android:textSize="@dimen/_16font_mdp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/detail_info_following"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/_4mdp"
+                        android:text="Đang theo dõi"
+                        android:textSize="@dimen/_14font_mdp" />
+                </LinearLayout>
+
+                <View
+                    android:id="@+id/border_left"
+                    android:layout_width="2dp"
+                    android:layout_height="match_parent"
+                    android:background="@color/gray" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/detail_info_follower_cnt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/_4mdp"
+                        android:text="0"
+                        android:textSize="@dimen/_16font_mdp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/detail_info_follower"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/_4mdp"
+                        android:text="Người theo dõi"
+                        android:textSize="@dimen/_14font_mdp" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:layout_marginTop="@dimen/_20mdp"
+                android:layout_marginLeft="@dimen/_20mdp"
+                android:layout_marginRight="@dimen/_20mdp"
+                android:divider="@drawable/space_between"
+                android:showDividers="middle">
+                <LinearLayout
+                    android:id="@+id/btnSaved"
+                    android:layout_width="match_parent"
+                    android:layout_height="74dp"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:background="@drawable/account_bgr_card"
+                    android:backgroundTint="#B3B3B3"
+                    >
+
+                    <ImageButton
+                        android:id="@+id/bookmark_yellow"
+                        android:layout_width="180dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@color/transparent"
+                        android:src="@drawable/bookmark_yellow" />
+
+                    <TextView
+                        android:id="@+id/saved"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Đã Lưu"
+                        android:textSize="20dp"
+                        android:textStyle="bold"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/btnSetting"
+                    android:layout_width="match_parent"
+                    android:layout_height="74dp"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:background="@drawable/account_bgr_card"
+                    android:backgroundTint="#B3B3B3"
+                    >
+
+                    <ImageButton
+                        android:id="@+id/setting_yellow"
+                        android:layout_width="180dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@color/transparent"
+                        android:src="@drawable/icn_setting_small" />
+
+                    <TextView
+                        android:id="@+id/setting"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Cài đặt"
+                        android:textSize="20dp"
+                        android:textStyle="bold"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/btnManagePost"
+                    android:layout_width="match_parent"
+                    android:layout_height="74dp"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:background="@drawable/account_bgr_card"
+                    android:backgroundTint="#B3B3B3"
+                    >
+
+                    <ImageButton
+                        android:id="@+id/manage_poster"
+                        android:layout_width="180dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@color/transparent"
+                        android:src="@drawable/icn_label" />
+
+                    <TextView
+                        android:id="@+id/manage_poster_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Quản lý bài đăng"
+                        android:textSize="20dp"
+                        android:textStyle="bold"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/btnLogout"
+                    android:layout_width="match_parent"
+                    android:layout_height="74dp"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:background="@drawable/account_bgr_card"
+                    android:backgroundTint="#B3B3B3"
+                    >
+
+                    <ImageButton
+                        android:id="@+id/logout_icon"
+                        android:layout_width="180dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@color/transparent"
+                        android:src="@drawable/icn_logout" />
+
+                    <TextView
+                        android:id="@+id/logout_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Đăng xuất"
+                        android:textSize="20dp"
+                        android:textStyle="bold"/>
+                </LinearLayout>
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+    </ScrollView>
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"/>
+</FrameLayout>
