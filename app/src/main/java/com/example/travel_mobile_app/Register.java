@@ -78,6 +78,7 @@ public class Register extends AppCompatActivity {
                 String fullname = register_fullname.getText().toString();
                 String phone = register_phone.getText().toString();
                 String avatarURL = null, address = null;
+                String username = null;
                 Boolean enableNotification = true, enableUpdate = true;
                 ArrayList<String> followers = new ArrayList<>();
                 ArrayList<String> following = new ArrayList<>();
@@ -109,6 +110,7 @@ public class Register extends AppCompatActivity {
                             DocumentReference documentReference = fStore.collection("users").document(userID);
                             Map<String, Object> user = new HashMap<>();
                             user.put("fullName", fullname);
+                            user.put("username", username);
                             user.put("email", email);
                             user.put("password", password);
                             user.put("phone", phone);
