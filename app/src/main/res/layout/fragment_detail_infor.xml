@@ -32,7 +32,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView" />
+        app:layout_constraintTop_toBottomOf="@+id/anhditich" />
 
     <TextView
         android:id="@+id/text1"
@@ -57,7 +57,7 @@
         android:layout_marginRight="60dp"
         android:fontFamily="@font/montserrat"
 
-        android:text="Hãy bước vào hành trình khám phá với di tích A - một bảo tàng sống động của lịch sử và văn hóa. Với kiến trúc tinh tế và những câu chuyện hấp dẫn, nơi này là điểm đến không thể bỏ qua cho mọi người yêu thích lịch sử. Tại đây, bạn sẽ được chìm đắm trong không gian thời gian, từ những thời kỳ xa xưa đến hiện đại. Đặt chân đến di tích A, bạn sẽ cảm nhận được vẻ đẹp và sức sống của quá khứ, đồng thời tìm thấy sự kỳ diệu và sự phong phú của văn hóa con người."
+        android:text="Loading"
         android:textColor="@color/black"
         android:textSize="15dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -87,7 +87,7 @@
         android:layout_marginLeft="10dp"
 
         android:fontFamily="@font/montserrat"
-        android:text="Đường B, Quận C, Thành phố D"
+        android:text="Loading"
         android:textColor="@color/black"
         android:textSize="15dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -116,7 +116,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
         android:fontFamily="@font/montserrat"
-        android:text="07h00 - 21h00"
+        android:text="Loading"
         android:textColor="@color/black"
         android:textSize="15dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -145,7 +145,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
         android:fontFamily="@font/montserrat"
-        android:text="100.000 đ cho người lớn và 50.000 đ cho trẻ em"
+        android:text="Loading"
         android:textColor="@color/black"
         android:textSize="15dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -208,15 +208,14 @@
         app:layout_constraintTop_toTopOf="@+id/tenditich" />
 
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/anhditich"
         android:layout_width="match_parent"
         android:layout_height="300dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/titledetailinfor"
-        android:src="@drawable/boy"
-        android:scaleType="centerCrop"
         android:background="@drawable/titlebar"
-        />
+        android:scaleType="centerCrop"
+        android:src="@drawable/boy"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/titledetailinfor" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 

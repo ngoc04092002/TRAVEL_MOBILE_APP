@@ -1,8 +1,11 @@
 package com.example.travel_mobile_app;
 
+import static android.content.ContentValues.TAG;
+
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -17,7 +20,9 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.example.travel_mobile_app.fragments.event;
 import com.example.travel_mobile_app.fragments.suggestion;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -40,7 +45,9 @@ public class DetailInfor extends Fragment {
     private String mParam2;
     private ImageButton btnback;
     private ImageButton btndirect, btnevent;
-    private TextView nametv, introducetv, addresstv, opentimetv;
+    private TextView nametv, introducetv, addresstv, opentimetv, pricetv;
+    private ImageView imgv;
+
 
     public DetailInfor() {
         // Required empty public constructor
@@ -68,10 +75,9 @@ public class DetailInfor extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+
+
+
     }
 
     @SuppressLint("MissingInflatedId")
@@ -80,6 +86,43 @@ public class DetailInfor extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_detail_infor, container, false);
+        nametv = view.findViewById(R.id.tenditich);
+        introducetv =view.findViewById(R.id.gioithieuchitiet);
+        addresstv =view.findViewById(R.id.diachi);
+        opentimetv =view.findViewById(R.id.giomocua);
+        pricetv=view.findViewById(R.id.giave);
+        imgv=view.findViewById(R.id.anhditich);
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        DocumentReference docRef = db.collection("locations").document("loc001");
+
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        String name = document.getString("name");
+                        String intro = document.getString("introduce");
+                        String adrs = document.getString("address");
+                        String opnt = document.getString("opentime");
+                        String pric = document.getString("price");
+                        String link = document.getString("imglink");
+                        nametv.setText(name);
+                        introducetv.setText(intro);
+                        addresstv.setText(adrs);
+                        opentimetv.setText(opnt);
+                        pricetv.setText(pric);
+                        Glide.with(imgv).load(link).into(imgv);
+                        // Ở đây bạn có thể sử dụng giá trị của trường "name"
+                    } else {
+                        Log.d(TAG, "No such document");
+                    }
+                } else {
+                    Log.d(TAG, "get failed with ", task.getException());
+                }
+            }
+        });
         btnback = view.findViewById(R.id.backbtn3);
         btnback.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -16,7 +16,8 @@
         app:layout_constraintTop_toBottomOf="@+id/titlesuggesttion">
 
 
-        <GridView
+        <ListView
+            android:id="@+id/danhsachdexuat"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:numColumns="@integer/material_motion_duration_long_2"/>
