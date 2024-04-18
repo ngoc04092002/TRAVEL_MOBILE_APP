@@ -51,6 +51,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.auth.User;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.gson.Gson;
@@ -213,37 +214,61 @@ public class SocialFragment extends Fragment implements View.OnClickListener {
     }
 
     private void setStoryListData(StoryAdapter storyAdapter) {
-        //fix 8c89d98007c54f34b44f2f619a8684b3 is userID and add filter table user
         UserModel user = SharedPreferencesManager.readUserInfo();
+        CollectionReference storiesRef = db.collection("stories");
+        CollectionReference usersRef = db.collection("users");
 
-        db.collection("stories")
-          .whereEqualTo("storyBy", user.getId())
-          .get()
-          .addOnCompleteListener(task -> {
-              if (task.isSuccessful() && task.getResult() != null) {
-                  ArrayList<UserStory> userStories = new ArrayList<>();
-                  for (QueryDocumentSnapshot document : task.getResult()) {
-                      Date currentTime = new Date();
-                      StoryModel storyModel = document.toObject(StoryModel.class);
 
-                      if (currentTime.getTime() - storyModel.getStoryAt() < (24 * 60 * 60 * 1000)) {
-                          userStories.add(new UserStory(storyModel.getUri(), storyModel.getStoryAt()));
-                      }
-                  }
-                  if (userStories.size() > 0) {
-                      StoryModel storyModel = new StoryModel();
-                      storyModel.setUserStories(userStories);
-                      storyModel.setStoryBy(user.getId());
-                      list.add(storyModel);
-                  }
+        usersRef
+//                .whereIn("id", user.getFollowing())
+.get()
+.addOnCompleteListener(task -> {
+    if (task.isSuccessful() && task.getResult() != null) {
+        for (QueryDocumentSnapshot document : task.getResult()) {
+            UserModel userModel = document.toObject(UserModel.class);
+            if (userModel.getId() != null) {
+                getAllUserStory(userModel, storiesRef);
+            }
+        }
 
-                  shimmerFrameLayoutStory.showShimmer(false);
-                  shimmerFrameLayoutStory.setVisibility(View.GONE);
-                  storyAdapter.notifyDataSetChanged();
-              } else {
-                  Log.d("record", "Error getting documents: ", task.getException());
-              }
-          });
+    }
+});
+
+    }
+
+    private void getAllUserStory(UserModel user, CollectionReference storiesRef) {
+        storiesRef
+                .orderBy("storyAt", Query.Direction.DESCENDING)
+                .whereEqualTo("storyBy", user.getId())
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && task.getResult() != null) {
+                        ArrayList<UserStory> userStories = new ArrayList<>();
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            Date currentTime = new Date();
+                            StoryModel storyModel = document.toObject(StoryModel.class);
+
+                            if (currentTime.getTime() - storyModel.getStoryAt() < (24 * 60 * 60 * 1000)) {
+                                userStories.add(new UserStory(storyModel.getUri(), storyModel.getStoryAt()));
+                            }
+                        }
+                        if (userStories.size() > 0) {
+                            StoryModel storyModel = new StoryModel();
+                            storyModel.setUserStories(userStories);
+                            storyModel.setStoryBy(user.getId());
+                            storyModel.setFullName(user.getFullName());
+                            storyModel.setImage(user.getAvatarURL());
+                            list.add(storyModel);
+                        }
+                        shimmerFrameLayoutStory.showShimmer(false);
+                        shimmerFrameLayoutStory.setVisibility(View.GONE);
+                        storyAdapter.notifyDataSetChanged();
+                    } else {
+                        Log.e("record", "Error getting documents: ", task.getException());
+                    }
+                }).addOnFailureListener(e -> {
+                    Log.e("ERROR-GET-STORY::", e.getMessage());
+                });
     }
 
     private void uploadImages(Uri imageUri, UserModel user) {
@@ -273,7 +298,6 @@ public class SocialFragment extends Fragment implements View.OnClickListener {
         story.setStoryId(storyId);
         story.setStoryBy(user.getId()); // get name and set fix
         story.setStoryAt(new Date().getTime());
-        story.setFullName(user.getFullName());
 
         stories.document(storyId).set(story).addOnSuccessListener(unused -> {
             Toast.makeText(getContext(), "Tạo thành công", Toast.LENGTH_SHORT).show();
