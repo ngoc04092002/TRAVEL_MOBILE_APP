@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.travel_mobile_app.Adapter.FollowAdapter;
 import com.example.travel_mobile_app.R;
@@ -20,6 +21,8 @@ import com.example.travel_mobile_app.dto.FollowDTO;
 import com.example.travel_mobile_app.models.UserModel;
 import com.github.ybq.android.spinkit.sprite.Sprite;
 import com.github.ybq.android.spinkit.style.Circle;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -33,7 +36,6 @@ public class FriendFollowerFragment extends Fragment {
     ArrayList<FollowDTO> list;
 
     private FirebaseFirestore db;
-
     FragmentFriendFollowerBinding binding;
     public FriendFollowerFragment() {
         // Required empty public constructor
@@ -66,15 +68,13 @@ public class FriendFollowerFragment extends Fragment {
     }
 
     public void getFollowerData(FollowAdapter followAdapter, String userId) {
-        showProgressBar();
         CollectionReference users = db.collection("users");
-
 
         users.document(userId).get().addOnCompleteListener(task -> {
             if(task.isSuccessful()&& task.getResult()!=null){
+                showProgressBar();
                 UserModel userModel = task.getResult().toObject(UserModel.class);
                 getAllFollowerUser(userModel, users, followAdapter);
-                binding.badRequest.setVisibility(View.GONE);
             }
         }).addOnFailureListener(unused -> {
             binding.badRequest.setVisibility(View.VISIBLE);
@@ -84,15 +84,23 @@ public class FriendFollowerFragment extends Fragment {
     }
 
     private void getAllFollowerUser(UserModel userModel, CollectionReference users, FollowAdapter followAdapter) {
+        if(userModel == null){
+            dismissProgressBar();
+            Toast.makeText(getContext(), "Người dùng không tồn tại!",
+                           Toast.LENGTH_SHORT).show();
+            //not found
+            return;
+        }
+
         if (userModel != null && userModel.getFollowing() != null) {
-            users.whereIn("following", userModel.getFollowing())
+            users.whereNotIn("id", userModel.getFollowing())
                  .get()
                  .addOnCompleteListener(task -> {
                      if (task.isSuccessful()) {
                          for (QueryDocumentSnapshot document : task.getResult()) {
                              UserModel model = document.toObject(UserModel.class);
                              if (model.getFollowers() != null) {
-                                 list.add(new FollowDTO(model.getAvatarURL(), model.getUsername(), model.getFollowers().size()));
+                                 list.add(new FollowDTO(model.getAvatarURL(), model.getFullName(), model.getFollowers().size()));
                              }
                          }
                          binding.badRequest.setVisibility(View.GONE);

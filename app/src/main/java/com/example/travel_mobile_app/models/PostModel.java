@@ -2,10 +2,11 @@ package com.example.travel_mobile_app.models;
 
 import java.util.List;
 
-public class PostModel {
+public class PostModel implements Cloneable{
     private String postId;
     private String postImage;
     private String postedBy;
+    private String fullname;
     private String postDescription;
     private long postedAt;
 
@@ -28,17 +29,12 @@ public class PostModel {
     public PostModel() {
     }
 
-    public PostModel(String postId, String postImage, String postedBy, String postDescription, long postedAt, List<String> likes, List<String> save, String shareBy, Boolean isShare, List<CommentModel> comments) {
-        this.postId = postId;
-        this.postImage = postImage;
-        this.postedBy = postedBy;
-        this.postDescription = postDescription;
-        this.postedAt = postedAt;
-        this.likes = likes;
-        this.save = save;
-        this.shareBy = shareBy;
-        this.isShare = isShare;
-        this.comments = comments;
+    public String getFullname() {
+        return fullname;
+    }
+
+    public void setFullname(String fullname) {
+        this.fullname = fullname;
     }
 
     public long getShareAt() {
@@ -129,6 +125,10 @@ public class PostModel {
         this.comments = comments;
     }
 
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
     @Override
     public String toString() {
         return "PostModel{" +

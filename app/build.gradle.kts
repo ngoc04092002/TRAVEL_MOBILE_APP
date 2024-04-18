@@ -64,6 +64,9 @@ dependencies {
     implementation("com.github.ybq:Android-SpinKit:1.4.0")
     implementation ("com.github.MikeOrtiz:TouchImageView:1.4.1")
     implementation("com.squareup.okhttp3:okhttp:4.10.0")
+    // https://mvnrepository.com/artifact/com.google.code.gson/gson
+    implementation("com.google.code.gson:gson:2.10.1")
+
 
 
     // Import the Firebase BoM

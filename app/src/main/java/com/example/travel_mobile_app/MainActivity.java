@@ -4,22 +4,21 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 
+
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.example.travel_mobile_app.Manager.FirebaseManager;
 import com.example.travel_mobile_app.databinding.ActivityMainBinding;
 import com.example.travel_mobile_app.fragments.AccountFragment;
 import com.example.travel_mobile_app.fragments.NotificationFragment;
 import com.example.travel_mobile_app.fragments.SocialFragment;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.Firebase;
-import com.google.firebase.auth.AuthResult;
+import com.example.travel_mobile_app.models.UserModel;
+import com.example.travel_mobile_app.services.SharedPreferencesManager;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.example.travel_mobile_app.models.NotificationModel;
-import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -29,18 +28,14 @@ import com.google.firebase.firestore.WriteBatch;
 public class MainActivity extends AppCompatActivity {
 
     ActivityMainBinding binding;
-    FirebaseManager firebaseManager = FirebaseManager.getInstance();
     private FirebaseFirestore db;
-    private FirebaseAuth mAuth;
 
-    private static final String TAG = "Main Activity";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         db = FirebaseFirestore.getInstance();
-        mAuth = FirebaseAuth.getInstance();
 
         //screen change from search screen to social screen
         String previousFragment = getIntent().getStringExtra("previous_fragment");
@@ -70,22 +65,22 @@ public class MainActivity extends AppCompatActivity {
             return true;
         });
 
-        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
-            firebaseManager.loginUser("ngocngu@gmail.com", "1234567890", task -> {
-                if (task.isSuccessful()) {
-                    // Sign in success, update UI with the signed-in user's information
-                    Log.d(TAG, "signInWithEmail:success");
-                    // You can navigate to another activity here if needed
-                    Toast.makeText(MainActivity.this, "Login successful.",
-                            Toast.LENGTH_SHORT).show();
-                } else {
-                    // If sign in fails, display a message to the user.
-                    Log.w(TAG, "signInWithEmail:failure", task.getException());
-                }
-                Toast.makeText(MainActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
-            });
-        }
+        setUserInfoToLocal("qbJW6GgDkqgv6H5tvCPfLty2Bto2");
+
         fetchNotificationBadge();
+    }
+
+    private void setUserInfoToLocal(String uId) {
+        SharedPreferencesManager.init(this);
+        CollectionReference users = db.collection("users");
+        users.document(uId)
+             .get()
+             .addOnCompleteListener(taskUser -> {
+                 if (taskUser.isSuccessful() && taskUser.getResult() != null) {
+                     UserModel userModel = taskUser.getResult().toObject(UserModel.class);
+                     SharedPreferencesManager.writeUserInfo(userModel);
+                 }
+             });
     }
 
     private void updateNotificationCheckOpen() {

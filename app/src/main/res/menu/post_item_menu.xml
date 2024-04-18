@@ -5,5 +5,8 @@
         android:title="Lưu" />
     <item
         android:id="@+id/block_post"
-        android:title="Chặn theo dõi" />
+        android:title="Chặn bài viết" />
+    <item
+        android:id="@+id/del_post"
+        android:title="Xóa bài viết" />
 </menu>

@@ -53,6 +53,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         super.onNewToken(token);
         this.token = token;
         Log.d("TOKEN::", token);
+        SharedPreferencesManager.init(getApplicationContext());
         String oldToken = SharedPreferencesManager.readDeviceToken();
         if (token.equals(oldToken)) {
             return;
@@ -60,7 +61,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         String userId = "I2cG4PNtPmSCnPSS0BQib3rRxxl2";
 
         //remove old token
-        removeToken(token, userId);
+//        removeToken(token, userId);
 
         //fix user id
         UserToken userToken = new UserToken(userId, token, new Date().getTime());

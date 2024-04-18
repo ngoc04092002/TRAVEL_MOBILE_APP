@@ -6,9 +6,18 @@ import java.util.ArrayList;
 public class StoryModel {
    private String storyId;
    private String storyBy;
+   private String fullName;
    private long storyAt;
    private String uri;
    private ArrayList<UserStory> userStories;
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
 
     public StoryModel() {
     }

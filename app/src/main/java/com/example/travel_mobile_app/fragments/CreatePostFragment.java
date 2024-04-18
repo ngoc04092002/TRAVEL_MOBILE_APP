@@ -24,6 +24,8 @@ import android.widget.VideoView;
 
 import com.example.travel_mobile_app.R;
 import com.example.travel_mobile_app.models.PostModel;
+import com.example.travel_mobile_app.models.UserModel;
+import com.example.travel_mobile_app.services.SharedPreferencesManager;
 import com.github.dhaval2404.imagepicker.ImagePicker;
 import com.github.ybq.android.spinkit.sprite.Sprite;
 import com.github.ybq.android.spinkit.style.WanderingCubes;
@@ -49,9 +51,7 @@ public class CreatePostFragment extends Fragment implements View.OnClickListener
     private FirebaseStorage storage;
     private MaterialButton btnCreatePost;
     private EditText des;
-    FirebaseAuth mAuth;
     private FirebaseFirestore db;
-
     ProgressBar progressBar;
     LinearLayout backdrop;
 
@@ -62,7 +62,6 @@ public class CreatePostFragment extends Fragment implements View.OnClickListener
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mAuth = FirebaseAuth.getInstance();
         storage = FirebaseStorage.getInstance();
         db = FirebaseFirestore.getInstance();
     }
@@ -109,11 +108,12 @@ public class CreatePostFragment extends Fragment implements View.OnClickListener
             startActivityForResult(intent, 1);
 
         } else if (v.getId() == R.id.btn_create_post) {
-            String userId = "8c89d98007c54f34b44f2f619a8684b3";
+            UserModel user = SharedPreferencesManager.readUserInfo();
+
             final StorageReference reference = storage.getReference().child("posts")
-                                                      .child(userId)
+                                                      .child(user.getId())
                                                       .child(new Date().getTime() + "");
-            createNewPost(reference, userId);
+            createNewPost(reference, user);
         }
     }
 
@@ -128,7 +128,11 @@ public class CreatePostFragment extends Fragment implements View.OnClickListener
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == Activity.RESULT_OK) {
             uri = data.getData();
-            String mimeType = getContext().getContentResolver().getType(uri);
+            String mimeType = requireContext().getContentResolver().getType(uri);
+
+            if (mimeType == null) {
+                mimeType = uri.toString();
+            }
 
             if (mimeType.contains("jpeg") || mimeType.contains("jpg") || mimeType.contains("png")) {
                 postimg.setImageURI(uri);
@@ -155,7 +159,7 @@ public class CreatePostFragment extends Fragment implements View.OnClickListener
         }
     }
 
-    private void createNewPost(StorageReference reference, String userId) {
+    private void createNewPost(StorageReference reference, UserModel user) {
         if (des.getText().toString().trim().equals("") && uri == null) {
             Toast.makeText(getContext(), "Lỗi khi tạo", Toast.LENGTH_SHORT).show();
             return;
@@ -167,8 +171,9 @@ public class CreatePostFragment extends Fragment implements View.OnClickListener
         PostModel post = new PostModel();
         post.setPostId(postId);
         post.setPostDescription(des.getText().toString().trim());
-        post.setPostedBy(userId);
+        post.setPostedBy(user.getId());
         post.setPostedAt(new Date().getTime());
+        post.setFullname(user.getFullName());
 
         CollectionReference posts = db.collection("posts");
 

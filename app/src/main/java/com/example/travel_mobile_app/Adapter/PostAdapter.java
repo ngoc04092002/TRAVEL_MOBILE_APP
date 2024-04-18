@@ -12,6 +12,8 @@ import android.net.Uri;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,10 +24,12 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -41,9 +45,14 @@ import com.example.travel_mobile_app.fragments.SocialUserDetailInfoFragment;
 import com.example.travel_mobile_app.models.CommentModel;
 import com.example.travel_mobile_app.models.NotificationModel;
 import com.example.travel_mobile_app.models.PostModel;
+import com.example.travel_mobile_app.models.SaveItemModel;
+import com.example.travel_mobile_app.models.UserModel;
 import com.example.travel_mobile_app.services.MyFirebaseMessagingService;
+import com.example.travel_mobile_app.services.SharedPreferencesManager;
 import com.example.travel_mobile_app.utils.CustomDateTime;
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.button.MaterialButton;
@@ -60,12 +69,13 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.viewHolder> {
 
-    ArrayList<PostModel> list;
+    List<PostModel> list;
     Context context;
 
     FragmentManager fragmentManager;
@@ -73,14 +83,14 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.viewHolder> {
     private FirebaseFirestore db;
     private MaterialButton btnLike, btnComment, btnShare;
 
-    public PostAdapter(ArrayList<PostModel> list, Context context, FragmentManager fragmentManager, Activity activity) {
+    public PostAdapter(List<PostModel> list, Context context, FragmentManager fragmentManager, Activity activity) {
         this.list = list;
         this.context = context;
         this.fragmentManager = fragmentManager;
         this.activity = activity;
     }
 
-    public PostAdapter(ArrayList<PostModel> list, Context context, FragmentManager fragmentManager, Activity activity, FirebaseFirestore db) {
+    public PostAdapter(List<PostModel> list, Context context, FragmentManager fragmentManager, Activity activity, FirebaseFirestore db) {
         this.list = list;
         this.context = context;
         this.fragmentManager = fragmentManager;
@@ -114,9 +124,11 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.viewHolder> {
                  .placeholder(R.drawable.image_empty)
                  .into(holder.binding.postimg);
         }
-
         LinearLayout container = holder.binding.container;
         LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) container.getLayoutParams();
+        UserModel user = SharedPreferencesManager.readUserInfo();
+
+
         if (post.getShare() != null && post.getShare().equals(true)) {
             holder.binding.topbarShare.setVisibility(View.VISIBLE);
             int desiredWidthInDp = 380;
@@ -127,11 +139,13 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.viewHolder> {
             holder.binding.moreShare.setVisibility(View.VISIBLE);
             holder.binding.btnsShare.setVisibility(View.VISIBLE);
             holder.binding.btns.setVisibility(View.GONE);
-            holder.binding.usernameShare.setText(post.getShareBy());
+            setUserName(holder.binding.usernameShare, post.getShareBy());
+
             holder.binding.timestamp.setText(CustomDateTime.formatDate(post.getShareAt()));
             btnLike = holder.binding.likeShare;
             btnComment = holder.binding.commentShare;
             btnShare = holder.binding.shareShare;
+
         } else {
             holder.binding.topbarShare.setVisibility(View.GONE);
             layoutParams.width = LinearLayout.LayoutParams.MATCH_PARENT;
@@ -139,7 +153,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.viewHolder> {
             holder.binding.moreShare.setVisibility(View.GONE);
             holder.binding.btnsShare.setVisibility(View.GONE);
             holder.binding.btns.setVisibility(View.VISIBLE);
-            holder.binding.username.setText(post.getPostedBy());
+            setUserName(holder.binding.username, post.getPostedBy());
             holder.binding.timestamp.setText(CustomDateTime.formatDate(post.getPostedAt()));
             btnLike = holder.binding.like;
             btnComment = holder.binding.comment;
@@ -148,8 +162,10 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.viewHolder> {
         }
         container.setLayoutParams(layoutParams);
 
+
         final boolean[] isLike = {false};
-        getLikeInfo(btnLike, isLike, post.getPostId());
+        getLikeInfo(btnLike, isLike, post.getPostId(), user.getId());
+
         btnLike.setOnClickListener(v -> {
             toggleBtnLike(post, isLike);
         });
@@ -169,7 +185,11 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.viewHolder> {
         }
 
         btnShare.setOnClickListener(v -> {
-            showDialogShare(post);
+            try {
+                showDialogShare(post);
+            } catch (CloneNotSupportedException e) {
+
+            }
         });
 
 //        if (post.getShare() == null || post.getShare().size() == 0) {
@@ -180,12 +200,58 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.viewHolder> {
 
 
         //See detail info
-        holder.binding.postUserName.setOnClickListener(v->{
+        holder.binding.postUserName.setOnClickListener(v -> {
             seeInfoDetail(post);
         });
-        holder.binding.postUserNameShare.setOnClickListener(v->{
+        holder.binding.postUserNameShare.setOnClickListener(v -> {
             seeInfoDetail(post);
         });
+
+
+        MaterialToolbar materialToolbar = holder.binding.more;
+        Menu menu = materialToolbar.getMenu();
+        MenuItem selectDeletePost = menu.findItem(R.id.del_post);
+
+        materialToolbar.setOnMenuItemClickListener(item -> {
+            int itemId = item.getItemId();
+            if (itemId == R.id.del_post) {
+                removePost(post);
+            } else if (itemId == R.id.save_post) {
+                savePost(post, user.getId());
+            } else if (itemId == R.id.block_post) {
+
+            }
+            return true;
+        });
+
+        if (user.getId().equals(post.getPostedBy())) {
+            selectDeletePost.setVisible(true);
+        } else {
+            selectDeletePost.setVisible(false);
+        }
+
+        MaterialToolbar materialToolbarShare = holder.binding.moreShare;
+        Menu menuShare = materialToolbarShare.getMenu();
+        MenuItem selectDeletePostShare = menuShare.findItem(R.id.del_post);
+
+        materialToolbarShare.setOnMenuItemClickListener(item -> {
+            int itemId = item.getItemId();
+            if (itemId == R.id.del_post) {
+                removePost(post);
+            } else if (itemId == R.id.save_post) {
+                savePost(post, user.getId());
+            } else if (itemId == R.id.block_post) {
+
+            }
+            return true;
+        });
+
+        if (user.getId().equals(post.getShareBy())) {
+            selectDeletePostShare.setVisible(true);
+        } else {
+            selectDeletePostShare.setVisible(false);
+        }
+
     }
 
     @Override
@@ -209,23 +275,39 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.viewHolder> {
 
     }
 
-    private void seeInfoDetail(PostModel post){
+    private void setUserName(TextView userName, String userId) {
+        CollectionReference users = db.collection("users");
+        users.document(userId)
+             .get()
+             .addOnCompleteListener(taskUser -> {
+                 if (taskUser.isSuccessful() && taskUser.getResult() != null) {
+                     UserModel userModel = taskUser.getResult().toObject(UserModel.class);
+                     if (userModel != null && userModel.getFullName() != null) {
+                         userName.setText(userModel.getFullName());
+                     }
+                 }
+             }).addOnFailureListener(e -> {
+                 System.out.println("ERRORR::" + e.getMessage());
+             });
+    }
+
+    private void seeInfoDetail(PostModel post) {
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.container, new SocialUserDetailInfoFragment(post.getPostedBy()));
+        fragmentTransaction.replace(R.id.container, new SocialUserDetailInfoFragment(post.getFullname()));
         fragmentTransaction.addToBackStack("userDetailInfo_fragment");
         // Commit transaction
         fragmentTransaction.commit();
     }
 
     private void toggleBtnLike(PostModel post, final boolean[] isLike) {
-        //fix 8c89d98007c54f34b44f2f619a8684b3 is userID
+        UserModel user = SharedPreferencesManager.readUserInfo();
         CollectionReference posts = db.collection("posts");
         List<String> likes;
         if (isLike[0]) {
             //pull
             likes = post.getLikes();
             if (likes != null) {
-                likes.remove("8c89d98007c54f34b44f2f619a8684b3");
+                likes.remove(user.getId());
             }
         } else {
             //push
@@ -233,7 +315,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.viewHolder> {
             if (post.getLikes() != null) {
                 likes.addAll(post.getLikes());
             }
-            likes.add("8c89d98007c54f34b44f2f619a8684b3");
+            likes.add(user.getId());
             addNotification(post, "like");
             sendNotification(post, "like");
         }
@@ -245,10 +327,39 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.viewHolder> {
         notifyDataSetChanged();
     }
 
+    private void savePost(PostModel post, String userId) {
+        String savePostId = UUID.randomUUID().toString().replace("-", "");
+        SaveItemModel itemModel = new SaveItemModel(savePostId, post.getPostImage(), post.getPostDescription(), new Date().getTime(), userId, post.getPostId());
+        CollectionReference posts = db.collection("save_posts");
+        posts.document(savePostId)
+             .set(itemModel)
+             .addOnSuccessListener(unused -> {
+                 Toast.makeText(context, "Lưu thành công!", Toast.LENGTH_SHORT).show();
+             })
+             .addOnFailureListener(e -> {
+                 Toast.makeText(context, "Đã có lỗi xảy ra!", Toast.LENGTH_SHORT).show();
+             });
+    }
+
+    private void removePost(PostModel post) {
+        CollectionReference posts = db.collection("posts");
+        posts.document(post.getPostId())
+             .delete()
+             .addOnSuccessListener(unused -> {
+                 Toast.makeText(context, "Xóa thành công!", Toast.LENGTH_SHORT).show();
+                 list = list.stream().filter(item -> !item.getPostId().equals(post.getPostId())).collect(Collectors.toList());
+                 notifyDataSetChanged();
+             })
+             .addOnFailureListener(e -> {
+                 Toast.makeText(context, "Đã có lỗi xảy ra!", Toast.LENGTH_SHORT).show();
+             });
+    }
+
     private void addNotification(PostModel post, String type) {
+        UserModel user = SharedPreferencesManager.readUserInfo();
         //fix 8c89d98007c54f34b44f2f619a8684b3 is userID
         NotificationModel notification = new NotificationModel();
-        notification.setNotificationBy("8c89d98007c54f34b44f2f619a8684b3");
+        notification.setNotificationBy(user.getFullName());
         notification.setNotificationAt(new Date().getTime());
         notification.setPostId(post.getPostId());
         notification.setPostedBy(post.getPostedBy());
@@ -259,15 +370,14 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.viewHolder> {
     }
 
     private void sendNotification(PostModel post, String type) {
-        //fix userid
-        String userId = "8c89d98007c54f34b44f2f619a8684b3";
+        UserModel user = SharedPreferencesManager.readUserInfo();
         HashMap<String, String> conent = new HashMap<>();
         if (type.equals("like")) {
             conent.put("0", "Bài đăng");
-            conent.put("1", userId + " Thích bài đăng của bạn");
+            conent.put("1", user.getFullName() + " Thích bài đăng của bạn");
         } else if (type.equals("comment")) {
             conent.put("0", "Bài đăng");
-            conent.put("1", userId + " Bình luận bài đăng của bạn");
+            conent.put("1", user.getFullName() + " Bình luận bài đăng của bạn");
         }
 
         FirebaseFirestore.getInstance().collection("tokens")
@@ -298,10 +408,12 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.viewHolder> {
         }).start();
     }
 
-    private void getLikeInfo(MaterialButton button, final boolean[] isLike, String postId) {
+    private void getLikeInfo(MaterialButton button, final boolean[] isLike, String postId, String userId) {
         //fix 8c89d98007c54f34b44f2f619a8684b3 is userID
         CollectionReference posts = db.collection("posts");
-        posts.whereArrayContains("likes", "8c89d98007c54f34b44f2f619a8684b3").whereEqualTo("postId", postId)
+
+        posts.whereEqualTo("postId", postId)
+             .whereArrayContains("likes", userId)
              .get().addOnSuccessListener(documentSnapshots -> {
                  if (documentSnapshots.getDocuments().size() != 0) {
                      isLike[0] = true;
@@ -321,22 +433,31 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.viewHolder> {
 
     }
 
-    private void showDialogShare(PostModel post) {
+    private void showDialogShare(PostModel post) throws CloneNotSupportedException {
         final BottomSheetDialog dialog = new BottomSheetDialog(context);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.dialog_share);
-        PostModel newPost = post;
+
+        PostModel newPost = (PostModel) post.clone();
+
+
+        UserModel user = SharedPreferencesManager.readUserInfo();
+
         String postId = UUID.randomUUID().toString().replace("-", "");
         CollectionReference posts = db.collection("posts");
         dialog.findViewById(R.id.btn_share_internal).setOnClickListener(v -> {
+            newPost.setPostId(postId);
             newPost.setShare(true);
-            newPost.setShareBy("8c89d98007c54f34b44f2f619a8684b3");
+            newPost.setShareBy(user.getId());
             newPost.setShareAt(new Date().getTime());
+            newPost.setPostedAt(new Date().getTime());
             newPost.setOriginPostId(post.getPostId());
+            newPost.setFullname(user.getId());
             posts.document(postId).set(newPost)
                  .addOnSuccessListener(unused -> {
                      Toast.makeText(context, "Chia sẻ thành công", Toast.LENGTH_SHORT).show();
                      dialog.dismiss();
+                     notifyDataSetChanged();
                  }).addOnFailureListener(e -> {
                      Log.e("ERROR", "[ERROR-CREATE-POST]", e);
                      Toast.makeText(context, "Đã có lỗi xảy ra.", Toast.LENGTH_SHORT).show();
