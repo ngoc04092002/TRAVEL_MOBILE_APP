@@ -44,7 +44,13 @@ public class MainActivity extends AppCompatActivity {
             binding.readableBottomBar.setSelectedItemId(R.id.insta);
             transaction.replace(R.id.container, new SocialFragment());
             transaction.commit();
-            return;
+        }
+
+        if (previousFragment != null && previousFragment.equals("notification")) {
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            binding.readableBottomBar.setSelectedItemId(R.id.bell);
+            transaction.replace(R.id.container, new NotificationFragment());
+            transaction.commit();
         }
 
         binding.readableBottomBar.setOnItemSelectedListener(item -> {
@@ -84,9 +90,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updateNotificationCheckOpen() {
-        //fix I2cG4PNtPmSCnPSS0BQib3rRxxl2 userId
+        UserModel user = SharedPreferencesManager.readUserInfo();
+
         db.collection("notifications")
-          .whereEqualTo("postedBy", "I2cG4PNtPmSCnPSS0BQib3rRxxl2")
+          .whereEqualTo("postedBy", user.getId())
           .whereEqualTo("checkOpen", false)
           .get().addOnCompleteListener(task -> {
               if (task.isSuccessful()) {
@@ -110,9 +117,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void fetchNotificationBadge() {
-        //fix I2cG4PNtPmSCnPSS0BQib3rRxxl2 userId
+        UserModel user = SharedPreferencesManager.readUserInfo();
         db.collection("notifications")
-          .whereEqualTo("postedBy", "I2cG4PNtPmSCnPSS0BQib3rRxxl2")
+          .whereEqualTo("postedBy", user.getId())
           .whereEqualTo("checkOpen", false)
           .get().addOnCompleteListener(task -> {
               if (task.isSuccessful()) {

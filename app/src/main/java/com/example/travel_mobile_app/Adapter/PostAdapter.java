@@ -134,7 +134,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.viewHolder> {
             holder.binding.moreShare.setVisibility(View.VISIBLE);
             holder.binding.btnsShare.setVisibility(View.VISIBLE);
             holder.binding.btns.setVisibility(View.GONE);
-            setUserName(holder.binding.usernameShare, post.getShareBy(), holder.binding.profileImage);
+            setUserName(holder.binding.usernameShare, post.getShareBy(), holder.binding.profileImageShare);
 
             holder.binding.timestamp.setText(CustomDateTime.formatDate(post.getShareAt()));
             btnLike = holder.binding.likeShare;
@@ -147,7 +147,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.viewHolder> {
             holder.binding.moreShare.setVisibility(View.GONE);
             holder.binding.btnsShare.setVisibility(View.GONE);
             holder.binding.btns.setVisibility(View.VISIBLE);
-            setUserName(holder.binding.username, post.getPostedBy(), holder.binding.profileImageShare);
+            setUserName(holder.binding.username, post.getPostedBy(), holder.binding.profileImage);
             holder.binding.timestamp.setText(CustomDateTime.formatDate(post.getPostedAt()));
             btnLike = holder.binding.like;
             btnComment = holder.binding.comment;
@@ -383,11 +383,14 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.viewHolder> {
 
     private void addNotification(PostModel post, String type) {
         UserModel user = SharedPreferencesManager.readUserInfo();
-        //fix 8c89d98007c54f34b44f2f619a8684b3 is userID
+        String notificationId = UUID.randomUUID().toString().replace("-", "");
+
         NotificationModel notification = new NotificationModel();
+        notification.setNotificationId(notificationId);
         notification.setNotificationBy(user.getFullName());
         notification.setNotificationAt(new Date().getTime());
         notification.setPostId(post.getPostId());
+        notification.setPostedBy(post.getPostedBy());
         notification.setType(type);
 
         CollectionReference notifications = db.collection("notifications");

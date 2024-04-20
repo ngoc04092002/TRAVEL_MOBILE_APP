@@ -416,11 +416,15 @@ public class SocialUserDetailInfoAdapter {
 
     private void addNotification(PostModel post, String type) {
         UserModel user = SharedPreferencesManager.readUserInfo();
-        //fix 8c89d98007c54f34b44f2f619a8684b3 is userID
+        String notificationId = UUID.randomUUID().toString().replace("-", "");
+
+
         NotificationModel notification = new NotificationModel();
+        notification.setNotificationId(notificationId);
         notification.setNotificationBy(user.getFullName());
         notification.setNotificationAt(new Date().getTime());
         notification.setPostId(post.getPostId());
+        notification.setPostedBy(post.getPostedBy());
         notification.setType(type);
 
         CollectionReference notifications = db.collection("notifications");

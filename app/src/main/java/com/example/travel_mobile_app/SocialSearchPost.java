@@ -51,12 +51,13 @@ public class SocialSearchPost extends AppCompatActivity implements View.OnClickL
 
         posts = new ArrayList<>();
         disposable = getDisposable(binding.search);
-        postAdapter = new SearchPostItemAdapter(posts, this, "search_post",this);
+        postAdapter = new SearchPostItemAdapter(posts, this, "search_post", this);
         binding.searchPostRv.setHasFixedSize(true);
         binding.searchPostRv.setLayoutManager(new StaggeredGridLayoutManager(1, LinearLayoutManager.VERTICAL));
         binding.searchPostRv.setAdapter(postAdapter);
 
         binding.searchPostBtnBack.setOnClickListener(this);
+        String type = getIntent().getStringExtra("search_activity");
 
         LinearLayout searchHistory = binding.searchHistory;
         Set<String> existsHistory = SharedPreferencesManager.readPostSearchHistory();
@@ -66,10 +67,10 @@ public class SocialSearchPost extends AppCompatActivity implements View.OnClickL
             View subLayout = post.inflate(R.layout.post_search_history, null);
             TextView content = subLayout.findViewById(R.id.content);
             content.setText(h);
-            content.setOnClickListener(v->{
-                binding.search.setQuery(h,true);
+            content.setOnClickListener(v -> {
+                binding.search.setQuery(h, true);
             });
-            subLayout.findViewById(R.id.btn_del_history).setOnClickListener(v->{
+            subLayout.findViewById(R.id.btn_del_history).setOnClickListener(v -> {
                 existsHistory.remove(h);
                 searchHistory.removeView(subLayout);
             });
@@ -84,7 +85,14 @@ public class SocialSearchPost extends AppCompatActivity implements View.OnClickL
     public void onClick(View v) {
         if (v.getId() == R.id.searchPost_btnBack) {
             Intent intent = new Intent(this, MainActivity.class);
-            intent.putExtra("previous_fragment", "social_screen");
+
+            String type = getIntent().getStringExtra("search_activity");
+            if (type != null && type.equals("notification")) {
+                intent.putExtra("previous_fragment", "notification");
+            } else {
+                intent.putExtra("previous_fragment", "social_screen");
+            }
+
             startActivity(intent);
             overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
         }
@@ -129,10 +137,10 @@ public class SocialSearchPost extends AppCompatActivity implements View.OnClickL
                                              View subLayout = post.inflate(R.layout.post_search_history, null);
                                              TextView content = subLayout.findViewById(R.id.content);
                                              content.setText(h);
-                                             content.setOnClickListener(v->{
-                                                 binding.search.setQuery(h,true);
+                                             content.setOnClickListener(v -> {
+                                                 binding.search.setQuery(h, true);
                                              });
-                                             subLayout.findViewById(R.id.btn_del_history).setOnClickListener(v->{
+                                             subLayout.findViewById(R.id.btn_del_history).setOnClickListener(v -> {
                                                  existsHistory.remove(h);
                                                  searchHistory.removeView(subLayout);
                                              });
