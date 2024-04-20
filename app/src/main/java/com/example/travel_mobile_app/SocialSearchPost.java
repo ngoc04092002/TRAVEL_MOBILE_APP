@@ -2,24 +2,29 @@ package com.example.travel_mobile_app;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
-import com.example.travel_mobile_app.Adapter.PostAdapter;
+import com.example.travel_mobile_app.Adapter.SearchPostItemAdapter;
 import com.example.travel_mobile_app.databinding.ActivitySocialSearchPostBinding;
 import com.example.travel_mobile_app.models.PostModel;
+import com.example.travel_mobile_app.services.SharedPreferencesManager;
 import com.github.ybq.android.spinkit.sprite.Sprite;
 import com.github.ybq.android.spinkit.style.Circle;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
@@ -31,10 +36,10 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 public class SocialSearchPost extends AppCompatActivity implements View.OnClickListener {
 
     ActivitySocialSearchPostBinding binding;
-    private ArrayList<PostModel> posts;
+    private List<PostModel> posts;
     private FirebaseFirestore db;
     private Disposable disposable;
-    private PostAdapter postAdapter;
+    private SearchPostItemAdapter postAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,13 +51,33 @@ public class SocialSearchPost extends AppCompatActivity implements View.OnClickL
 
         posts = new ArrayList<>();
         disposable = getDisposable(binding.search);
-
-        postAdapter = new PostAdapter(posts, this, this.getSupportFragmentManager(), this, db);
+        postAdapter = new SearchPostItemAdapter(posts, this, "search_post",this);
         binding.searchPostRv.setHasFixedSize(true);
         binding.searchPostRv.setLayoutManager(new StaggeredGridLayoutManager(1, LinearLayoutManager.VERTICAL));
         binding.searchPostRv.setAdapter(postAdapter);
 
         binding.searchPostBtnBack.setOnClickListener(this);
+
+        LinearLayout searchHistory = binding.searchHistory;
+        Set<String> existsHistory = SharedPreferencesManager.readPostSearchHistory();
+        searchHistory.removeAllViews();
+        for (String h : existsHistory) {
+            LayoutInflater post = LayoutInflater.from(this);
+            View subLayout = post.inflate(R.layout.post_search_history, null);
+            TextView content = subLayout.findViewById(R.id.content);
+            content.setText(h);
+            content.setOnClickListener(v->{
+                binding.search.setQuery(h,true);
+            });
+            subLayout.findViewById(R.id.btn_del_history).setOnClickListener(v->{
+                existsHistory.remove(h);
+                searchHistory.removeView(subLayout);
+            });
+
+            searchHistory.addView(subLayout);
+        }
+
+        SharedPreferencesManager.init(this);
     }
 
     @Override
@@ -64,6 +89,7 @@ public class SocialSearchPost extends AppCompatActivity implements View.OnClickL
             overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
         }
     }
+
 
     //debounce
     private Disposable getDisposable(SearchView search) {
@@ -87,14 +113,37 @@ public class SocialSearchPost extends AppCompatActivity implements View.OnClickL
                          .observeOn(AndroidSchedulers.mainThread())
                          .subscribe(
                                  newText -> {
+                                     LinearLayout searchHistory = binding.searchHistory;
+                                     Set<String> existsHistory = SharedPreferencesManager.readPostSearchHistory();
+                                     searchHistory.removeAllViews();
                                      if (newText.toString().trim().equals("")) {
                                          binding.notFound.setVisibility(View.GONE);
-                                         if(posts.size()!=0){
+                                         if (posts.size() != 0) {
                                              posts.clear();
                                              postAdapter.notifyDataSetChanged();
                                          }
+
+                                         searchHistory.setVisibility(View.VISIBLE);
+                                         for (String h : existsHistory) {
+                                             LayoutInflater post = LayoutInflater.from(this);
+                                             View subLayout = post.inflate(R.layout.post_search_history, null);
+                                             TextView content = subLayout.findViewById(R.id.content);
+                                             content.setText(h);
+                                             content.setOnClickListener(v->{
+                                                 binding.search.setQuery(h,true);
+                                             });
+                                             subLayout.findViewById(R.id.btn_del_history).setOnClickListener(v->{
+                                                 existsHistory.remove(h);
+                                                 searchHistory.removeView(subLayout);
+                                             });
+                                             searchHistory.addView(subLayout);
+                                         }
                                          return;
                                      }
+                                     searchHistory.setVisibility(View.GONE);
+                                     existsHistory.add(newText.toString().trim());
+
+                                     SharedPreferencesManager.writePostSearchHistory(existsHistory);
                                      refreshPosts(newText.toString().trim());
                                  },
                                  error -> {

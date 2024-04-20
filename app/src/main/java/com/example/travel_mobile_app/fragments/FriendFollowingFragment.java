@@ -2,6 +2,7 @@ package com.example.travel_mobile_app.fragments;
 
 import android.os.Bundle;
 
+import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -19,6 +20,7 @@ import com.example.travel_mobile_app.R;
 import com.example.travel_mobile_app.databinding.FragmentFriendFollowingBinding;
 import com.example.travel_mobile_app.dto.FollowDTO;
 import com.example.travel_mobile_app.models.UserModel;
+import com.example.travel_mobile_app.services.SharedPreferencesManager;
 import com.github.ybq.android.spinkit.sprite.Sprite;
 import com.github.ybq.android.spinkit.style.Circle;
 import com.google.firebase.auth.FirebaseAuth;
@@ -26,15 +28,21 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.auth.User;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class FriendFollowingFragment extends Fragment {
 
     private RecyclerView followingRv;
-    private ArrayList<FollowDTO> list;
+    private List<FollowDTO> list;
     private FirebaseFirestore db;
     FragmentFriendFollowingBinding binding;
+    private String searchText = "";
+    private SearchView searchView;
+
 
     public FriendFollowingFragment() {
         // Required empty public constructor
@@ -53,18 +61,20 @@ public class FriendFollowingFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_friend_following, container, false);
         binding = FragmentFriendFollowingBinding.bind(view);
         followingRv = view.findViewById(R.id.followingRv);
-        String userId = "qbJW6GgDkqgv6H5tvCPfLty2Bto2";
+        UserModel user = SharedPreferencesManager.readUserInfo();
+
+        System.out.println("searchText::" + searchText);
 
         list = new ArrayList<>();
-        FollowAdapter followAdapter = new FollowAdapter(list, getContext(), true);
+        final boolean[] isFollow = {true};
+        FollowAdapter followAdapter = new FollowAdapter(list, getContext(), isFollow, db);
         followingRv.setHasFixedSize(true);
         followingRv.setLayoutManager(new StaggeredGridLayoutManager(1, LinearLayoutManager.VERTICAL));
         followingRv.setAdapter(followAdapter);
-        getFollowingData(followAdapter, userId);
+        getFollowingData(followAdapter, user.getId());
 
         return view;
     }
-
 
     public void getFollowingData(FollowAdapter followAdapter, String userId) {
         CollectionReference users = db.collection("users");
@@ -81,7 +91,7 @@ public class FriendFollowingFragment extends Fragment {
     }
 
     private void getAllFollowingUser(UserModel userModel, CollectionReference users, FollowAdapter followAdapter) {
-        if(userModel == null){
+        if (userModel == null) {
             dismissProgressBar();
             Toast.makeText(getContext(), "Người dùng không tồn tại!",
                            Toast.LENGTH_SHORT).show();
@@ -97,7 +107,7 @@ public class FriendFollowingFragment extends Fragment {
                          for (QueryDocumentSnapshot document : task.getResult()) {
                              UserModel model = document.toObject(UserModel.class);
                              if (model.getFollowers() != null) {
-                                 list.add(new FollowDTO(model.getAvatarURL(), model.getFullName(), model.getFollowers().size()));
+                                 list.add(new FollowDTO(model.getId(), model.getAvatarURL(), model.getFullName(), model.getFollowers().size()));
                              }
                          }
                          binding.badRequest.setVisibility(View.GONE);
@@ -106,6 +116,9 @@ public class FriendFollowingFragment extends Fragment {
                          Log.d("ERROR::", "Error getting documents: ", task.getException());
                      }
                      dismissProgressBar();
+                     if (!this.searchText.equals("")) {
+                         list = list.stream().filter(item -> item.getUsername().contains(this.searchText)).collect(Collectors.toList());
+                     }
                      followAdapter.notifyDataSetChanged();
                  }).addOnFailureListener(
                          unused ->

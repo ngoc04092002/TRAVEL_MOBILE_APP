@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    >
+    <TextView
+        android:id="@+id/content"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/_40mdp"
+        android:layout_weight="1"
+        android:text="sss"
+        android:textSize="@dimen/_16font_mdp"
+        android:maxLines="2"
+        android:ellipsize="end"
+        android:paddingLeft="@dimen/_10mdp"
+        android:gravity="center_vertical"
+        />
+    <ImageButton
+        android:id="@+id/btn_del_history"
+        android:layout_width="@dimen/_40mdp"
+        android:layout_height="@dimen/_40mdp"
+        android:background="@color/white"
+        android:clickable="true"
+        android:padding="@dimen/_20mdp"
+        android:src="@drawable/close_black"
+        />
+</LinearLayout>

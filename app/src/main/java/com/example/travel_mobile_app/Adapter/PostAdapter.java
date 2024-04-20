@@ -50,6 +50,9 @@ import com.example.travel_mobile_app.models.UserModel;
 import com.example.travel_mobile_app.services.MyFirebaseMessagingService;
 import com.example.travel_mobile_app.services.SharedPreferencesManager;
 import com.example.travel_mobile_app.utils.CustomDateTime;
+import com.google.android.exoplayer2.ExoPlayer;
+import com.google.android.exoplayer2.MediaItem;
+import com.google.android.exoplayer2.ui.StyledPlayerView;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.appbar.MaterialToolbar;
@@ -207,6 +210,15 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.viewHolder> {
             seeInfoDetail(post);
         });
 
+        holder.binding.postimg.setOnClickListener(v -> {
+            String url = post.getPostImage();
+            if (url != null && url.contains("video")) {
+                showCenterDialog(post.getPostImage());
+            } else {
+                showCenterDialog(holder.binding.postimg.getDrawable());
+            }
+        });
+
 
         MaterialToolbar materialToolbar = holder.binding.more;
         Menu menu = materialToolbar.getMenu();
@@ -252,6 +264,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.viewHolder> {
             selectDeletePostShare.setVisible(false);
         }
 
+
     }
 
     @Override
@@ -268,9 +281,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.viewHolder> {
             binding = DashboardRvBinding.bind(itemView);
             this.fragmentManager = fragmentManager;
 
-            binding.postimg.setOnClickListener(v -> {
-                showCenterDialog(binding.postimg.getDrawable());
-            });
+
         }
 
     }
@@ -293,7 +304,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.viewHolder> {
 
     private void seeInfoDetail(PostModel post) {
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.container, new SocialUserDetailInfoFragment(post.getFullname()));
+        fragmentTransaction.replace(R.id.container, new SocialUserDetailInfoFragment(post.getPostedBy()));
         fragmentTransaction.addToBackStack("userDetailInfo_fragment");
         // Commit transaction
         fragmentTransaction.commit();
@@ -362,7 +373,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.viewHolder> {
         notification.setNotificationBy(user.getFullName());
         notification.setNotificationAt(new Date().getTime());
         notification.setPostId(post.getPostId());
-        notification.setPostedBy(post.getPostedBy());
         notification.setType(type);
 
         CollectionReference notifications = db.collection("notifications");
@@ -513,13 +523,14 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.viewHolder> {
 
         //fix 8c89d98007c54f34b44f2f619a8684b3 is userID and handle date
         CollectionReference posts = db.collection("posts");
+        UserModel user = SharedPreferencesManager.readUserInfo();
 
         btnSend.setOnClickListener(v -> {
             String msg = commentEditText.getText().toString().trim();
             if (msg.equals("")) return;
             String commentId = UUID.randomUUID().toString().replace("-", "");
 
-            CommentModel comment = new CommentModel(commentId, R.drawable.avatar_men, "8c89d98007c54f34b44f2f619a8684b3", msg, new Date().getTime());
+            CommentModel comment = new CommentModel(commentId, R.drawable.avatar_men, user.getId(), msg, new Date().getTime());
             List<CommentModel> commentModelList = new ArrayList<>();
             if (post.getComments() != null) {
                 commentModelList.addAll(post.getComments());
@@ -585,6 +596,40 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.viewHolder> {
             btnLike.setIconResource(R.drawable.favorite);
         }
         btnLike.setText(String.valueOf(cnt));
+    }
+
+
+    ExoPlayer exoPlayer;
+
+    private void showCenterDialog(String uri) {
+        final Dialog dialog = new Dialog(activity);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.centersheet_video);
+
+        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.getWindow().setGravity(Gravity.BOTTOM);
+
+        StyledPlayerView playerView = dialog.findViewById(R.id.videoView_dialog);
+        exoPlayer = new ExoPlayer.Builder(dialog.getContext()).build();
+        playerView.setPlayer(exoPlayer);
+
+        MediaItem mediaItem = MediaItem.fromUri(uri);
+        exoPlayer.setMediaItem(mediaItem);
+        exoPlayer.prepare();
+        exoPlayer.setPlayWhenReady(true);
+
+        ImageButton btnCloseDialog = dialog.findViewById(R.id.close_sheet);
+        btnCloseDialog.setOnClickListener(v -> {
+            if(exoPlayer!=null){
+                exoPlayer.setPlayWhenReady(false);
+                exoPlayer.release();
+            }
+            exoPlayer = null;
+            dialog.dismiss();
+        });
+
+        dialog.show();
     }
 
     private ImageView imageView;

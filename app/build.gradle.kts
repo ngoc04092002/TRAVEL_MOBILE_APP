@@ -66,7 +66,7 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp:4.10.0")
     // https://mvnrepository.com/artifact/com.google.code.gson/gson
     implementation("com.google.code.gson:gson:2.10.1")
-
+    implementation("com.google.android.exoplayer:exoplayer:2.19.1")
 
 
     // Import the Firebase BoM

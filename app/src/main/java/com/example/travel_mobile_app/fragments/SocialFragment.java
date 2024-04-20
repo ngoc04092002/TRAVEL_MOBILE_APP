@@ -66,8 +66,8 @@ import java.util.UUID;
 public class SocialFragment extends Fragment implements View.OnClickListener {
 
     private RecyclerView storyRv, dashboardRv;
-    private ArrayList<StoryModel> list = new ArrayList<>();
-    private ArrayList<PostModel> postList = new ArrayList<>();
+    private ArrayList<StoryModel> list;
+    private ArrayList<PostModel> postList;
     private ImageButton btnFriends, btnAdd, btnSearch;
     private FirebaseFirestore db;
     private FirebaseStorage storage;
@@ -111,12 +111,14 @@ public class SocialFragment extends Fragment implements View.OnClickListener {
         progressBar = view.findViewById(R.id.spin_kit);
         backdrop = view.findViewById(R.id.backdrop);
 
+        list = new ArrayList<>();
         storyRv = view.findViewById(R.id.storyRv);
         storyAdapter = new StoryAdapter(list, getContext());
         storyRv.setHasFixedSize(true);
         storyRv.setLayoutManager(new StaggeredGridLayoutManager(1, LinearLayoutManager.HORIZONTAL));
 
 
+        postList = new ArrayList<>();
         dashboardRv = view.findViewById(R.id.dashboardRv);
         PostAdapter postAdapter = new PostAdapter(postList, getContext(), requireActivity().getSupportFragmentManager(), getActivity(), db);
         dashboardRv.setHasFixedSize(true);
@@ -167,7 +169,7 @@ public class SocialFragment extends Fragment implements View.OnClickListener {
         } else if (v.getId() == R.id.btnSearch) {
             Intent i = new Intent(getActivity(), SocialSearchPost.class);
             startActivity(i);
-            getActivity().overridePendingTransition(0, 0);
+            getActivity().overridePendingTransition(0,android.R.anim.slide_out_right);
         } else if (v.getId() == R.id.createStory) {
             ImagePicker.with(this)
                        .galleryOnly()
@@ -238,7 +240,6 @@ public class SocialFragment extends Fragment implements View.OnClickListener {
 
     private void getAllUserStory(UserModel user, CollectionReference storiesRef) {
         storiesRef
-                .orderBy("storyAt", Query.Direction.DESCENDING)
                 .whereEqualTo("storyBy", user.getId())
                 .get()
                 .addOnCompleteListener(task -> {

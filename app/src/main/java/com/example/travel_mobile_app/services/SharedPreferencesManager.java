@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import com.example.travel_mobile_app.models.UserModel;
 import com.google.gson.Gson;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.annotation.Nullable;
@@ -52,13 +53,19 @@ public class SharedPreferencesManager {
 
     public static final String FCM_CHANNEL_LIST = "FCM_CHANNEL_LIST";
 
-    public static @Nullable String[] readChannelList() {
-        return (String[]) sharedPref.getStringSet(FCM_CHANNEL_LIST, null).toArray();
+    public static Set<String> readPostSearchHistory() {
+        Set<String> history = sharedPref.getStringSet(FCM_CHANNEL_LIST, null);
+        if (history == null) {
+            return new HashSet<>();
+        } else {
+            return history;
+        }
     }
 
-    public static void writeChannelList(Set<String> value) {
+    public static void writePostSearchHistory(Set<String> value) {
         SharedPreferences.Editor prefsEditor = sharedPref.edit();
         prefsEditor.putStringSet(FCM_CHANNEL_LIST, value);
         prefsEditor.apply();
+        System.out.println("SUCCESS");
     }
 }

@@ -83,37 +83,30 @@ public class SocialUserDetailInfoFragment extends Fragment implements View.OnCli
 
         CollectionReference posts = db.collection("posts");
         posts.whereEqualTo("postedBy", userId)
-                     .
+             .whereNotEqualTo("share", true)
+             .get()
+             .addOnCompleteListener(task ->
+                                    {
+                                        if (task.isSuccessful()) {
+                                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                                PostModel model = document.toObject(PostModel.class);
+                                                postList.add(model);
+                                            }
 
-             whereNotEqualTo("share", true)
-                     .
+                                            LinearLayout userInfos = view.findViewById(R.id.uInfo_container);
 
-             get()
-                     .
+                                            for (PostModel model : postList) {
+                                                LayoutInflater post = LayoutInflater.from(getContext());
+                                                View subLayout = post.inflate(R.layout.dashboard_rv, null);
+                                                SocialUserDetailInfoAdapter socialUserDetailInfoAdapter = new SocialUserDetailInfoAdapter(model, getContext(), db);
+                                                View viewSubLayout = socialUserDetailInfoAdapter.onCreateView(subLayout, model);
 
-             addOnCompleteListener(task ->
+                                                userInfos.addView(viewSubLayout);
+                                            }
+                                        }
+                                        dismissProgressBar();
 
-                                   {
-                                       if (task.isSuccessful()) {
-                                           for (QueryDocumentSnapshot document : task.getResult()) {
-                                               PostModel model = document.toObject(PostModel.class);
-                                               postList.add(model);
-                                           }
-
-                                           LinearLayout userInfos = view.findViewById(R.id.uInfo_container);
-
-                                           for (PostModel model : postList) {
-                                               LayoutInflater post = LayoutInflater.from(getContext());
-                                               View subLayout = post.inflate(R.layout.dashboard_rv, null);
-                                               SocialUserDetailInfoAdapter socialUserDetailInfoAdapter = new SocialUserDetailInfoAdapter(model, getContext(), db);
-                                               View viewSubLayout = socialUserDetailInfoAdapter.onCreateView(subLayout, model);
-
-                                               userInfos.addView(viewSubLayout);
-                                           }
-                                       }
-                                       dismissProgressBar();
-
-                                   }).
+                                    }).
 
              addOnFailureListener(e ->
 

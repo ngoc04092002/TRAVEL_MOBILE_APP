@@ -1,7 +1,13 @@
 package com.example.travel_mobile_app.fragments;
 
 import android.app.Activity;
+import android.app.Dialog;
+import android.content.ContentResolver;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -12,13 +18,20 @@ import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.viewmodel.CreationExtras;
 
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.MediaController;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 import android.widget.VideoView;
 
@@ -29,6 +42,9 @@ import com.example.travel_mobile_app.services.SharedPreferencesManager;
 import com.github.dhaval2404.imagepicker.ImagePicker;
 import com.github.ybq.android.spinkit.sprite.Sprite;
 import com.github.ybq.android.spinkit.style.WanderingCubes;
+import com.google.android.exoplayer2.ExoPlayer;
+import com.google.android.exoplayer2.MediaItem;
+import com.google.android.exoplayer2.ui.StyledPlayerView;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
@@ -38,6 +54,8 @@ import com.google.firebase.storage.StorageReference;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.Date;
 import java.util.UUID;
 
@@ -54,6 +72,8 @@ public class CreatePostFragment extends Fragment implements View.OnClickListener
     private FirebaseFirestore db;
     ProgressBar progressBar;
     LinearLayout backdrop;
+    StorageReference reference;
+
 
     public CreatePostFragment() {
         // Required empty public constructor
@@ -87,6 +107,9 @@ public class CreatePostFragment extends Fragment implements View.OnClickListener
         btnCamera.setOnClickListener(this);
         btnGallery.setOnClickListener(this);
         btnCreatePost.setOnClickListener(this);
+        videoView.setOnClickListener(this);
+        postimg.setOnClickListener(this);
+
 
         return view;
     }
@@ -96,7 +119,7 @@ public class CreatePostFragment extends Fragment implements View.OnClickListener
         if (v.getId() == R.id.createPost_btnBack) {
             FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
             fragmentManager.popBackStack("social_fragment", FragmentManager.POP_BACK_STACK_INCLUSIVE);
-        } else if (v.getId() == R.id.camera || v.getId() == R.id.postimg) {
+        } else if (v.getId() == R.id.camera || (v.getId() == R.id.postimg && uri == null)) {
             ImagePicker.with(this)
                        .cameraOnly()
                        .crop()
@@ -109,11 +132,23 @@ public class CreatePostFragment extends Fragment implements View.OnClickListener
 
         } else if (v.getId() == R.id.btn_create_post) {
             UserModel user = SharedPreferencesManager.readUserInfo();
+            String mimeType = requireContext().getContentResolver().getType(uri);
 
-            final StorageReference reference = storage.getReference().child("posts")
-                                                      .child(user.getId())
-                                                      .child(new Date().getTime() + "");
+            if (mimeType != null && mimeType.contains("mp4")) {
+                reference = storage.getReference().child("posts")
+                                   .child("video")
+                                   .child(user.getId())
+                                   .child(new Date().getTime() + "");
+            } else {
+                reference = storage.getReference().child("posts")
+                                   .child(user.getId())
+                                   .child(new Date().getTime() + "");
+            }
             createNewPost(reference, user);
+        } else if (v.getId() == R.id.videoView) {
+            showCenterDialog();
+        } else if (v.getId() == R.id.postimg) {
+            showCenterDialog(postimg.getDrawable());
         }
     }
 
@@ -207,6 +242,117 @@ public class CreatePostFragment extends Fragment implements View.OnClickListener
             dismissProgressBar();
         });
     }
+
+    ExoPlayer exoPlayer;
+
+    private void showCenterDialog() {
+        final Dialog dialog = new Dialog(requireActivity());
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.centersheet_video);
+
+        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.getWindow().setGravity(Gravity.BOTTOM);
+
+        StyledPlayerView playerView = dialog.findViewById(R.id.videoView_dialog);
+        exoPlayer = new ExoPlayer.Builder(dialog.getContext()).build();
+        playerView.setPlayer(exoPlayer);
+
+        MediaItem mediaItem = MediaItem.fromUri(uri);
+        exoPlayer.setMediaItem(mediaItem);
+        exoPlayer.prepare();
+        exoPlayer.setPlayWhenReady(true);
+
+        ImageButton btnCloseDialog = dialog.findViewById(R.id.close_sheet);
+        btnCloseDialog.setOnClickListener(v -> {
+            exoPlayer.setPlayWhenReady(false);
+            exoPlayer.release();
+            exoPlayer = null;
+            dialog.dismiss();
+        });
+
+        dialog.show();
+    }
+
+
+    private ImageView imageView;
+    private float x, y, dx, dy, initX, initY, limitCoordinatesY1, limitCoordinatesY2, limitCoordinatesX;
+
+    //hieenr thị ảnh lên toàn màn hình khi click vào ảnh bài post
+    private void showCenterDialog(Drawable drawable) {
+        final Dialog dialog = new Dialog(requireActivity());
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.centersheet_image);
+
+        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.getWindow().setGravity(Gravity.BOTTOM);
+
+        imageView = dialog.findViewById(R.id.postimg);
+        imageView.setImageDrawable(drawable);
+        handleOnTouchImageOfPost(dialog, imageView);
+
+        ImageButton btnCloseDialog = dialog.findViewById(R.id.btnClose_dialog);
+        btnCloseDialog.setOnClickListener(v -> {
+            dialog.dismiss();
+        });
+
+        dialog.show();
+    }
+
+
+    private void handleOnTouchImageOfPost(Dialog dialog, ImageView imageView) {
+        // Đặt độ mờ ban đầu là 0
+        WindowManager.LayoutParams layoutParams = dialog.getWindow().getAttributes();
+        layoutParams.dimAmount = 1;
+        dialog.getWindow().setAttributes(layoutParams);
+
+
+        imageView.setOnTouchListener((v, event) -> {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    x = event.getRawX();
+                    y = event.getRawY();
+                    initX = imageView.getX();
+                    initY = imageView.getY();
+                    limitCoordinatesY1 = -imageView.getHeight() / 2;
+                    limitCoordinatesY2 = initY + imageView.getHeight() / 2;
+                    limitCoordinatesX = imageView.getWidth() / 2;
+                    break;
+                case MotionEvent.ACTION_MOVE:
+                    dx = event.getRawX() - x;
+                    dy = event.getRawY() - y;
+
+                    float edgeX = imageView.getX() + dx;
+                    float edgeY = imageView.getY() + dy;
+                    float acreage1 = (Math.abs(edgeY) - initY + (imageView.getHeight() / 2)) * (Math.abs(edgeX) + (imageView.getWidth() / 2));
+                    float acreage2 = limitCoordinatesX * 2 * (limitCoordinatesY2 - limitCoordinatesY1);
+                    // Áp dụng độ mờ cho dialog
+                    layoutParams.dimAmount = (acreage2 - acreage1) / acreage2;
+                    dialog.getWindow().setAttributes(layoutParams);
+
+                    imageView.setX(edgeX);
+                    imageView.setY(edgeY);
+                    x = event.getRawX();
+                    y = event.getRawY();
+                    break;
+                case MotionEvent.ACTION_UP:
+
+                    if (Math.abs(imageView.getX()) >= limitCoordinatesX || imageView.getY() >= limitCoordinatesY2 || imageView.getY() <= limitCoordinatesY1) {
+                        dialog.dismiss();
+                    } else {
+                        imageView.setX(initX);
+                        imageView.setY(initY);
+                        layoutParams.dimAmount = 1;
+                        dialog.getWindow().setAttributes(layoutParams);
+                    }
+                    break;
+            }
+            return true;
+        });
+
+    }
+
 
     private void resetValue() {
         uri = null;
