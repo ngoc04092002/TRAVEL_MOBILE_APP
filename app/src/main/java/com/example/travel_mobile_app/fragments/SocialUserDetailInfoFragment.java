@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.viewmodel.CreationExtras;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,10 +26,12 @@ import com.github.ybq.android.spinkit.sprite.Sprite;
 import com.github.ybq.android.spinkit.style.Circle;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.Filter;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class SocialUserDetailInfoFragment extends Fragment implements View.OnClickListener {
 
@@ -52,7 +55,7 @@ public class SocialUserDetailInfoFragment extends Fragment implements View.OnCli
     }
 
     private ImageView btnFriendBack;
-    private ArrayList<PostModel> postList;
+    private List<PostModel> postList;
     private SpinKitView spinKit;
 
     @Override
@@ -82,8 +85,9 @@ public class SocialUserDetailInfoFragment extends Fragment implements View.OnCli
                      });
 
         CollectionReference posts = db.collection("posts");
-        posts.whereEqualTo("postedBy", userId)
-             .whereNotEqualTo("share", true)
+        posts.where(Filter.or(
+                     Filter.equalTo("postedBy", userId),
+                     Filter.equalTo("shareBy", userId)))
              .get()
              .addOnCompleteListener(task ->
                                     {
@@ -98,7 +102,7 @@ public class SocialUserDetailInfoFragment extends Fragment implements View.OnCli
                                             for (PostModel model : postList) {
                                                 LayoutInflater post = LayoutInflater.from(getContext());
                                                 View subLayout = post.inflate(R.layout.dashboard_rv, null);
-                                                SocialUserDetailInfoAdapter socialUserDetailInfoAdapter = new SocialUserDetailInfoAdapter(model, getContext(), db);
+                                                SocialUserDetailInfoAdapter socialUserDetailInfoAdapter = new SocialUserDetailInfoAdapter(model, getContext(), db, getActivity(), userInfos);
                                                 View viewSubLayout = socialUserDetailInfoAdapter.onCreateView(subLayout, model);
 
                                                 userInfos.addView(viewSubLayout);
@@ -111,6 +115,7 @@ public class SocialUserDetailInfoFragment extends Fragment implements View.OnCli
              addOnFailureListener(e ->
 
                                   {
+                                      Log.e("ERROR-USER-DETAIL-INFOR", e.getMessage());
                                       dismissProgressBar();
                                   });
 

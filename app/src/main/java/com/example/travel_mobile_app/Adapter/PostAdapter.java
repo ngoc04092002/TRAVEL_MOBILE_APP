@@ -3,7 +3,6 @@ package com.example.travel_mobile_app.Adapter;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -28,8 +27,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -53,8 +50,6 @@ import com.example.travel_mobile_app.utils.CustomDateTime;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.ui.StyledPlayerView;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
@@ -73,8 +68,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
-import de.hdodenhof.circleimageview.CircleImageView;
 
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.viewHolder> {
 
@@ -114,23 +107,22 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.viewHolder> {
     public void onBindViewHolder(@NonNull viewHolder holder, int position) {
         PostModel post = list.get(position);
 
-        //load image
-        if (post.getPostImage() == null) {
-            Glide.with(context).clear(holder.binding.postimg);
-            holder.binding.postimg.setImageURI(null);
-            holder.binding.postimg.setVisibility(View.GONE);
+        LinearLayout container = holder.binding.container;
+        LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) container.getLayoutParams();
+        UserModel user = SharedPreferencesManager.readUserInfo();
 
-        } else {
+        //load image
+        if (post.getPostImage() != null) {
             Glide.with(context)
                  .load(Uri.parse(post.getPostImage()))
                  .centerCrop()
                  .placeholder(R.drawable.image_empty)
                  .into(holder.binding.postimg);
+        } else {
+            Glide.with(context).clear(holder.binding.postimg);
+            holder.binding.postimg.setImageURI(null);
+            holder.binding.postimg.setVisibility(View.GONE);
         }
-        LinearLayout container = holder.binding.container;
-        LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) container.getLayoutParams();
-        UserModel user = SharedPreferencesManager.readUserInfo();
-
 
         if (post.getShare() != null && post.getShare().equals(true)) {
             holder.binding.topbarShare.setVisibility(View.VISIBLE);
@@ -142,13 +134,12 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.viewHolder> {
             holder.binding.moreShare.setVisibility(View.VISIBLE);
             holder.binding.btnsShare.setVisibility(View.VISIBLE);
             holder.binding.btns.setVisibility(View.GONE);
-            setUserName(holder.binding.usernameShare, post.getShareBy());
+            setUserName(holder.binding.usernameShare, post.getShareBy(), holder.binding.profileImage);
 
             holder.binding.timestamp.setText(CustomDateTime.formatDate(post.getShareAt()));
             btnLike = holder.binding.likeShare;
             btnComment = holder.binding.commentShare;
             btnShare = holder.binding.shareShare;
-
         } else {
             holder.binding.topbarShare.setVisibility(View.GONE);
             layoutParams.width = LinearLayout.LayoutParams.MATCH_PARENT;
@@ -156,7 +147,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.viewHolder> {
             holder.binding.moreShare.setVisibility(View.GONE);
             holder.binding.btnsShare.setVisibility(View.GONE);
             holder.binding.btns.setVisibility(View.VISIBLE);
-            setUserName(holder.binding.username, post.getPostedBy());
+            setUserName(holder.binding.username, post.getPostedBy(), holder.binding.profileImageShare);
             holder.binding.timestamp.setText(CustomDateTime.formatDate(post.getPostedAt()));
             btnLike = holder.binding.like;
             btnComment = holder.binding.comment;
@@ -167,7 +158,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.viewHolder> {
 
 
         final boolean[] isLike = {false};
-        getLikeInfo(btnLike, isLike, post.getPostId(), user.getId());
+        getLikeInfo(btnLike, isLike, post, user.getId());
 
         btnLike.setOnClickListener(v -> {
             toggleBtnLike(post, isLike);
@@ -178,9 +169,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.viewHolder> {
             btnLike.setText(String.valueOf(post.getLikes().size()));
         }
         holder.binding.des.setText(post.getPostDescription());
-        btnComment.setOnClickListener(v -> {
-            showBottomDialog(post, isLike);
-        });
+
         if (post.getComments() == null || post.getComments().size() == 0) {
             btnComment.setText("");
         } else {
@@ -195,12 +184,30 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.viewHolder> {
             }
         });
 
-//        if (post.getShare() == null || post.getShare().size() == 0) {
-//            holder.binding.share.setText("");
-//        } else {
-//            holder.binding.share.setText(String.valueOf(post.getShare().size()));
-//        }
+        StringBuilder amountShare = new StringBuilder("");
 
+        CollectionReference posts = db.collection("posts");
+        posts.whereEqualTo("share", true)
+             .whereEqualTo("originPostId", post.getPostId())
+             .get()
+             .addOnCompleteListener(task -> {
+                 if (task.isSuccessful() && task.getResult() != null) {
+                     if (task.getResult().size() != 0) {
+                         btnShare.setText(String.valueOf(task.getResult().size()));
+                         amountShare.append(task.getResult().size());
+                     } else {
+                         btnShare.setText("");
+                     }
+
+                 }
+
+             }).addOnFailureListener(e -> {
+                 btnShare.setText("");
+             });
+
+        btnComment.setOnClickListener(v -> {
+            showBottomDialog(post, isLike, amountShare);
+        });
 
         //See detail info
         holder.binding.postUserName.setOnClickListener(v -> {
@@ -286,7 +293,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.viewHolder> {
 
     }
 
-    private void setUserName(TextView userName, String userId) {
+    private void setUserName(TextView userName, String userId, ImageView imageView) {
         CollectionReference users = db.collection("users");
         users.document(userId)
              .get()
@@ -295,6 +302,14 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.viewHolder> {
                      UserModel userModel = taskUser.getResult().toObject(UserModel.class);
                      if (userModel != null && userModel.getFullName() != null) {
                          userName.setText(userModel.getFullName());
+                     }
+
+                     if (userModel != null && userModel.getAvatarURL() != null) {
+                         Glide.with(context)
+                              .load(Uri.parse(userModel.getAvatarURL()))
+                              .centerCrop()
+                              .placeholder(R.drawable.image_empty)
+                              .into(imageView);
                      }
                  }
              }).addOnFailureListener(e -> {
@@ -418,25 +433,18 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.viewHolder> {
         }).start();
     }
 
-    private void getLikeInfo(MaterialButton button, final boolean[] isLike, String postId, String userId) {
-        //fix 8c89d98007c54f34b44f2f619a8684b3 is userID
-        CollectionReference posts = db.collection("posts");
-
-        posts.whereEqualTo("postId", postId)
-             .whereArrayContains("likes", userId)
-             .get().addOnSuccessListener(documentSnapshots -> {
-                 if (documentSnapshots.getDocuments().size() != 0) {
-                     isLike[0] = true;
-                     int tintColor = ContextCompat.getColor(context, R.color.yellow);
-                     button.setIconTint(ColorStateList.valueOf(tintColor));
-                     button.setIconResource(R.drawable.favorite_fill);
-                 } else {
-                     isLike[0] = false;
-                     int tintColor = ContextCompat.getColor(context, R.color.black);
-                     button.setIconTint(ColorStateList.valueOf(tintColor));
-                     button.setIconResource(R.drawable.favorite);
-                 }
-             });
+    private void getLikeInfo(MaterialButton button, final boolean[] isLike, PostModel post, String userId) {
+        if (post.getLikes() != null && post.getLikes().contains(userId)) {
+            isLike[0] = true;
+            int tintColor = ContextCompat.getColor(context, R.color.yellow);
+            button.setIconTint(ColorStateList.valueOf(tintColor));
+            button.setIconResource(R.drawable.favorite_fill);
+        } else {
+            isLike[0] = false;
+            int tintColor = ContextCompat.getColor(context, R.color.black);
+            button.setIconTint(ColorStateList.valueOf(tintColor));
+            button.setIconResource(R.drawable.favorite);
+        }
     }
 
     private void saveNewPost(CollectionReference posts, PostModel post) {
@@ -483,7 +491,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.viewHolder> {
     }
 
     //comments UI
-    private void showBottomDialog(PostModel post, final boolean[] isLike) {
+    private void showBottomDialog(PostModel post, final boolean[] isLike, CharSequence amountShare) {
         final BottomSheetDialog dialog = new BottomSheetDialog(context);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.bottomsheet_layout);
@@ -506,6 +514,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.viewHolder> {
             refreshBtnLikeDialog(btnLike, isLike, post, post.getLikes().size());
         });
 
+        MaterialButton btnShare = dialog.findViewById(R.id.share);
+        btnShare.setText(amountShare);
 
         //handle comments
         EditText commentEditText = dialog.findViewById(R.id.comment_message);
@@ -530,7 +540,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.viewHolder> {
             if (msg.equals("")) return;
             String commentId = UUID.randomUUID().toString().replace("-", "");
 
-            CommentModel comment = new CommentModel(commentId, R.drawable.avatar_men, user.getId(), msg, new Date().getTime());
+            CommentModel comment = new CommentModel(user.getId(), commentId, user.getAvatarURL(), user.getFullName(), msg, new Date().getTime());
             List<CommentModel> commentModelList = new ArrayList<>();
             if (post.getComments() != null) {
                 commentModelList.addAll(post.getComments());
@@ -621,7 +631,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.viewHolder> {
 
         ImageButton btnCloseDialog = dialog.findViewById(R.id.close_sheet);
         btnCloseDialog.setOnClickListener(v -> {
-            if(exoPlayer!=null){
+            if (exoPlayer != null) {
                 exoPlayer.setPlayWhenReady(false);
                 exoPlayer.release();
             }

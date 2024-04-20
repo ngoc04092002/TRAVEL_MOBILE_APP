@@ -152,7 +152,7 @@
                 android:layout_height="@dimen/_150mdp"
                 android:clickable="true"
                 android:scaleType="centerCrop"
-                android:src="@drawable/avatar_men"
+                android:src="@drawable/image_empty"
                 app:riv_border_color="#333333"
                 app:riv_border_width="1dip"
                 app:riv_corner_radius="10dip"
