@@ -43,6 +43,10 @@ public class FollowAdapter extends RecyclerView.Adapter<FollowAdapter.viewHolder
         this.db = db;
     }
 
+    public void setData(List<FollowDTO> newData) {
+        this.list = newData;
+    }
+
     @NonNull
     @Override
     public viewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -57,12 +61,12 @@ public class FollowAdapter extends RecyclerView.Adapter<FollowAdapter.viewHolder
             Glide.with(context)
                  .load(Uri.parse(model.getProfileImage()))
                  .centerCrop()
-                 .placeholder(R.drawable.avatar_men)
+                 .placeholder(R.drawable.image_empty)
                  .into(holder.profile);
         }
 
         holder.username.setText(model.getUsername());
-        holder.followers.setText(model.getNumberOfFollowers() + "người theo dõi");
+        holder.followers.setText(model.getNumberOfFollowers() + " người theo dõi");
         if (!isFollow[0]) {
             holder.btnFollow.setText("Theo dõi");
             int color = ContextCompat.getColor(context, R.color.yellow);

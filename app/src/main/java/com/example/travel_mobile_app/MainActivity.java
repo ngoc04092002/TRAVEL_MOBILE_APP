@@ -11,6 +11,7 @@ import android.util.Log;
 import com.example.travel_mobile_app.Manager.FirebaseManager;
 import com.example.travel_mobile_app.databinding.ActivityMainBinding;
 import com.example.travel_mobile_app.fragments.AccountFragment;
+import com.example.travel_mobile_app.fragments.FriendFollowingFragment;
 import com.example.travel_mobile_app.fragments.NotificationFragment;
 import com.example.travel_mobile_app.fragments.SocialFragment;
 import com.example.travel_mobile_app.models.UserModel;

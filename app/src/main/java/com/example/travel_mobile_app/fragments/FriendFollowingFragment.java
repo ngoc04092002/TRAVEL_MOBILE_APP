@@ -18,6 +18,7 @@ import com.example.travel_mobile_app.Adapter.FollowAdapter;
 import com.example.travel_mobile_app.MainActivity;
 import com.example.travel_mobile_app.R;
 import com.example.travel_mobile_app.databinding.FragmentFriendFollowingBinding;
+import com.example.travel_mobile_app.dto.DataChangeListener;
 import com.example.travel_mobile_app.dto.FollowDTO;
 import com.example.travel_mobile_app.models.UserModel;
 import com.example.travel_mobile_app.services.SharedPreferencesManager;
@@ -34,14 +35,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class FriendFollowingFragment extends Fragment {
+public class FriendFollowingFragment extends Fragment implements DataChangeListener {
 
     private RecyclerView followingRv;
     private List<FollowDTO> list;
     private FirebaseFirestore db;
     FragmentFriendFollowingBinding binding;
-    private String searchText = "";
-    private SearchView searchView;
+    FollowAdapter followAdapter;
 
 
     public FriendFollowingFragment() {
@@ -63,11 +63,9 @@ public class FriendFollowingFragment extends Fragment {
         followingRv = view.findViewById(R.id.followingRv);
         UserModel user = SharedPreferencesManager.readUserInfo();
 
-        System.out.println("searchText::" + searchText);
-
         list = new ArrayList<>();
         final boolean[] isFollow = {true};
-        FollowAdapter followAdapter = new FollowAdapter(list, getContext(), isFollow, db);
+        followAdapter = new FollowAdapter(list, getContext(), isFollow, db);
         followingRv.setHasFixedSize(true);
         followingRv.setLayoutManager(new StaggeredGridLayoutManager(1, LinearLayoutManager.VERTICAL));
         followingRv.setAdapter(followAdapter);
@@ -75,6 +73,7 @@ public class FriendFollowingFragment extends Fragment {
 
         return view;
     }
+
 
     public void getFollowingData(FollowAdapter followAdapter, String userId) {
         CollectionReference users = db.collection("users");
@@ -111,14 +110,13 @@ public class FriendFollowingFragment extends Fragment {
                              }
                          }
                          binding.badRequest.setVisibility(View.GONE);
+                         showNotFound(list);
                      } else {
                          binding.badRequest.setVisibility(View.VISIBLE);
                          Log.d("ERROR::", "Error getting documents: ", task.getException());
                      }
                      dismissProgressBar();
-                     if (!this.searchText.equals("")) {
-                         list = list.stream().filter(item -> item.getUsername().contains(this.searchText)).collect(Collectors.toList());
-                     }
+
                      followAdapter.notifyDataSetChanged();
                  }).addOnFailureListener(
                          unused ->
@@ -139,5 +137,23 @@ public class FriendFollowingFragment extends Fragment {
 
     private void dismissProgressBar() {
         binding.spinKit.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void onDataChange(String data) {
+
+        List<FollowDTO> searchList = list.stream().filter(item -> item.getUsername().contains(data)).collect(Collectors.toList());
+        followAdapter.setData(searchList);
+        followAdapter.notifyDataSetChanged();
+        showNotFound(searchList);
+    }
+
+
+    private void showNotFound(List<FollowDTO> checkList) {
+        if (checkList.size() == 0) {
+            binding.notFound.setVisibility(View.VISIBLE);
+        } else {
+            binding.notFound.setVisibility(View.GONE);
+        }
     }
 }

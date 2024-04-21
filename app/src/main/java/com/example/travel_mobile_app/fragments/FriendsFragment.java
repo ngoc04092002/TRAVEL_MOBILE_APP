@@ -6,10 +6,10 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentPagerAdapter;
-import androidx.lifecycle.ViewModelProvider;
+
 import androidx.lifecycle.viewmodel.CreationExtras;
 import androidx.viewpager.widget.ViewPager;
+
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,7 +20,9 @@ import com.example.travel_mobile_app.Adapter.FriendViewPageAdapter;
 import com.example.travel_mobile_app.R;
 import com.google.android.material.tabs.TabLayout;
 
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class FriendsFragment extends Fragment implements View.OnClickListener {
 
@@ -45,7 +47,11 @@ public class FriendsFragment extends Fragment implements View.OnClickListener {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_friends, container, false);
 
-        adapter = new FriendViewPageAdapter(getChildFragmentManager());
+        List<Fragment> fragments = new ArrayList<>();
+        fragments.add(new FriendFollowingFragment());
+        fragments.add(new FriendFollowerFragment());
+
+        adapter = new FriendViewPageAdapter(getChildFragmentManager(), fragments);
         viewPager = view.findViewById(R.id.viewpager);
         tabLayout = view.findViewById(R.id.friend_tabLayout);
 
@@ -53,13 +59,13 @@ public class FriendsFragment extends Fragment implements View.OnClickListener {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                System.out.println("query==>" + query);
+                adapter.updateData(query);
                 return true;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                System.out.println("newText==>" + newText);
+               adapter.updateData(newText);
                 return true;
             }
         });
