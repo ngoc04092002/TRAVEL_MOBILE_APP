@@ -66,6 +66,5 @@ public class SharedPreferencesManager {
         SharedPreferences.Editor prefsEditor = sharedPref.edit();
         prefsEditor.putStringSet(FCM_CHANNEL_LIST, value);
         prefsEditor.apply();
-        System.out.println("SUCCESS");
     }
 }

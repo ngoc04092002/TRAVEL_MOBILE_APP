@@ -31,11 +31,11 @@ import java.util.stream.Collectors;
 
 public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapter.viewHolder> {
 
-    private ArrayList<NotificationModel> list;
+    private List<NotificationModel> list;
     private Context context;
     private FirebaseFirestore db;
 
-    public NotificationAdapter(ArrayList<NotificationModel> list, Context context, FirebaseFirestore db) {
+    public NotificationAdapter(List<NotificationModel> list, Context context, FirebaseFirestore db) {
         this.list = list;
         this.context = context;
         this.db = db;

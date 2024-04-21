@@ -13,8 +13,10 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.example.travel_mobile_app.Adapter.NotificationAdapter;
 import com.example.travel_mobile_app.Adapter.SearchPostItemAdapter;
 import com.example.travel_mobile_app.databinding.ActivitySocialSearchPostBinding;
+import com.example.travel_mobile_app.models.NotificationModel;
 import com.example.travel_mobile_app.models.PostModel;
 import com.example.travel_mobile_app.services.SharedPreferencesManager;
 import com.github.ybq.android.spinkit.sprite.Sprite;
@@ -37,9 +39,12 @@ public class SocialSearchPost extends AppCompatActivity implements View.OnClickL
 
     ActivitySocialSearchPostBinding binding;
     private List<PostModel> posts;
+    private List<NotificationModel> notifications;
     private FirebaseFirestore db;
     private Disposable disposable;
     private SearchPostItemAdapter postAdapter;
+    private NotificationAdapter notificationAdapter;
+    private String type = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,16 +53,25 @@ public class SocialSearchPost extends AppCompatActivity implements View.OnClickL
         setContentView(binding.getRoot());
         db = FirebaseFirestore.getInstance();
 
-
-        posts = new ArrayList<>();
         disposable = getDisposable(binding.search);
-        postAdapter = new SearchPostItemAdapter(posts, this, "search_post", this);
+
         binding.searchPostRv.setHasFixedSize(true);
         binding.searchPostRv.setLayoutManager(new StaggeredGridLayoutManager(1, LinearLayoutManager.VERTICAL));
-        binding.searchPostRv.setAdapter(postAdapter);
+
+        type = getIntent().getStringExtra("search_activity");
+
+        if (type != null && type.equals("notification")) {
+            notifications = new ArrayList<>();
+            notificationAdapter = new NotificationAdapter(notifications, this, db);
+            binding.searchPostRv.setAdapter(notificationAdapter);
+        } else {
+            posts = new ArrayList<>();
+            postAdapter = new SearchPostItemAdapter(posts, this, "search_post", this);
+            binding.searchPostRv.setAdapter(postAdapter);
+        }
+
 
         binding.searchPostBtnBack.setOnClickListener(this);
-        String type = getIntent().getStringExtra("search_activity");
 
         LinearLayout searchHistory = binding.searchHistory;
         Set<String> existsHistory = SharedPreferencesManager.readPostSearchHistory();
@@ -123,10 +137,15 @@ public class SocialSearchPost extends AppCompatActivity implements View.OnClickL
                                  newText -> {
                                      LinearLayout searchHistory = binding.searchHistory;
                                      Set<String> existsHistory = SharedPreferencesManager.readPostSearchHistory();
+
                                      searchHistory.removeAllViews();
+
                                      if (newText.toString().trim().equals("")) {
                                          binding.notFound.setVisibility(View.GONE);
-                                         if (posts.size() != 0) {
+                                         if (type != null && type.equals("notification") && notifications.size() != 0) {
+                                             notifications.clear();
+                                             notificationAdapter.notifyDataSetChanged();
+                                         } else {
                                              posts.clear();
                                              postAdapter.notifyDataSetChanged();
                                          }
@@ -150,9 +169,14 @@ public class SocialSearchPost extends AppCompatActivity implements View.OnClickL
                                      }
                                      searchHistory.setVisibility(View.GONE);
                                      existsHistory.add(newText.toString().trim());
-
                                      SharedPreferencesManager.writePostSearchHistory(existsHistory);
-                                     refreshPosts(newText.toString().trim());
+
+                                     if (type != null && type.equals("notification")) {
+                                         refreshNotifications(newText.toString().trim());
+                                     } else {
+                                         refreshPosts(newText.toString().trim());
+                                     }
+
                                  },
                                  error -> {
                                      // handle error
@@ -180,6 +204,32 @@ public class SocialSearchPost extends AppCompatActivity implements View.OnClickL
                       posts.add(post);
                   }
                   postAdapter.notifyDataSetChanged();
+              }
+              dismissProgressBar();
+          }).addOnFailureListener(e -> {
+              dismissProgressBar();
+              binding.notFound.setVisibility(View.VISIBLE);
+              binding.notFound.setText("Đã có lỗi xảy ra");
+          });
+    }
+
+    private void refreshNotifications(String newText) {
+        notifications.clear();
+        showProgressBar();
+        db.collection("notifications")
+          .whereGreaterThanOrEqualTo("notificationBy", newText)
+          .whereLessThanOrEqualTo("notificationBy", newText + "\uf8ff")
+          .get()
+          .addOnSuccessListener(documentSnapshots -> {
+              if (documentSnapshots.getDocuments().size() == 0) {
+                  binding.notFound.setVisibility(View.VISIBLE);
+              } else {
+                  binding.notFound.setVisibility(View.GONE);
+                  for (DocumentSnapshot documentSnapshot : documentSnapshots.getDocuments()) {
+                      NotificationModel notification = documentSnapshot.toObject(NotificationModel.class);
+                      notifications.add(notification);
+                  }
+                  notificationAdapter.notifyDataSetChanged();
               }
               dismissProgressBar();
           }).addOnFailureListener(e -> {
