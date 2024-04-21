@@ -62,7 +62,7 @@ public class SocialSearchPost extends AppCompatActivity implements View.OnClickL
 
         if (type != null && type.equals("notification")) {
             notifications = new ArrayList<>();
-            notificationAdapter = new NotificationAdapter(notifications, this, db);
+            notificationAdapter = new NotificationAdapter(notifications, this, db, this);
             binding.searchPostRv.setAdapter(notificationAdapter);
         } else {
             posts = new ArrayList<>();

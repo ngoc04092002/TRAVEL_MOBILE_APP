@@ -1,6 +1,8 @@
 package com.example.travel_mobile_app.Adapter;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.text.Html;
 import android.view.LayoutInflater;
@@ -18,11 +20,15 @@ import androidx.core.text.HtmlCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.travel_mobile_app.DetailPostInfo;
 import com.example.travel_mobile_app.R;
+import com.example.travel_mobile_app.SocialSearchPost;
 import com.example.travel_mobile_app.databinding.FragmentNotificationItemBinding;
 import com.example.travel_mobile_app.models.CommentModel;
 import com.example.travel_mobile_app.models.NotificationModel;
+import com.example.travel_mobile_app.models.UserModel;
 import com.example.travel_mobile_app.utils.CustomDateTime;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
@@ -34,11 +40,13 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
     private List<NotificationModel> list;
     private Context context;
     private FirebaseFirestore db;
+    private Activity activity;
 
-    public NotificationAdapter(List<NotificationModel> list, Context context, FirebaseFirestore db) {
+    public NotificationAdapter(List<NotificationModel> list, Context context, FirebaseFirestore db, Activity activity) {
         this.list = list;
         this.context = context;
         this.db = db;
+        this.activity = activity;
     }
 
     @NonNull
@@ -52,9 +60,9 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
     public void onBindViewHolder(@NonNull viewHolder holder, int position) {
         NotificationModel model = list.get(position);
 
-        //fix userUri
+
         //load image
-        String userUri = "https://firebasestorage.googleapis.com/v0/b/travel-app-130de.appspot.com/o/posts%2F52138f0e687e4ca582811ceaa719cffb%2F1710946395711?alt=media&token=de7a610d-cf9e-47de-97b7-69d3701201dc";
+        String userUri = model.getUserImage();
         if (userUri == null) {
             Glide.with(context).clear(holder.binding.profileImage);
             holder.binding.profileImage.setImageURI(null);
@@ -101,6 +109,24 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
             }
             return false;
         });
+
+
+        //handle click
+        holder.binding.infoNotification.setOnClickListener(v -> {
+            navigateToDetailPostInfo(model.getPostId());
+        });
+
+        holder.binding.profileImage.setOnClickListener(v -> {
+            navigateToDetailPostInfo(model.getPostId());
+        });
+    }
+
+    private void navigateToDetailPostInfo(String postId) {
+        Intent i = new Intent(context, DetailPostInfo.class);
+        i.putExtra("detail_post_activity", "notification");
+        i.putExtra("postId", postId);
+        context.startActivity(i);
+        activity.overridePendingTransition(0, android.R.anim.slide_out_right);
     }
 
     @Override

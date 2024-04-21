@@ -24,6 +24,7 @@
             app:civ_border_width="2dp" />
 
         <LinearLayout
+            android:id="@+id/info_friends"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"

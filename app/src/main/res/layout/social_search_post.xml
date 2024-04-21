@@ -8,8 +8,8 @@
     >
     <com.makeramen.roundedimageview.RoundedImageView
         android:id="@+id/search_item_img"
-        android:layout_width="@dimen/_90mdp"
-        android:layout_height="@dimen/_90mdp"
+        android:layout_width="@dimen/_80mdp"
+        android:layout_height="@dimen/_80mdp"
         android:clickable="true"
         android:scaleType="centerCrop"
         android:src="@drawable/avatar_men"

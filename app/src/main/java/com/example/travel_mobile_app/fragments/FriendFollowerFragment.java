@@ -67,7 +67,7 @@ public class FriendFollowerFragment extends Fragment implements DataChangeListen
 
         list = new ArrayList<>();
         final boolean[] isFollow = {false};
-        followAdapter = new FollowAdapter(list, getContext(), isFollow, db);
+        followAdapter = new FollowAdapter(list, getContext(), isFollow, db,requireActivity().getSupportFragmentManager());
         followerRv.setHasFixedSize(true);
         followerRv.setLayoutManager(new StaggeredGridLayoutManager(1, LinearLayoutManager.VERTICAL));
         followerRv.setAdapter(followAdapter);
@@ -145,10 +145,12 @@ public class FriendFollowerFragment extends Fragment implements DataChangeListen
 
     @Override
     public void onDataChange(String data) {
-        List<FollowDTO> searchList = list.stream().filter(item -> item.getUsername().contains(data)).collect(Collectors.toList());
-        followAdapter.setData(searchList);
-        followAdapter.notifyDataSetChanged();
-        showNotFound(searchList);
+        if(list!=null){
+            List<FollowDTO> searchList = list.stream().filter(item -> item.getUsername().contains(data)).collect(Collectors.toList());
+            followAdapter.setData(searchList);
+            followAdapter.notifyDataSetChanged();
+            showNotFound(searchList);
+        }
     }
 
 

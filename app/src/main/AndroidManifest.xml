@@ -19,13 +19,16 @@
         android:theme="@style/Theme.TRAVEL_MOBILE_APP"
         tools:targetApi="31">
         <activity
+            android:name=".DetailPostInfo"
+            android:exported="false"/>
+        <activity
             android:name=".SocialSearchPost"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".MainActivity"
-            android:windowSoftInputMode="adjustPan"
-            android:exported="true">
+            android:exported="true"
+            android:windowSoftInputMode="adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -40,7 +43,8 @@
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
 
-        <service android:name=".services.MyFirebaseMessagingService"
+        <service
+            android:name=".services.MyFirebaseMessagingService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />

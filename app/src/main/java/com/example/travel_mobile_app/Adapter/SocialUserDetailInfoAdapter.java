@@ -418,9 +418,10 @@ public class SocialUserDetailInfoAdapter {
         UserModel user = SharedPreferencesManager.readUserInfo();
         String notificationId = UUID.randomUUID().toString().replace("-", "");
 
-
         NotificationModel notification = new NotificationModel();
         notification.setNotificationId(notificationId);
+        notification.setUserId(user.getId());
+        notification.setUserImage(user.getAvatarURL());
         notification.setNotificationBy(user.getFullName());
         notification.setNotificationAt(new Date().getTime());
         notification.setPostId(post.getPostId());

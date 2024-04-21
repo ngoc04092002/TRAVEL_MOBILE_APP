@@ -148,7 +148,11 @@ public class SocialUserDetailInfoFragment extends Fragment implements View.OnCli
         if (userModel.getUsername() != null) {
             binding.detailInfoUsername.setText(userModel.getUsername());
             binding.uInfoUsername.setText(userModel.getUsername());
+        }else{
+            binding.detailInfoUsername.setText(userModel.getFullName());
+            binding.uInfoUsername.setText(userModel.getFullName());
         }
+
         if (userModel.getAddress() != null) {
             binding.detailInfoAddress.setText(userModel.getAddress());
             binding.uInfoAddress.setText(userModel.getAddress());

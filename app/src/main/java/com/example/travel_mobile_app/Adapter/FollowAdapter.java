@@ -8,16 +8,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.travel_mobile_app.R;
 import com.example.travel_mobile_app.dto.FollowDTO;
+import com.example.travel_mobile_app.fragments.SocialUserDetailInfoFragment;
+import com.example.travel_mobile_app.models.PostModel;
 import com.example.travel_mobile_app.models.UserModel;
 import com.example.travel_mobile_app.services.SharedPreferencesManager;
 import com.google.firebase.firestore.CollectionReference;
@@ -35,12 +40,14 @@ public class FollowAdapter extends RecyclerView.Adapter<FollowAdapter.viewHolder
     Context context;
     final boolean[] isFollow;
     private FirebaseFirestore db;
+    FragmentManager fragmentManager;
 
-    public FollowAdapter(List<FollowDTO> list, Context context, boolean[] isFollow, FirebaseFirestore db) {
+    public FollowAdapter(List<FollowDTO> list, Context context, boolean[] isFollow, FirebaseFirestore db,FragmentManager fragmentManager) {
         this.list = list;
         this.context = context;
         this.isFollow = isFollow;
         this.db = db;
+        this.fragmentManager = fragmentManager;
     }
 
     public void setData(List<FollowDTO> newData) {
@@ -93,7 +100,15 @@ public class FollowAdapter extends RecyclerView.Adapter<FollowAdapter.viewHolder
             }
             isFollow[0] = !isFollow[0];
         });
+
+        holder.infoFriends.setOnClickListener(v->{
+            seeInfoDetail(model.getUserId());
+        });
+        holder.profile.setOnClickListener(v->{
+            seeInfoDetail(model.getUserId());
+        });
     }
+
 
     private void updateFollowMySelf(FollowDTO model, UserModel user) {
 
@@ -130,6 +145,15 @@ public class FollowAdapter extends RecyclerView.Adapter<FollowAdapter.viewHolder
                });
     }
 
+
+    private void seeInfoDetail(String postedBy) {
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.container, new SocialUserDetailInfoFragment(postedBy));
+        fragmentTransaction.addToBackStack("userDetailInfo_fragment");
+        // Commit transaction
+        fragmentTransaction.commit();
+    }
+
     @Override
     public int getItemCount() {
         return list.size();
@@ -140,6 +164,7 @@ public class FollowAdapter extends RecyclerView.Adapter<FollowAdapter.viewHolder
         ImageView profile;
         TextView username, followers;
         Button btnFollow;
+        LinearLayout infoFriends;
 
         public viewHolder(@NonNull View itemView) {
             super(itemView);
@@ -147,6 +172,7 @@ public class FollowAdapter extends RecyclerView.Adapter<FollowAdapter.viewHolder
             username = itemView.findViewById(R.id.username);
             followers = itemView.findViewById(R.id.followers);
             btnFollow = itemView.findViewById(R.id.btnFollow);
+            infoFriends = itemView.findViewById(R.id.info_friends);
         }
     }
 

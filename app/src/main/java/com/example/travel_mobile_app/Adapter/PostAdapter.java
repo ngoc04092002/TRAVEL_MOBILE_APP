@@ -387,6 +387,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.viewHolder> {
 
         NotificationModel notification = new NotificationModel();
         notification.setNotificationId(notificationId);
+        notification.setUserId(user.getId());
+        notification.setUserImage(user.getAvatarURL());
         notification.setNotificationBy(user.getFullName());
         notification.setNotificationAt(new Date().getTime());
         notification.setPostId(post.getPostId());
@@ -594,7 +596,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.viewHolder> {
         bottomsheet_back.setOnClickListener(v -> {
             dialog.dismiss();
         });
-
     }
 
     private void refreshBtnLikeDialog(MaterialButton btnLike, final boolean[] isLike, PostModel post, int cnt) {

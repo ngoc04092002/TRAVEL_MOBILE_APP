@@ -85,7 +85,7 @@
                         android:id="@+id/detail_info_address"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Bắc Ninh"
+                        android:text=""
                         android:textSize="@dimen/_10font_mdp" />
                 </LinearLayout>
 
@@ -234,7 +234,7 @@
                     <TextView
                         android:id="@+id/uInfo_username"
                         android:layout_width="match_parent"
-                        android:layout_height="@dimen/_24mdp"
+                        android:layout_height="wrap_content"
                         android:gravity="center"
                         android:text="NgocVan"
                         android:textSize="@dimen/_12font_mdp" />
@@ -252,7 +252,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/_24mdp"
                         android:gravity="center"
-                        android:text="Bắc Ninh"
+                        android:text=""
                         android:textSize="@dimen/_12font_mdp" />
                 </LinearLayout>
 

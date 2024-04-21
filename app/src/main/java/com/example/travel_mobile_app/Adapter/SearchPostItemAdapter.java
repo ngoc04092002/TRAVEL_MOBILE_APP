@@ -3,6 +3,7 @@ package com.example.travel_mobile_app.Adapter;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -17,16 +18,21 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.travel_mobile_app.DetailPostInfo;
 import com.example.travel_mobile_app.R;
 import com.example.travel_mobile_app.dto.FollowDTO;
 import com.example.travel_mobile_app.models.PostModel;
 import com.example.travel_mobile_app.utils.CustomDateTime;
+import com.google.android.exoplayer2.ExoPlayer;
+import com.google.android.exoplayer2.MediaItem;
+import com.google.android.exoplayer2.ui.StyledPlayerView;
 
 import java.util.List;
 
@@ -63,8 +69,29 @@ public class SearchPostItemAdapter extends RecyclerView.Adapter<SearchPostItemAd
         }
         holder.timestamp.setText(CustomDateTime.formatDate(post.getPostedAt()));
         holder.des.setText(post.getPostDescription());
+
+        holder.profile.setOnClickListener(v -> {
+            String url = post.getPostImage();
+            if (url != null && url.contains("video")) {
+                showCenterDialog(post.getPostImage());
+            } else {
+                showCenterDialog(holder.profile.getDrawable());
+            }
+        });
+
+
+        holder.postInfo.setOnClickListener(v->{
+            navigateToDetailPostInfo(post.getPostId());
+        });
     }
 
+
+    private void navigateToDetailPostInfo(String postId){
+        Intent i = new Intent(context, DetailPostInfo.class);
+        i.putExtra("postId",postId );
+        context.startActivity(i);
+        activity.overridePendingTransition(0,android.R.anim.slide_out_right);
+    }
     @Override
     public int getItemCount() {
         return list.size();
@@ -74,21 +101,51 @@ public class SearchPostItemAdapter extends RecyclerView.Adapter<SearchPostItemAd
 
         ImageView profile;
         TextView des, timestamp;
+        LinearLayout postInfo;
 
         public viewHolder(@NonNull View itemView) {
             super(itemView);
             profile = itemView.findViewById(R.id.search_item_img);
             des = itemView.findViewById(R.id.search_post_des);
             timestamp = itemView.findViewById(R.id.search_post_timestamp);
-
-            profile.setOnClickListener(v -> {
-                showCenterDialog(profile.getDrawable());
-            });
+            postInfo = itemView.findViewById(R.id.post_user_name);
         }
     }
 
 
 
+    ExoPlayer exoPlayer;
+
+    private void showCenterDialog(String uri) {
+        final Dialog dialog = new Dialog(activity);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.centersheet_video);
+
+        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.getWindow().setGravity(Gravity.BOTTOM);
+
+        StyledPlayerView playerView = dialog.findViewById(R.id.videoView_dialog);
+        exoPlayer = new ExoPlayer.Builder(dialog.getContext()).build();
+        playerView.setPlayer(exoPlayer);
+
+        MediaItem mediaItem = MediaItem.fromUri(uri);
+        exoPlayer.setMediaItem(mediaItem);
+        exoPlayer.prepare();
+        exoPlayer.setPlayWhenReady(true);
+
+        ImageButton btnCloseDialog = dialog.findViewById(R.id.close_sheet);
+        btnCloseDialog.setOnClickListener(v -> {
+            if (exoPlayer != null) {
+                exoPlayer.setPlayWhenReady(false);
+                exoPlayer.release();
+            }
+            exoPlayer = null;
+            dialog.dismiss();
+        });
+
+        dialog.show();
+    }
     private ImageView imageView;
     private float x, y, dx, dy, initX, initY, limitCoordinatesY1, limitCoordinatesY2, limitCoordinatesX;
 
