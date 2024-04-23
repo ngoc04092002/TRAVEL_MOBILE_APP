@@ -1,40 +1,20 @@
 package com.example.travel_mobile_app.fragments;
 
-import static android.content.ContentValues.TAG;
-
-import android.app.Activity;
 import android.os.Bundle;
 
-import androidx.annotation.IdRes;
-import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
 
-import com.example.travel_mobile_app.Adapter.SuggetionAdapter;
+import com.example.travel_mobile_app.Adapter.SuggestionAdapter;
 import com.example.travel_mobile_app.DetailInfor;
 import com.example.travel_mobile_app.R;
-import com.example.travel_mobile_app.models.Location;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -52,6 +32,9 @@ public class suggestion extends Fragment implements View.OnClickListener {
     private String mParam1;
     private String mParam2;
     private ImageButton disbtn;
+    private ListView dexuatlv;
+    private SuggestionAdapter dexuatadap;
+    private FirebaseFirestore db;
 
 
     public suggestion() {
@@ -85,8 +68,6 @@ public class suggestion extends Fragment implements View.OnClickListener {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_suggestion, container, false);
-
-
 
         disbtn = view.findViewById(R.id.discoverybtn);
         disbtn.setOnClickListener(new View.OnClickListener() {

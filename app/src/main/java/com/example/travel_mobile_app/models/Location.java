@@ -53,7 +53,7 @@ public class Location {
         this.introduce = introduce;
     }
 
-    public String getName() {
+    public  String getName() {
         return name;
     }
 
@@ -83,5 +83,19 @@ public class Location {
 
     public void setPrice(String price) {
         this.price = price;
+    }
+
+    @Override
+    public String toString() {
+        return "Location{" +
+                "name='" + name + '\'' +
+                ", address='" + address + '\'' +
+                ", price='" + price + '\'' +
+                ", event='" + event + '\'' +
+                ", intro='" + introduce + '\'' +
+                ", openTime='" + opentime + '\'' +
+                ", imgLink='" + imglink + '\'' +
+                ", number='" + number + '\'' +
+                '}';
     }
 }

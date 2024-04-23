@@ -64,6 +64,10 @@ dependencies {
     implementation("com.github.ybq:Android-SpinKit:1.4.0")
     implementation ("com.github.MikeOrtiz:TouchImageView:1.4.1")
     implementation("com.squareup.okhttp3:okhttp:4.10.0")
+    implementation("androidx.cardview:cardview:1.0.0")
+    implementation("androidx.recyclerview:recyclerview-selection:1.1.0")
+
+
 
 
     // Import the Firebase BoM

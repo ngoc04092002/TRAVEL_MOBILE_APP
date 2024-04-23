@@ -18,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.example.travel_mobile_app.fragments.SuggestionFragment;
 import com.example.travel_mobile_app.fragments.event;
 import com.example.travel_mobile_app.fragments.suggestion;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -86,14 +87,38 @@ public class DetailInfor extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_detail_infor, container, false);
-        nametv = view.findViewById(R.id.tenditich);
-        introducetv =view.findViewById(R.id.gioithieuchitiet);
-        addresstv =view.findViewById(R.id.diachi);
-        opentimetv =view.findViewById(R.id.giomocua);
-        pricetv=view.findViewById(R.id.giave);
-        imgv=view.findViewById(R.id.anhditich);
 
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            String name = bundle.getString("location_name");
+            String address = bundle.getString("location_address");
+            String intro = bundle.getString("location_intro");
+            String event = bundle.getString("location_event");
+            String imglink = bundle.getString("location_imglink");
+            String number = bundle.getString("location_number");
+            String price = bundle.getString("location_price");
+            String opentime = bundle.getString("location_opentime");
+
+            // Hiển thị thông tin chi tiết trong TextView hoặc các phần tử khác trong Fragment
+            TextView nameTextView = view.findViewById(R.id.tenditich);
+            TextView addressTextView = view.findViewById(R.id.diachi);
+            TextView introTextView = view.findViewById(R.id.gioithieuchitiet);
+            TextView priceTextView = view.findViewById(R.id.giave);
+            TextView opentimeTextView = view.findViewById(R.id.giomocua);
+            ImageView loadimg = view.findViewById(R.id.anhditich);
+
+
+            nameTextView.setText(name);
+            addressTextView.setText(address);
+            introTextView.setText(intro);
+            priceTextView.setText(price);
+            opentimeTextView.setText(opentime);
+            Glide.with(loadimg).load(imglink).into(loadimg);
+
+        }
+
+       /* FirebaseFirestore db = FirebaseFirestore.getInstance();
         DocumentReference docRef = db.collection("locations").document("loc001");
 
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -122,12 +147,12 @@ public class DetailInfor extends Fragment {
                     Log.d(TAG, "get failed with ", task.getException());
                 }
             }
-        });
+        });*/
         btnback = view.findViewById(R.id.backbtn3);
         btnback.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Fragment otherFragment = new suggestion();
+                Fragment otherFragment = new SuggestionFragment();
                 FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
                 transaction.replace(R.id.container, otherFragment);
                 transaction.addToBackStack(null); // Để cho phép người dùng quay lại Fragment trước đó

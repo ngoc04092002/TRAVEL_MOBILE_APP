@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".fragments.SuggestionFragment">
+
+
+
+
+    <!-- TODO: Update blank fragment layout -->
+   <androidx.recyclerview.widget.RecyclerView
+       android:id="@+id/rcv_suggestion"
+       android:layout_width="match_parent"
+       android:layout_height="match_parent"
+       android:layout_marginTop="60dp"
+/>
+    <TextView
+        android:id="@+id/titlesuggesttion"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/titlebar"
+        android:fontFamily="@font/montserrat"
+        android:gravity="center"
+        android:paddingBottom="3dp"
+        android:text="ĐỀ XUẤT"
+        android:textColor="@color/black"
+        android:textSize="40dp"
+        />
+
+    <ImageButton
+        android:id="@+id/reloadbtn"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="16dp"
+        android:background="@color/transparent"
+        android:scaleType="fitXY"
+        android:src="@drawable/reload" />
+</RelativeLayout>

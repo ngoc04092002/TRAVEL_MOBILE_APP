@@ -14,6 +14,7 @@ import com.example.travel_mobile_app.databinding.ActivityMainBinding;
 import com.example.travel_mobile_app.fragments.AccountFragment;
 import com.example.travel_mobile_app.fragments.NotificationFragment;
 import com.example.travel_mobile_app.fragments.SocialFragment;
+import com.example.travel_mobile_app.fragments.SuggestionFragment;
 import com.example.travel_mobile_app.fragments.suggestion;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -45,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         // Trong Activity hoặc Fragment của bạn
         FragmentTransaction newhome = getSupportFragmentManager().beginTransaction();
-        newhome.replace(R.id.container, new suggestion()); // Thay thế R.id.container với id của layout container trong màn hình chính của bạn
+        newhome.replace(R.id.container, new SuggestionFragment()); // Thay thế R.id.container với id của layout container trong màn hình chính của bạn
         newhome.commit();
 
 
@@ -72,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
             } else if (itemId == R.id.user) {
                 transaction.replace(R.id.container, new AccountFragment());
             } else if (itemId == R.id.home) {
-                transaction.replace(R.id.container,new suggestion());
+                transaction.replace(R.id.container,new SuggestionFragment());
 
             }
 

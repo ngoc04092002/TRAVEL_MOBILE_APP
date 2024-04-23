@@ -1,20 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="200dp"
-    android:layout_height="250dp"
-    android:orientation="vertical"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="10dp"
+    app:cardCornerRadius="11dp"
+    app:cardBackgroundColor="@color/lightyellow"
+    app:cardElevation="4dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     >
-    <ImageView
-        android:id="@+id/imgsug"
-        android:src="@drawable/boy"
-        android:scaleType="centerCrop"
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="200dp"/>
-    <TextView
-        android:layout_width="match_parent"
+        android:background="@drawable/border"
         android:layout_height="wrap_content"
-        android:text="Example"
-        android:textSize="20dp"/>
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/namesug"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:gravity="center"
+            android:text="Example"
+            android:fontFamily="@font/montserrat_bold"
+            android:textColor="@color/black"
+            android:textSize="20dp"/>
+
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/border"
+            android:layout_margin="10dp">
+        <androidx.cardview.widget.CardView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="2dp"
+            app:cardCornerRadius="8dp">
 
 
-</LinearLayout>
+        <ImageView
+            android:id="@+id/imgsug"
+            android:layout_width="match_parent"
+            android:layout_height="450dp"
+            android:scaleType="centerCrop"
+
+            android:src="@drawable/boy" />
+        </androidx.cardview.widget.CardView>
+        </FrameLayout>
+
+
+
+
+
+
+        <TextView
+            android:id="@+id/addsug"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="10dp"
+            android:text="Example"
+            android:layout_marginBottom="5dp"
+            android:fontFamily="@font/montserrat"
+            android:textColor="@color/black"
+            android:textSize="15dp"/>
+
+        <ImageButton
+            android:id="@+id/disbtn"
+            android:layout_width="283dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/discoverybtn" />
+
+
+    </LinearLayout>
+
+
+
+
+</androidx.cardview.widget.CardView>
