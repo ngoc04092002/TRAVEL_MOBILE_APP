@@ -25,8 +25,12 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
@@ -34,6 +38,7 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import com.bumptech.glide.Glide;
 import com.example.travel_mobile_app.R;
 import com.example.travel_mobile_app.dto.UserToken;
+import com.example.travel_mobile_app.fragments.CreatePostFragment;
 import com.example.travel_mobile_app.models.CommentModel;
 import com.example.travel_mobile_app.models.NotificationModel;
 import com.example.travel_mobile_app.models.PostModel;
@@ -73,13 +78,15 @@ public class SocialUserDetailInfoAdapter {
     FirebaseFirestore db;
     LinearLayout userInfos;
     Activity activity;
+    FragmentManager fragmentManager;
 
-    public SocialUserDetailInfoAdapter(PostModel model, Context context, FirebaseFirestore db, Activity activity, LinearLayout userInfos) {
+    public SocialUserDetailInfoAdapter(PostModel model, Context context, FirebaseFirestore db, Activity activity, LinearLayout userInfos,FragmentManager fragmentManager) {
         this.model = model;
         this.context = context;
         this.db = db;
         this.userInfos = userInfos;
         this.activity = activity;
+        this.fragmentManager = fragmentManager;
     }
 
     ImageView postImage, postimg;
@@ -207,6 +214,7 @@ public class SocialUserDetailInfoAdapter {
         MaterialToolbar materialToolbar = more;
         Menu menu = materialToolbar.getMenu();
         MenuItem selectDeletePost = menu.findItem(R.id.del_post);
+        MenuItem selectEditPost = menu.findItem(R.id.edit_post);
 
         materialToolbar.setOnMenuItemClickListener(item -> {
             int itemId = item.getItemId();
@@ -214,21 +222,30 @@ public class SocialUserDetailInfoAdapter {
                 removePost(postModel, itemView);
             } else if (itemId == R.id.save_post) {
                 savePost(postModel, user.getId());
-            } else if (itemId == R.id.block_post) {
-
+            } else if (itemId == R.id.edit_post) {
+                replaceScreen(R.id.container, new CreatePostFragment(postModel.getPostId()), "social_fragment");
             }
             return true;
         });
 
         if (user.getId().equals(postModel.getPostedBy())) {
             selectDeletePost.setVisible(true);
+            selectEditPost.setVisible(true);
         } else {
             selectDeletePost.setVisible(false);
+            selectEditPost.setVisible(false);
         }
 
         return itemView;
     }
 
+    private void replaceScreen(@IdRes int containerViewId, @NonNull Fragment fragment, String backTrackName) {
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+        fragmentTransaction.replace(containerViewId, fragment);
+        fragmentTransaction.addToBackStack(backTrackName);
+        fragmentTransaction.commit();
+    }
 
     private void toggleBtnLike(PostModel post, final boolean[] isLike) {
         UserModel user = SharedPreferencesManager.readUserInfo();

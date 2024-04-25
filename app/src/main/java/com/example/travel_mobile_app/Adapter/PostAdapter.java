@@ -26,8 +26,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -38,6 +40,7 @@ import com.bumptech.glide.Glide;
 import com.example.travel_mobile_app.R;
 import com.example.travel_mobile_app.databinding.DashboardRvBinding;
 import com.example.travel_mobile_app.dto.UserToken;
+import com.example.travel_mobile_app.fragments.CreatePostFragment;
 import com.example.travel_mobile_app.fragments.SocialUserDetailInfoFragment;
 import com.example.travel_mobile_app.models.CommentModel;
 import com.example.travel_mobile_app.models.NotificationModel;
@@ -230,6 +233,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.viewHolder> {
         MaterialToolbar materialToolbar = holder.binding.more;
         Menu menu = materialToolbar.getMenu();
         MenuItem selectDeletePost = menu.findItem(R.id.del_post);
+        MenuItem selectEditPost = menu.findItem(R.id.edit_post);
 
         materialToolbar.setOnMenuItemClickListener(item -> {
             int itemId = item.getItemId();
@@ -237,21 +241,24 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.viewHolder> {
                 removePost(post);
             } else if (itemId == R.id.save_post) {
                 savePost(post, user.getId());
-            } else if (itemId == R.id.block_post) {
-
+            } else if (itemId == R.id.edit_post) {
+                replaceScreen(R.id.container,new CreatePostFragment(post.getPostId()),"social_fragment");
             }
             return true;
         });
 
         if (user.getId().equals(post.getPostedBy())) {
             selectDeletePost.setVisible(true);
+            selectEditPost.setVisible(true);
         } else {
             selectDeletePost.setVisible(false);
+            selectEditPost.setVisible(false);
         }
 
         MaterialToolbar materialToolbarShare = holder.binding.moreShare;
         Menu menuShare = materialToolbarShare.getMenu();
         MenuItem selectDeletePostShare = menuShare.findItem(R.id.del_post);
+        MenuItem selectEditPostShare = menuShare.findItem(R.id.edit_post);
 
         materialToolbarShare.setOnMenuItemClickListener(item -> {
             int itemId = item.getItemId();
@@ -259,12 +266,13 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.viewHolder> {
                 removePost(post);
             } else if (itemId == R.id.save_post) {
                 savePost(post, user.getId());
-            } else if (itemId == R.id.block_post) {
-
+            } else if (itemId == R.id.edit_post) {
+//                replaceScreen(R.id.container,new CreatePostFragment(post.getPostId()),"social_fragment");
             }
             return true;
         });
 
+        selectEditPostShare.setVisible(false);
         if (user.getId().equals(post.getShareBy())) {
             selectDeletePostShare.setVisible(true);
         } else {
@@ -318,10 +326,14 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.viewHolder> {
     }
 
     private void seeInfoDetail(PostModel post) {
+        replaceScreen(R.id.container,new SocialUserDetailInfoFragment(post.getPostedBy()),"userDetailInfo_fragment");
+    }
+
+    private void replaceScreen(@IdRes int containerViewId, @NonNull Fragment fragment, String backTrackName) {
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.container, new SocialUserDetailInfoFragment(post.getPostedBy()));
-        fragmentTransaction.addToBackStack("userDetailInfo_fragment");
-        // Commit transaction
+
+        fragmentTransaction.replace(containerViewId, fragment);
+        fragmentTransaction.addToBackStack(backTrackName);
         fragmentTransaction.commit();
     }
 

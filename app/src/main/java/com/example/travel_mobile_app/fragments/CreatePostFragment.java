@@ -35,6 +35,9 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 import android.widget.VideoView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.travel_mobile_app.R;
 import com.example.travel_mobile_app.models.PostModel;
 import com.example.travel_mobile_app.models.UserModel;
@@ -45,6 +48,8 @@ import com.github.ybq.android.spinkit.style.WanderingCubes;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.ui.StyledPlayerView;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
@@ -73,10 +78,16 @@ public class CreatePostFragment extends Fragment implements View.OnClickListener
     ProgressBar progressBar;
     LinearLayout backdrop;
     StorageReference reference;
-
+    ImageView btnRefresh;
+    private String postId;
+    private String oldUrl;
 
     public CreatePostFragment() {
         // Required empty public constructor
+    }
+
+    public CreatePostFragment(String postId) {
+        this.postId = postId;
     }
 
     @Override
@@ -94,6 +105,7 @@ public class CreatePostFragment extends Fragment implements View.OnClickListener
 
 
         ImageView btnBack = view.findViewById(R.id.createPost_btnBack);
+        btnRefresh = view.findViewById(R.id.createPost_btnRefresh);
         btnCamera = view.findViewById(R.id.camera);
         btnGallery = view.findViewById(R.id.gallery);
         postimg = view.findViewById(R.id.postimg);
@@ -104,13 +116,16 @@ public class CreatePostFragment extends Fragment implements View.OnClickListener
         backdrop = view.findViewById(R.id.backdrop);
 
         btnBack.setOnClickListener(this);
+        btnRefresh.setOnClickListener(this);
         btnCamera.setOnClickListener(this);
         btnGallery.setOnClickListener(this);
         btnCreatePost.setOnClickListener(this);
         videoView.setOnClickListener(this);
         postimg.setOnClickListener(this);
 
-
+        if (this.postId != null) {
+            fetchPreData();
+        }
         return view;
     }
 
@@ -149,6 +164,8 @@ public class CreatePostFragment extends Fragment implements View.OnClickListener
             showCenterDialog();
         } else if (v.getId() == R.id.postimg) {
             showCenterDialog(postimg.getDrawable());
+        } else if (v.getId() == R.id.createPost_btnRefresh) {
+            resetValue();
         }
     }
 
@@ -194,6 +211,42 @@ public class CreatePostFragment extends Fragment implements View.OnClickListener
         }
     }
 
+    private void fetchPreData() {
+        CollectionReference posts = db.collection("posts");
+        posts.document(this.postId)
+             .get()
+             .addOnCompleteListener(task -> {
+                 if (task.isSuccessful() && task.getResult() != null) {
+                     PostModel postModel = task.getResult().toObject(PostModel.class);
+                     des.setText(postModel.getPostDescription());
+                     String url = postModel.getPostImage();
+                     boolean isVideo = url != null && url.contains("video");
+                     oldUrl = url;
+                     if (url != null) {
+                         uri = Uri.parse(url);
+                         Glide.with(this)
+                              .load(uri)
+                              .centerCrop()
+                              .placeholder(R.drawable.image_empty)
+                              .into(postimg);
+                     }
+
+                     if (isVideo) {
+                         videoView.setVisibility(View.VISIBLE);
+                         postimg.setVisibility(View.GONE);
+                         videoView.start();
+                     } else {
+                         postimg.setVisibility(View.VISIBLE);
+                         videoView.setVisibility(View.GONE);
+                         videoView.pause();
+                     }
+
+                 }
+             }).addOnFailureListener(e -> {
+                 System.out.println("ERROR-EDIT-POST::" + e.getMessage());
+             });
+    }
+
     private void createNewPost(StorageReference reference, UserModel user) {
         if (des.getText().toString().trim().equals("") && uri == null) {
             Toast.makeText(getContext(), "Lỗi khi tạo", Toast.LENGTH_SHORT).show();
@@ -204,7 +257,12 @@ public class CreatePostFragment extends Fragment implements View.OnClickListener
         String postId = UUID.randomUUID().toString().replace("-", "");
 
         PostModel post = new PostModel();
-        post.setPostId(postId);
+        if (this.postId != null) {
+            post.setPostId(this.postId); //for edit
+            post.setPostImage(uri.toString());
+        } else {
+            post.setPostId(postId); //for create new
+        }
         post.setPostDescription(des.getText().toString().trim());
         post.setPostedBy(user.getId());
         post.setPostedAt(new Date().getTime());
@@ -212,7 +270,17 @@ public class CreatePostFragment extends Fragment implements View.OnClickListener
 
         CollectionReference posts = db.collection("posts");
 
-        if (uri != null) {
+        if (uri != null && !uri.toString().contains("http")) {
+            //remove old image
+            if (oldUrl != null && !oldUrl.equals("")) {
+                try {
+                    StorageReference fileRef = storage.getReferenceFromUrl(oldUrl);
+                    fileRef.delete()
+                           .addOnSuccessListener(aVoid -> Log.d("REMOVE-SUCCESS", "Xóa tệp tin thành công"))
+                           .addOnFailureListener(exception -> Log.d("REMOVE-FAILURE", "Xóa tệp tin thất bại: " + exception.getMessage()));
+                }catch (Exception e){}
+            }
+
             reference.putFile(uri).addOnSuccessListener(taskSnapshot -> {
                 reference.getDownloadUrl().addOnSuccessListener(uri -> {
                     post.setPostImage(uri.toString());
@@ -358,7 +426,10 @@ public class CreatePostFragment extends Fragment implements View.OnClickListener
         uri = null;
         des.setText("");
         videoView.setVideoURI(null);
+        videoView.setVisibility(View.GONE);
+        postimg.setVisibility(View.VISIBLE);
         postimg.setImageURI(null);
+        postimg.setImageResource(R.drawable.image_empty);
     }
 
     private void showProgressBar() {

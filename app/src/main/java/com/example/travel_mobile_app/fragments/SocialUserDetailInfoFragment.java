@@ -103,7 +103,7 @@ public class SocialUserDetailInfoFragment extends Fragment implements View.OnCli
                                             for (PostModel model : postList) {
                                                 LayoutInflater post = LayoutInflater.from(getContext());
                                                 View subLayout = post.inflate(R.layout.dashboard_rv, null);
-                                                SocialUserDetailInfoAdapter socialUserDetailInfoAdapter = new SocialUserDetailInfoAdapter(model, getContext(), db, getActivity(), userInfos);
+                                                SocialUserDetailInfoAdapter socialUserDetailInfoAdapter = new SocialUserDetailInfoAdapter(model, getContext(), db, getActivity(), userInfos,requireActivity().getSupportFragmentManager());
                                                 View viewSubLayout = socialUserDetailInfoAdapter.onCreateView(subLayout, model);
 
                                                 userInfos.addView(viewSubLayout);
