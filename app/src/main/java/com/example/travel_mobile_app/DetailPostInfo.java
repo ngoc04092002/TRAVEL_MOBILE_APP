@@ -58,8 +58,6 @@ public class DetailPostInfo extends AppCompatActivity {
 
         String postId = getIntent().getStringExtra("postId");
 
-        System.out.println("postId=>" + postId);
-
         showProgressBar();
         postList = new ArrayList<>();
         dashboardRv = binding.dashboardRv;

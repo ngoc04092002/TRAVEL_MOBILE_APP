@@ -3,9 +3,11 @@ package com.example.travel_mobile_app.fragments;
 import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.viewmodel.CreationExtras;
 
 import android.util.Log;
@@ -34,7 +36,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SocialUserDetailInfoFragment extends Fragment implements View.OnClickListener {
-
     private String userId;
     private FirebaseFirestore db;
     FragmentSocialUserDetailInfoBinding binding;
@@ -124,6 +125,7 @@ public class SocialUserDetailInfoFragment extends Fragment implements View.OnCli
         btnFriendBack = view.findViewById(R.id.uInfo_btnBack);
         btnFriendBack.setOnClickListener(this);
 
+
         return view;
     }
 
@@ -137,9 +139,21 @@ public class SocialUserDetailInfoFragment extends Fragment implements View.OnCli
     }
 
     private void setUserInfo(UserModel userModel) {
-        if (userModel == null) {
+        if (userModel == null || this == null) {
             return;
         }
+
+        if (userModel.getFollowing() != null) {
+            int cntFollowing = userModel.getFollowing().size();
+            String following = cntFollowing > 120 ? "120+" : String.valueOf(cntFollowing);
+            binding.detailInfoFollowingCnt.setText(following);
+        }
+        if (userModel.getFollowers() != null) {
+            int cntFollower = userModel.getFollowers().size();
+            String follower = cntFollower > 120 ? "120+" : String.valueOf(cntFollower);
+            binding.detailInfoFollowerCnt.setText(follower);
+        }
+
         if (userModel.getFullName() != null) {
             binding.detailInfoName.setText(userModel.getFullName());
             binding.uInfoName.setText(userModel.getFullName());
@@ -148,7 +162,7 @@ public class SocialUserDetailInfoFragment extends Fragment implements View.OnCli
         if (userModel.getUsername() != null) {
             binding.detailInfoUsername.setText(userModel.getUsername());
             binding.uInfoUsername.setText(userModel.getUsername());
-        }else{
+        } else {
             binding.detailInfoUsername.setText(userModel.getFullName());
             binding.uInfoUsername.setText(userModel.getFullName());
         }
@@ -168,6 +182,13 @@ public class SocialUserDetailInfoFragment extends Fragment implements View.OnCli
                  .placeholder(R.drawable.avatar_men)
                  .into(binding.profileImage);
         }
+
+        binding.infoFollower.setOnClickListener(v -> {
+            replaceScreen(R.id.container, new DetailFollowFragment("Theo dõi", userModel.getFollowers()), null);
+        });
+        binding.infoFollowing.setOnClickListener(v -> {
+            replaceScreen(R.id.container, new DetailFollowFragment("Đang theo dõi", userModel.getFollowing()), null);
+        });
     }
 
     private void showProgressBar() {
@@ -180,6 +201,16 @@ public class SocialUserDetailInfoFragment extends Fragment implements View.OnCli
     private void dismissProgressBar() {
         binding.uInfoScroll.setVisibility(View.VISIBLE);
         spinKit.setVisibility(View.GONE);
+    }
+
+    private void replaceScreen(@IdRes int containerViewId, @NonNull Fragment fragment, String backTrackName) {
+        FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+        fragmentTransaction.replace(containerViewId, fragment);
+        fragmentTransaction.addToBackStack(backTrackName);
+        // Commit transaction
+        fragmentTransaction.commit();
     }
 
     @NonNull

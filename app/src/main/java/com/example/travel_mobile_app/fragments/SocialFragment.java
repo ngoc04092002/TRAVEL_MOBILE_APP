@@ -75,21 +75,15 @@ public class SocialFragment extends Fragment implements View.OnClickListener {
     private FrameLayout createStory;
     private LinearLayout backdrop;
     private ProgressBar progressBar;
-    static final String STATE_POST = "list_post";
-    static final String STATE_STORY = "list_story";
     private StoryAdapter storyAdapter;
 
     public SocialFragment() {
         // Required empty public constructor
     }
 
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-
-        Gson gson = new Gson();
-        outState.putString(STATE_POST, gson.toJson(postList));
-        outState.putString(STATE_STORY, gson.toJson(list));
+    public SocialFragment(ArrayList<PostModel> postList, ArrayList<StoryModel> list) {
+        this.postList = postList;
+        this.list = list;
     }
 
     @Override
@@ -111,38 +105,40 @@ public class SocialFragment extends Fragment implements View.OnClickListener {
         progressBar = view.findViewById(R.id.spin_kit);
         backdrop = view.findViewById(R.id.backdrop);
 
-        list = new ArrayList<>();
         storyRv = view.findViewById(R.id.storyRv);
         storyAdapter = new StoryAdapter(list, getContext());
         storyRv.setHasFixedSize(true);
         storyRv.setLayoutManager(new StaggeredGridLayoutManager(1, LinearLayoutManager.HORIZONTAL));
 
-
-        postList = new ArrayList<>();
         dashboardRv = view.findViewById(R.id.dashboardRv);
         PostAdapter postAdapter = new PostAdapter(postList, getContext(), requireActivity().getSupportFragmentManager(), getActivity(), db);
         dashboardRv.setHasFixedSize(true);
         dashboardRv.setLayoutManager(new StaggeredGridLayoutManager(1, LinearLayoutManager.VERTICAL));
+        dashboardRv.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                if (!recyclerView.canScrollVertically(1)) {
+                    System.out.println("end reach");
+                }
+            }
+        });
 
-        //fix
-        if (savedInstanceState != null) {
-            Gson gson = new Gson();
-            Type postListType = new TypeToken<List<PostModel>>() {
-            }.getType();
-            postList = gson.fromJson(savedInstanceState.getString(STATE_POST), postListType);
-            Type storyListType = new TypeToken<List<PostModel>>() {
-            }.getType();
-            list = gson.fromJson(savedInstanceState.getString(STATE_STORY), storyListType);
-            storyAdapter = new StoryAdapter(list, getContext());
+        if (postList.size() != 0) {
             postAdapter = new PostAdapter(postList, getContext(), requireActivity().getSupportFragmentManager(), getActivity(), db);
         } else {
             shimmerFrameLayout.setVisibility(View.VISIBLE);
             shimmerFrameLayout.startShimmer();
+            setPostListData(postAdapter);
+        }
+
+        if (list.size() != 0) {
+            storyAdapter = new StoryAdapter(list, getContext());
+        } else {
             shimmerFrameLayoutStory.setVisibility(View.VISIBLE);
             shimmerFrameLayoutStory.startShimmer();
             setStoryListData(storyAdapter);
-            setPostListData(postAdapter);
         }
+
 
         storyRv.setAdapter(storyAdapter);
         dashboardRv.setAdapter(postAdapter);
