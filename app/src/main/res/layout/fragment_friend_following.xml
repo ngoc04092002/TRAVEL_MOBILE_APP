@@ -28,14 +28,4 @@
         android:layout_marginTop="6dp"
         android:visibility="gone"
         app:SpinKit_Color="@color/yellow" />
-
-    <TextView
-        android:id="@+id/not_found"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="Không tìm thấy kết quả"
-        android:textAlignment="center"
-        android:textSize="@dimen/_12mdp"
-        android:visibility="gone" />
 </FrameLayout>

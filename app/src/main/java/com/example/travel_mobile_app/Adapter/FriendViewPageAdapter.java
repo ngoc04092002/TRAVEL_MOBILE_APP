@@ -6,20 +6,15 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
-import com.example.travel_mobile_app.dto.DataChangeListener;
 import com.example.travel_mobile_app.fragments.FriendFollowerFragment;
 import com.example.travel_mobile_app.fragments.FriendFollowingFragment;
-
-import java.util.List;
 
 
 public class FriendViewPageAdapter extends FragmentPagerAdapter {
 
-    private String searchedText="";
-    private List<Fragment> fragments;
-    public FriendViewPageAdapter(@NonNull FragmentManager fm,List<Fragment> fragments) {
+
+    public FriendViewPageAdapter(@NonNull FragmentManager fm) {
         super(fm);
-        this.fragments = fragments;
     }
 
     public FriendViewPageAdapter(@NonNull FragmentManager fm, int behavior) {
@@ -29,21 +24,19 @@ public class FriendViewPageAdapter extends FragmentPagerAdapter {
     @NonNull
     @Override
     public Fragment getItem(int position) {
-        return fragments.get(position);
+        switch (position){
+            case 0:
+                return new FriendFollowingFragment();
+            case 1:
+                return new FriendFollowerFragment();
+            default:
+                return new FriendFollowingFragment();
+        }
     }
 
     @Override
     public int getCount() {
-        return fragments.size();
-    }
-
-    public void updateData(String data) {
-        this.searchedText = data;
-        for (Fragment fragment : fragments) {
-            if (fragment instanceof DataChangeListener) {
-                ((DataChangeListener) fragment).onDataChange(data);
-            }
-        }
+        return 2;
     }
 
     @Nullable

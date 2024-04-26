@@ -10,16 +10,6 @@
         android:id="@+id/followerRv"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
-
-    <TextView
-        android:id="@+id/not_found"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="Không tìm thấy kết quả"
-        android:textAlignment="center"
-        android:textSize="@dimen/_12mdp"
-        android:visibility="gone" />
     <TextView
         android:id="@+id/bad_request"
         android:layout_width="match_parent"

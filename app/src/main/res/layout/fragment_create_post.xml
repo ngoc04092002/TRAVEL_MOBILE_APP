@@ -101,21 +101,16 @@
             android:textSize="16sp"
             android:textStyle="bold" />
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            >
-            <VideoView
-                android:id="@+id/videoView"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/_220mdp"
-                android:layout_marginLeft="12dp"
-                android:layout_marginRight="12dp"
-                android:scaleType="centerCrop"
-                android:visibility="gone"
-                />
-        </RelativeLayout>
 
+        <VideoView
+            android:id="@+id/videoView"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_220mdp"
+            android:layout_marginLeft="12dp"
+            android:layout_marginRight="12dp"
+            android:scaleType="centerCrop"
+            android:visibility="gone"
+            />
 
         <com.makeramen.roundedimageview.RoundedImageView
             android:id="@+id/postimg"
@@ -124,7 +119,7 @@
             android:layout_marginLeft="12dp"
             android:layout_marginRight="12dp"
             android:scaleType="centerCrop"
-            android:src="@drawable/image_empty"
+            android:src="@drawable/add_photo"
             app:riv_border_color="#333333"
             app:riv_border_width="1dip"
             app:riv_corner_radius="10dip"

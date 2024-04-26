@@ -44,10 +44,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:orientation="horizontal"
-                android:layout_marginLeft="6dp"
-                android:layout_marginRight="6dp"
-                >
+                android:orientation="horizontal">
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/profile_image"
@@ -70,7 +67,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="@dimen/_4mdp"
                         android:text="NgocVan"
-                        android:textSize="@dimen/_16font_mdp"
+                        android:textSize="@dimen/_22font_mdp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -79,14 +76,14 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="@dimen/_4mdp"
                         android:text="\@NgocVan"
-                        android:textSize="@dimen/_12font_mdp" />
+                        android:textSize="@dimen/_16font_mdp" />
 
                     <TextView
                         android:id="@+id/detail_info_address"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text=""
-                        android:textSize="@dimen/_10font_mdp" />
+                        android:text="Bắc Ninh"
+                        android:textSize="@dimen/_14font_mdp" />
                 </LinearLayout>
 
             </LinearLayout>
@@ -99,7 +96,6 @@
                 android:orientation="horizontal">
 
                 <LinearLayout
-                    android:id="@+id/infoFollowing"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -131,7 +127,6 @@
                     android:background="@color/gray" />
 
                 <LinearLayout
-                    android:id="@+id/infoFollower"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -236,7 +231,7 @@
                     <TextView
                         android:id="@+id/uInfo_username"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="@dimen/_24mdp"
                         android:gravity="center"
                         android:text="NgocVan"
                         android:textSize="@dimen/_12font_mdp" />
@@ -254,7 +249,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/_24mdp"
                         android:gravity="center"
-                        android:text=""
+                        android:text="Bắc Ninh"
                         android:textSize="@dimen/_12font_mdp" />
                 </LinearLayout>
 

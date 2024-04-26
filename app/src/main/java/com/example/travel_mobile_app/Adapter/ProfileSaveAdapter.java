@@ -37,9 +37,9 @@ public class ProfileSaveAdapter extends RecyclerView.Adapter<ProfileSaveAdapter.
     public void onBindViewHolder(@NonNull viewHolder holder, int position) {
         SaveItemModel model = list.get(position);
 
-//        holder.profile.setImageResource(model.getProfile());
+        holder.profile.setImageResource(model.getProfile());
 //        holder.title.setText(HtmlCompat.fromHtml(model.getTitle(),HtmlCompat.FROM_HTML_MODE_LEGACY));
-//        holder.time.setText(model.getTime());
+        holder.time.setText(model.getTime());
     }
 
     @Override
