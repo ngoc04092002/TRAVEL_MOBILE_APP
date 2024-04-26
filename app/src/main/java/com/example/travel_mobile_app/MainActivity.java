@@ -45,9 +45,9 @@ public class MainActivity extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
         // Trong Activity hoặc Fragment của bạn
-        FragmentTransaction newhome = getSupportFragmentManager().beginTransaction();
+        /*FragmentTransaction newhome = getSupportFragmentManager().beginTransaction();
         newhome.replace(R.id.container, new SuggestionFragment()); // Thay thế R.id.container với id của layout container trong màn hình chính của bạn
-        newhome.commit();
+        newhome.commit();*/
 
 
         //screen change from search screen to social screen
@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
                 updateNotificationCheckOpen();
             } else if (itemId == R.id.user) {
                 transaction.replace(R.id.container, new AccountFragment());
-            } else if (itemId == R.id.home) {
+            } else if (itemId == R.id.search) {
                 transaction.replace(R.id.container,new SuggestionFragment());
 
             }

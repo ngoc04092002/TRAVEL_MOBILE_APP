@@ -23,6 +23,7 @@ import com.example.travel_mobile_app.R;
 import com.example.travel_mobile_app.models.Location;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -31,7 +32,9 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 /**
@@ -92,6 +95,8 @@ public class SuggestionFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_suggestion2, container, false);
         rcvSug =view.findViewById(R.id.rcv_suggestion);
         mSugAdapter = new SuggestionAdapter(this);
+
+
         FirebaseFirestore.getInstance().collection("locations")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -129,6 +134,7 @@ public class SuggestionFragment extends Fragment {
             }
         });
 
+
         reloadbtn = view.findViewById(R.id.reloadbtn);
         reloadbtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -143,6 +149,16 @@ public class SuggestionFragment extends Fragment {
 
 
         return view;
+    }
+    private void updateDocumentId(CollectionReference collectionReference, String documentId, String newId) {
+        DocumentReference documentReference = collectionReference.document(documentId);
+        Map<String, Object> updates = new HashMap<>();
+        updates.put("id", newId); // Thay "id" bằng trường ID của tài liệu
+        documentReference.update(updates).addOnSuccessListener(aVoid -> {
+            Log.d(TAG, "Document ID updated successfully!");
+        }).addOnFailureListener(e -> {
+            Log.w(TAG, "Error updating document ID", e);
+        });
     }
    /* private List<Location> getListLocation() {
         List<Location> list = new ArrayList<>();
