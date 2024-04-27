@@ -433,6 +433,11 @@ public class SocialUserDetailInfoAdapter {
 
     private void addNotification(PostModel post, String type) {
         UserModel user = SharedPreferencesManager.readUserInfo();
+
+        if (post.getPostedBy().equals(user.getId())) {
+            return;
+        }
+
         String notificationId = UUID.randomUUID().toString().replace("-", "");
 
         NotificationModel notification = new NotificationModel();
@@ -451,6 +456,11 @@ public class SocialUserDetailInfoAdapter {
 
     private void sendNotification(PostModel post, String type) {
         UserModel user = SharedPreferencesManager.readUserInfo();
+
+        if (post.getPostedBy().equals(user.getId())) {
+            return;
+        }
+
         HashMap<String, String> conent = new HashMap<>();
         if (type.equals("like")) {
             conent.put("0", "Bài đăng");
