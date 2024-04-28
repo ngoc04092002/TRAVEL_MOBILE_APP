@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
         if (previousFragment != null && previousFragment.equals("social_screen")) {
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             binding.readableBottomBar.setSelectedItemId(R.id.insta);
-            transaction.replace(R.id.container, new SocialFragment(postList,storyList));
+            transaction.replace(R.id.container, new SocialFragment(postList));
             transaction.commit();
         }
 
@@ -80,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
             int itemId = item.getItemId();
 
             if (itemId == R.id.insta) { // Replace this with the correct ID for the social item
-                transaction.replace(R.id.container, new SocialFragment(postList,storyList));
+                transaction.replace(R.id.container, new SocialFragment(postList));
             } else if (itemId == R.id.bell) {
                 transaction.replace(R.id.container, new NotificationFragment());
                 updateNotificationCheckOpen();
@@ -107,7 +107,6 @@ public class MainActivity extends AppCompatActivity {
                      UserModel userModel = taskUser.getResult().toObject(UserModel.class);
                      SharedPreferencesManager.writeUserInfo(userModel);
                      fetchPostListData(userModel);
-                     fetchStoryListData(userModel);
                      fetchNotificationBadge(userModel);
                  }
              });
@@ -132,58 +131,6 @@ public class MainActivity extends AppCompatActivity {
         Log.d("record", "Error getting documents: ", task.getException());
     }
 });
-    }
-
-    private void fetchStoryListData(UserModel user) {
-        CollectionReference storiesRef = db.collection("stories");
-        CollectionReference usersRef = db.collection("users");
-
-        usersRef
-//                .whereIn("id", user.getFollowing())
-.get()
-.addOnCompleteListener(task -> {
-    if (task.isSuccessful() && task.getResult() != null) {
-        for (QueryDocumentSnapshot document : task.getResult()) {
-            UserModel userModel = document.toObject(UserModel.class);
-            if (userModel.getId() != null) {
-                getAllUserStory(userModel, storiesRef);
-            }
-        }
-
-    }
-});
-
-    }
-
-    private void getAllUserStory(UserModel user, CollectionReference storiesRef) {
-        storiesRef
-                .whereEqualTo("storyBy", user.getId())
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful() && task.getResult() != null) {
-                        ArrayList<UserStory> userStories = new ArrayList<>();
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            Date currentTime = new Date();
-                            StoryModel storyModel = document.toObject(StoryModel.class);
-
-                            if (currentTime.getTime() - storyModel.getStoryAt() < (24 * 60 * 60 * 1000)) {
-                                userStories.add(new UserStory(storyModel.getUri(), storyModel.getStoryAt()));
-                            }
-                        }
-                        if (userStories.size() > 0) {
-                            StoryModel storyModel = new StoryModel();
-                            storyModel.setUserStories(userStories);
-                            storyModel.setStoryBy(user.getId());
-                            storyModel.setFullName(user.getFullName());
-                            storyModel.setImage(user.getAvatarURL());
-                            storyList.add(storyModel);
-                        }
-                    } else {
-                        Log.e("record", "Error getting documents: ", task.getException());
-                    }
-                }).addOnFailureListener(e -> {
-                    Log.e("ERROR-GET-STORY::", e.getMessage());
-                });
     }
 
     private void updateNotificationCheckOpen() {

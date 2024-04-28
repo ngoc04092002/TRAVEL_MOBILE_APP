@@ -18,6 +18,7 @@ import com.example.travel_mobile_app.Adapter.SearchPostItemAdapter;
 import com.example.travel_mobile_app.databinding.ActivitySocialSearchPostBinding;
 import com.example.travel_mobile_app.models.NotificationModel;
 import com.example.travel_mobile_app.models.PostModel;
+import com.example.travel_mobile_app.models.UserModel;
 import com.example.travel_mobile_app.services.SharedPreferencesManager;
 import com.github.ybq.android.spinkit.sprite.Sprite;
 import com.github.ybq.android.spinkit.style.Circle;
@@ -165,16 +166,17 @@ public class SocialSearchPost extends AppCompatActivity implements View.OnClickL
                                              });
                                              searchHistory.addView(subLayout);
                                          }
-                                         return;
-                                     }
-                                     searchHistory.setVisibility(View.GONE);
-                                     existsHistory.add(newText.toString().trim());
-                                     SharedPreferencesManager.writePostSearchHistory(existsHistory);
-
-                                     if (type != null && type.equals("notification")) {
-                                         refreshNotifications(newText.toString().trim());
-                                     } else {
-                                         refreshPosts(newText.toString().trim());
+                                     }else{
+                                         searchHistory.setVisibility(View.GONE);
+                                         existsHistory.add(newText.toString().trim());
+                                         SharedPreferencesManager.writePostSearchHistory(existsHistory);
+                                         System.out.println("type::" + type);
+                                         System.out.println("newText::" + newText.toString().trim());
+                                         if (type != null && type.equals("notification")) {
+                                             refreshNotifications(newText.toString().trim());
+                                         } else {
+                                             refreshPosts(newText.toString().trim());
+                                         }
                                      }
 
                                  },
@@ -216,7 +218,10 @@ public class SocialSearchPost extends AppCompatActivity implements View.OnClickL
     private void refreshNotifications(String newText) {
         notifications.clear();
         showProgressBar();
+        UserModel user = SharedPreferencesManager.readUserInfo();
+
         db.collection("notifications")
+          .whereEqualTo("postedBy", user.getId())
           .whereGreaterThanOrEqualTo("notificationBy", newText)
           .whereLessThanOrEqualTo("notificationBy", newText + "\uf8ff")
           .get()
@@ -233,6 +238,7 @@ public class SocialSearchPost extends AppCompatActivity implements View.OnClickL
               }
               dismissProgressBar();
           }).addOnFailureListener(e -> {
+              Log.e("ERROR-FILTER-NOTIFICATION::", e.getMessage());
               dismissProgressBar();
               binding.notFound.setVisibility(View.VISIBLE);
               binding.notFound.setText("Đã có lỗi xảy ra");

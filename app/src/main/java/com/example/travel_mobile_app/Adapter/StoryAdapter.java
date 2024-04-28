@@ -51,7 +51,6 @@ public class StoryAdapter extends RecyclerView.Adapter<StoryAdapter.viewHolder> 
     public void onBindViewHolder(@NonNull viewHolder holder, int position) {
 
         StoryModel storyModel = list.get(position);
-
         // fix add load user image
         //load image
         if (storyModel.getUri() != null) {
@@ -60,6 +59,14 @@ public class StoryAdapter extends RecyclerView.Adapter<StoryAdapter.viewHolder> 
                  .centerCrop()
                  .placeholder(R.drawable.image_empty)
                  .into(holder.binding.story);
+        }
+
+        if (storyModel.getImage() != null) {
+            Glide.with(context)
+                 .load(Uri.parse(storyModel.getImage()))
+                 .centerCrop()
+                 .placeholder(R.drawable.image_empty)
+                 .into(holder.binding.profileImage);
         }
 
         holder.binding.name.setText(storyModel.getFullName());

@@ -65,6 +65,7 @@ import java.util.UUID;
 
 public class SocialFragment extends Fragment implements View.OnClickListener {
 
+    private final static int A_DAY = 24 * 60 * 60 * 1000;
     private RecyclerView storyRv, dashboardRv;
     private ArrayList<StoryModel> list;
     private ArrayList<PostModel> postList;
@@ -81,9 +82,8 @@ public class SocialFragment extends Fragment implements View.OnClickListener {
         // Required empty public constructor
     }
 
-    public SocialFragment(ArrayList<PostModel> postList, ArrayList<StoryModel> list) {
+    public SocialFragment(ArrayList<PostModel> postList) {
         this.postList = postList;
-        this.list = list;
     }
 
     @Override
@@ -106,6 +106,7 @@ public class SocialFragment extends Fragment implements View.OnClickListener {
         backdrop = view.findViewById(R.id.backdrop);
 
         storyRv = view.findViewById(R.id.storyRv);
+        list = new ArrayList<>();
         storyAdapter = new StoryAdapter(list, getContext());
         storyRv.setHasFixedSize(true);
         storyRv.setLayoutManager(new StaggeredGridLayoutManager(1, LinearLayoutManager.HORIZONTAL));
@@ -131,13 +132,10 @@ public class SocialFragment extends Fragment implements View.OnClickListener {
             setPostListData(postAdapter);
         }
 
-        if (list.size() != 0) {
-            storyAdapter = new StoryAdapter(list, getContext());
-        } else {
-            shimmerFrameLayoutStory.setVisibility(View.VISIBLE);
-            shimmerFrameLayoutStory.startShimmer();
-            setStoryListData(storyAdapter);
-        }
+
+        shimmerFrameLayoutStory.setVisibility(View.VISIBLE);
+        shimmerFrameLayoutStory.startShimmer();
+        setStoryListData(storyAdapter);
 
 
         storyRv.setAdapter(storyAdapter);
@@ -165,7 +163,7 @@ public class SocialFragment extends Fragment implements View.OnClickListener {
         } else if (v.getId() == R.id.btnSearch) {
             Intent i = new Intent(getActivity(), SocialSearchPost.class);
             startActivity(i);
-            getActivity().overridePendingTransition(0,android.R.anim.slide_out_right);
+            getActivity().overridePendingTransition(0, android.R.anim.slide_out_right);
         } else if (v.getId() == R.id.createStory) {
             ImagePicker.with(this)
                        .galleryOnly()
@@ -245,13 +243,16 @@ public class SocialFragment extends Fragment implements View.OnClickListener {
                             Date currentTime = new Date();
                             StoryModel storyModel = document.toObject(StoryModel.class);
 
-                            if (currentTime.getTime() - storyModel.getStoryAt() < (24 * 60 * 60 * 1000)) {
+                            if (currentTime.getTime() - storyModel.getStoryAt() < A_DAY) {
                                 userStories.add(new UserStory(storyModel.getUri(), storyModel.getStoryAt()));
                             }
                         }
+
                         if (userStories.size() > 0) {
+                            StoryModel firstStoryModel = task.getResult().getDocuments().get(0).toObject(StoryModel.class);
                             StoryModel storyModel = new StoryModel();
                             storyModel.setUserStories(userStories);
+                            storyModel.setUri(firstStoryModel.getUri());
                             storyModel.setStoryBy(user.getId());
                             storyModel.setFullName(user.getFullName());
                             storyModel.setImage(user.getAvatarURL());
@@ -293,6 +294,8 @@ public class SocialFragment extends Fragment implements View.OnClickListener {
         String storyId = UUID.randomUUID().toString().replace("-", "");
 
         story.setStoryId(storyId);
+        story.setImage(user.getAvatarURL());
+        story.setFullName(user.getFullName());
         story.setStoryBy(user.getId()); // get name and set fix
         story.setStoryAt(new Date().getTime());
 
