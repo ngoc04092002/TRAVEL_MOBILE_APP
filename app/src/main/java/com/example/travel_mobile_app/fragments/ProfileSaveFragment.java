@@ -45,9 +45,9 @@ public class ProfileSaveFragment extends Fragment implements View.OnClickListene
 
         saveRv = view.findViewById(R.id.save_itemsRv);
         list = new ArrayList<>();
-        list.add(new SaveItemModel("1L", "https://buffer.com/cdn-cgi/image/w=1000,fit=contain,q=90,f=auto/library/content/images/size/w600/2023/10/free-images.jpg", "<b>ngocvan</b> chào bạn", 1L));
-        list.add(new SaveItemModel("2L", "https://buffer.com/cdn-cgi/image/w=1000,fit=contain,q=90,f=auto/library/content/images/size/w600/2023/10/free-images.jpg", "<b>ngocvan</b> đã tạo 1 bài viết rất hay", 1L));
-        list.add(new SaveItemModel("3L", "https://buffer.com/cdn-cgi/image/w=1000,fit=contain,q=90,f=auto/library/content/images/size/w600/2023/10/free-images.jpg", "<b>ngocvan</b> đã nhắc tới bạn", 1L));
+        list.add(new SaveItemModel(1L, R.drawable.avatar_men, "<b>ngocvan</b> chào bạn", "Đã lưu 12 giờ trước"));
+        list.add(new SaveItemModel(2L, R.drawable.favorite, "<b>ngocvan</b> đã tạo 1 bài viết rất hay", "Đã lưu 2 phút trước"));
+        list.add(new SaveItemModel(3L, R.drawable.bell_fill, "<b>ngocvan</b> đã nhắc tới bạn", "Đã lưu 1 phút trước"));
 
         ProfileSaveAdapter notificationAdapter = new ProfileSaveAdapter(list, getContext());
         saveRv.setHasFixedSize(true);

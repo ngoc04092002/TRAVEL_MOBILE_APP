@@ -2,31 +2,24 @@ package com.example.travel_mobile_app;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
-import com.example.travel_mobile_app.Adapter.NotificationAdapter;
-import com.example.travel_mobile_app.Adapter.SearchPostItemAdapter;
+import com.example.travel_mobile_app.Adapter.PostAdapter;
 import com.example.travel_mobile_app.databinding.ActivitySocialSearchPostBinding;
-import com.example.travel_mobile_app.models.NotificationModel;
 import com.example.travel_mobile_app.models.PostModel;
-import com.example.travel_mobile_app.services.SharedPreferencesManager;
 import com.github.ybq.android.spinkit.sprite.Sprite;
 import com.github.ybq.android.spinkit.style.Circle;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
@@ -38,13 +31,10 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 public class SocialSearchPost extends AppCompatActivity implements View.OnClickListener {
 
     ActivitySocialSearchPostBinding binding;
-    private List<PostModel> posts;
-    private List<NotificationModel> notifications;
+    private ArrayList<PostModel> posts;
     private FirebaseFirestore db;
     private Disposable disposable;
-    private SearchPostItemAdapter postAdapter;
-    private NotificationAdapter notificationAdapter;
-    private String type = "";
+    private PostAdapter postAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,65 +43,27 @@ public class SocialSearchPost extends AppCompatActivity implements View.OnClickL
         setContentView(binding.getRoot());
         db = FirebaseFirestore.getInstance();
 
+
+        posts = new ArrayList<>();
         disposable = getDisposable(binding.search);
 
+        postAdapter = new PostAdapter(posts, this, this.getSupportFragmentManager(), this, db);
         binding.searchPostRv.setHasFixedSize(true);
         binding.searchPostRv.setLayoutManager(new StaggeredGridLayoutManager(1, LinearLayoutManager.VERTICAL));
-
-        type = getIntent().getStringExtra("search_activity");
-
-        if (type != null && type.equals("notification")) {
-            notifications = new ArrayList<>();
-            notificationAdapter = new NotificationAdapter(notifications, this, db, this);
-            binding.searchPostRv.setAdapter(notificationAdapter);
-        } else {
-            posts = new ArrayList<>();
-            postAdapter = new SearchPostItemAdapter(posts, this, "search_post", this);
-            binding.searchPostRv.setAdapter(postAdapter);
-        }
-
+        binding.searchPostRv.setAdapter(postAdapter);
 
         binding.searchPostBtnBack.setOnClickListener(this);
-
-        LinearLayout searchHistory = binding.searchHistory;
-        Set<String> existsHistory = SharedPreferencesManager.readPostSearchHistory();
-        searchHistory.removeAllViews();
-        for (String h : existsHistory) {
-            LayoutInflater post = LayoutInflater.from(this);
-            View subLayout = post.inflate(R.layout.post_search_history, null);
-            TextView content = subLayout.findViewById(R.id.content);
-            content.setText(h);
-            content.setOnClickListener(v -> {
-                binding.search.setQuery(h, true);
-            });
-            subLayout.findViewById(R.id.btn_del_history).setOnClickListener(v -> {
-                existsHistory.remove(h);
-                searchHistory.removeView(subLayout);
-            });
-
-            searchHistory.addView(subLayout);
-        }
-
-        SharedPreferencesManager.init(this);
     }
 
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.searchPost_btnBack) {
             Intent intent = new Intent(this, MainActivity.class);
-
-            String type = getIntent().getStringExtra("search_activity");
-            if (type != null && type.equals("notification")) {
-                intent.putExtra("previous_fragment", "notification");
-            } else {
-                intent.putExtra("previous_fragment", "social_screen");
-            }
-
+            intent.putExtra("previous_fragment", "social_screen");
             startActivity(intent);
             overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
         }
     }
-
 
     //debounce
     private Disposable getDisposable(SearchView search) {
@@ -135,48 +87,15 @@ public class SocialSearchPost extends AppCompatActivity implements View.OnClickL
                          .observeOn(AndroidSchedulers.mainThread())
                          .subscribe(
                                  newText -> {
-                                     LinearLayout searchHistory = binding.searchHistory;
-                                     Set<String> existsHistory = SharedPreferencesManager.readPostSearchHistory();
-
-                                     searchHistory.removeAllViews();
-
                                      if (newText.toString().trim().equals("")) {
                                          binding.notFound.setVisibility(View.GONE);
-                                         if (type != null && type.equals("notification") && notifications.size() != 0) {
-                                             notifications.clear();
-                                             notificationAdapter.notifyDataSetChanged();
-                                         } else {
+                                         if(posts.size()!=0){
                                              posts.clear();
                                              postAdapter.notifyDataSetChanged();
                                          }
-
-                                         searchHistory.setVisibility(View.VISIBLE);
-                                         for (String h : existsHistory) {
-                                             LayoutInflater post = LayoutInflater.from(this);
-                                             View subLayout = post.inflate(R.layout.post_search_history, null);
-                                             TextView content = subLayout.findViewById(R.id.content);
-                                             content.setText(h);
-                                             content.setOnClickListener(v -> {
-                                                 binding.search.setQuery(h, true);
-                                             });
-                                             subLayout.findViewById(R.id.btn_del_history).setOnClickListener(v -> {
-                                                 existsHistory.remove(h);
-                                                 searchHistory.removeView(subLayout);
-                                             });
-                                             searchHistory.addView(subLayout);
-                                         }
                                          return;
                                      }
-                                     searchHistory.setVisibility(View.GONE);
-                                     existsHistory.add(newText.toString().trim());
-                                     SharedPreferencesManager.writePostSearchHistory(existsHistory);
-
-                                     if (type != null && type.equals("notification")) {
-                                         refreshNotifications(newText.toString().trim());
-                                     } else {
-                                         refreshPosts(newText.toString().trim());
-                                     }
-
+                                     refreshPosts(newText.toString().trim());
                                  },
                                  error -> {
                                      // handle error
@@ -204,32 +123,6 @@ public class SocialSearchPost extends AppCompatActivity implements View.OnClickL
                       posts.add(post);
                   }
                   postAdapter.notifyDataSetChanged();
-              }
-              dismissProgressBar();
-          }).addOnFailureListener(e -> {
-              dismissProgressBar();
-              binding.notFound.setVisibility(View.VISIBLE);
-              binding.notFound.setText("Đã có lỗi xảy ra");
-          });
-    }
-
-    private void refreshNotifications(String newText) {
-        notifications.clear();
-        showProgressBar();
-        db.collection("notifications")
-          .whereGreaterThanOrEqualTo("notificationBy", newText)
-          .whereLessThanOrEqualTo("notificationBy", newText + "\uf8ff")
-          .get()
-          .addOnSuccessListener(documentSnapshots -> {
-              if (documentSnapshots.getDocuments().size() == 0) {
-                  binding.notFound.setVisibility(View.VISIBLE);
-              } else {
-                  binding.notFound.setVisibility(View.GONE);
-                  for (DocumentSnapshot documentSnapshot : documentSnapshots.getDocuments()) {
-                      NotificationModel notification = documentSnapshot.toObject(NotificationModel.class);
-                      notifications.add(notification);
-                  }
-                  notificationAdapter.notifyDataSetChanged();
               }
               dismissProgressBar();
           }).addOnFailureListener(e -> {

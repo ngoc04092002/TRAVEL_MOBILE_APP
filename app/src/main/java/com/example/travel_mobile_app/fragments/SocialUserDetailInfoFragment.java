@@ -3,14 +3,11 @@ package com.example.travel_mobile_app.fragments;
 import android.net.Uri;
 import android.os.Bundle;
 
-import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.viewmodel.CreationExtras;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,14 +25,13 @@ import com.github.ybq.android.spinkit.sprite.Sprite;
 import com.github.ybq.android.spinkit.style.Circle;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.Filter;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class SocialUserDetailInfoFragment extends Fragment implements View.OnClickListener {
+
     private String userId;
     private FirebaseFirestore db;
     FragmentSocialUserDetailInfoBinding binding;
@@ -56,7 +52,7 @@ public class SocialUserDetailInfoFragment extends Fragment implements View.OnCli
     }
 
     private ImageView btnFriendBack;
-    private List<PostModel> postList;
+    private ArrayList<PostModel> postList;
     private SpinKitView spinKit;
 
     @Override
@@ -86,37 +82,42 @@ public class SocialUserDetailInfoFragment extends Fragment implements View.OnCli
                      });
 
         CollectionReference posts = db.collection("posts");
-        posts.where(Filter.or(
-                     Filter.equalTo("postedBy", userId),
-                     Filter.equalTo("shareBy", userId)))
-             .get()
-             .addOnCompleteListener(task ->
-                                    {
-                                        if (task.isSuccessful()) {
-                                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                                PostModel model = document.toObject(PostModel.class);
-                                                postList.add(model);
-                                            }
+        posts.whereEqualTo("postedBy", userId)
+                     .
 
-                                            LinearLayout userInfos = view.findViewById(R.id.uInfo_container);
+             whereNotEqualTo("share", true)
+                     .
 
-                                            for (PostModel model : postList) {
-                                                LayoutInflater post = LayoutInflater.from(getContext());
-                                                View subLayout = post.inflate(R.layout.dashboard_rv, null);
-                                                SocialUserDetailInfoAdapter socialUserDetailInfoAdapter = new SocialUserDetailInfoAdapter(model, getContext(), db, getActivity(), userInfos,requireActivity().getSupportFragmentManager());
-                                                View viewSubLayout = socialUserDetailInfoAdapter.onCreateView(subLayout, model);
+             get()
+                     .
 
-                                                userInfos.addView(viewSubLayout);
-                                            }
-                                        }
-                                        dismissProgressBar();
+             addOnCompleteListener(task ->
 
-                                    }).
+                                   {
+                                       if (task.isSuccessful()) {
+                                           for (QueryDocumentSnapshot document : task.getResult()) {
+                                               PostModel model = document.toObject(PostModel.class);
+                                               postList.add(model);
+                                           }
+
+                                           LinearLayout userInfos = view.findViewById(R.id.uInfo_container);
+
+                                           for (PostModel model : postList) {
+                                               LayoutInflater post = LayoutInflater.from(getContext());
+                                               View subLayout = post.inflate(R.layout.dashboard_rv, null);
+                                               SocialUserDetailInfoAdapter socialUserDetailInfoAdapter = new SocialUserDetailInfoAdapter(model, getContext(), db);
+                                               View viewSubLayout = socialUserDetailInfoAdapter.onCreateView(subLayout, model);
+
+                                               userInfos.addView(viewSubLayout);
+                                           }
+                                       }
+                                       dismissProgressBar();
+
+                                   }).
 
              addOnFailureListener(e ->
 
                                   {
-                                      Log.e("ERROR-USER-DETAIL-INFOR", e.getMessage());
                                       dismissProgressBar();
                                   });
 
@@ -124,7 +125,6 @@ public class SocialUserDetailInfoFragment extends Fragment implements View.OnCli
         //handle click
         btnFriendBack = view.findViewById(R.id.uInfo_btnBack);
         btnFriendBack.setOnClickListener(this);
-
 
         return view;
     }
@@ -139,21 +139,9 @@ public class SocialUserDetailInfoFragment extends Fragment implements View.OnCli
     }
 
     private void setUserInfo(UserModel userModel) {
-        if (userModel == null || this == null) {
+        if (userModel == null) {
             return;
         }
-
-        if (userModel.getFollowing() != null) {
-            int cntFollowing = userModel.getFollowing().size();
-            String following = cntFollowing > 120 ? "120+" : String.valueOf(cntFollowing);
-            binding.detailInfoFollowingCnt.setText(following);
-        }
-        if (userModel.getFollowers() != null) {
-            int cntFollower = userModel.getFollowers().size();
-            String follower = cntFollower > 120 ? "120+" : String.valueOf(cntFollower);
-            binding.detailInfoFollowerCnt.setText(follower);
-        }
-
         if (userModel.getFullName() != null) {
             binding.detailInfoName.setText(userModel.getFullName());
             binding.uInfoName.setText(userModel.getFullName());
@@ -162,11 +150,7 @@ public class SocialUserDetailInfoFragment extends Fragment implements View.OnCli
         if (userModel.getUsername() != null) {
             binding.detailInfoUsername.setText(userModel.getUsername());
             binding.uInfoUsername.setText(userModel.getUsername());
-        } else {
-            binding.detailInfoUsername.setText(userModel.getFullName());
-            binding.uInfoUsername.setText(userModel.getFullName());
         }
-
         if (userModel.getAddress() != null) {
             binding.detailInfoAddress.setText(userModel.getAddress());
             binding.uInfoAddress.setText(userModel.getAddress());
@@ -182,13 +166,6 @@ public class SocialUserDetailInfoFragment extends Fragment implements View.OnCli
                  .placeholder(R.drawable.avatar_men)
                  .into(binding.profileImage);
         }
-
-        binding.infoFollower.setOnClickListener(v -> {
-            replaceScreen(R.id.container, new DetailFollowFragment("Theo dõi", userModel.getFollowers()), null);
-        });
-        binding.infoFollowing.setOnClickListener(v -> {
-            replaceScreen(R.id.container, new DetailFollowFragment("Đang theo dõi", userModel.getFollowing()), null);
-        });
     }
 
     private void showProgressBar() {
@@ -201,16 +178,6 @@ public class SocialUserDetailInfoFragment extends Fragment implements View.OnCli
     private void dismissProgressBar() {
         binding.uInfoScroll.setVisibility(View.VISIBLE);
         spinKit.setVisibility(View.GONE);
-    }
-
-    private void replaceScreen(@IdRes int containerViewId, @NonNull Fragment fragment, String backTrackName) {
-        FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
-        fragmentTransaction.replace(containerViewId, fragment);
-        fragmentTransaction.addToBackStack(backTrackName);
-        // Commit transaction
-        fragmentTransaction.commit();
     }
 
     @NonNull

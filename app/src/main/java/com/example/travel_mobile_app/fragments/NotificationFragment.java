@@ -1,6 +1,5 @@
 package com.example.travel_mobile_app.fragments;
 
-import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -12,15 +11,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 
 import com.example.travel_mobile_app.Adapter.NotificationAdapter;
-import com.example.travel_mobile_app.MainActivity;
 import com.example.travel_mobile_app.R;
-import com.example.travel_mobile_app.SocialSearchPost;
 import com.example.travel_mobile_app.models.NotificationModel;
-import com.example.travel_mobile_app.models.UserModel;
-import com.example.travel_mobile_app.services.SharedPreferencesManager;
 import com.github.ybq.android.spinkit.SpinKitView;
 import com.github.ybq.android.spinkit.sprite.Sprite;
 import com.github.ybq.android.spinkit.style.Circle;
@@ -37,7 +31,6 @@ public class NotificationFragment extends Fragment {
     private FirebaseFirestore db;
 
     private SpinKitView spinKit;
-    private ImageButton btnSearch;
 
     public NotificationFragment() {
         // Required empty public constructor
@@ -58,10 +51,9 @@ public class NotificationFragment extends Fragment {
 
         spinKit = view.findViewById(R.id.spin_kit);
         notificationItemRv = view.findViewById(R.id.notification_itemsRv);
-        btnSearch = view.findViewById(R.id.search_notification);
 
         list = new ArrayList<>();
-        NotificationAdapter notificationAdapter = new NotificationAdapter(list, getContext(), db,requireActivity());
+        NotificationAdapter notificationAdapter = new NotificationAdapter(list, getContext(), db);
         setNotificationListData(notificationAdapter);
 
 
@@ -69,21 +61,13 @@ public class NotificationFragment extends Fragment {
         notificationItemRv.setLayoutManager(new StaggeredGridLayoutManager(1, LinearLayoutManager.VERTICAL));
         notificationItemRv.setAdapter(notificationAdapter);
 
-
-        btnSearch.setOnClickListener(v->{
-            Intent i = new Intent(getActivity(), SocialSearchPost.class);
-            i.putExtra("search_activity", "notification");
-            startActivity(i);
-            getActivity().overridePendingTransition(0,android.R.anim.slide_out_right);
-        });
-
         return view;
     }
 
     private void setNotificationListData(NotificationAdapter notificationAdapter) {
         showProgressBar();
-        UserModel user = SharedPreferencesManager.readUserInfo();
-        db.collection("notifications").whereEqualTo("postedBy", user.getId())
+        //fix I2cG4PNtPmSCnPSS0BQib3rRxxl2 userId
+        db.collection("notifications").whereEqualTo("postedBy", "I2cG4PNtPmSCnPSS0BQib3rRxxl2")
           .get()
           .addOnCompleteListener(task -> {
               if (task.isSuccessful()) {

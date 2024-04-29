@@ -41,7 +41,7 @@
                 android:layout_gravity="bottom"
                 android:layout_margin="4dp"
                 android:maxLines="1"
-                android:text=""
+                android:text="NgocVan"
                 android:textColor="@color/black"
                 android:textStyle="bold" />
         </FrameLayout>

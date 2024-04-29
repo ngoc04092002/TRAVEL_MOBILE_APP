@@ -1,6 +1,7 @@
 package com.example.travel_mobile_app.fragments;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -20,6 +21,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.travel_mobile_app.Login;
 import com.example.travel_mobile_app.R;
 import com.example.travel_mobile_app.models.UserModel;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -44,6 +46,7 @@ public class AccountFragment extends Fragment implements View.OnClickListener{
     private TextView tvFullname, tvUsername, tvEmail, tvFollower, tvFollowing;
     private FirebaseAuth mAuth;
     private FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+
 
     public AccountFragment() {
         // Required empty public constructor

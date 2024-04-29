@@ -3,7 +3,6 @@ package com.example.travel_mobile_app.Adapter;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.net.Uri;
 import android.os.Handler;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -18,13 +17,10 @@ import androidx.annotation.NonNull;
 import androidx.core.text.HtmlCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.example.travel_mobile_app.R;
 import com.example.travel_mobile_app.databinding.CommentItemBinding;
 import com.example.travel_mobile_app.models.CommentModel;
 import com.example.travel_mobile_app.models.PostModel;
-import com.example.travel_mobile_app.models.UserModel;
-import com.example.travel_mobile_app.services.SharedPreferencesManager;
 import com.example.travel_mobile_app.utils.CustomDateTime;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -62,23 +58,12 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.viewHold
     @Override
     public void onBindViewHolder(@NonNull viewHolder holder, int position) {
         CommentModel model = list.get(position);
-        UserModel user = SharedPreferencesManager.readUserInfo();
-        if (model.getImage() != null) {
-            Glide.with(context)
-                 .load(Uri.parse(model.getImage()))
-                 .centerCrop()
-                 .placeholder(R.drawable.image_empty)
-                 .into(holder.binding.profileImage);
-        }
-
+        holder.binding.profileImage.setImageResource(model.getProfile());
         holder.binding.content.setText(HtmlCompat.fromHtml("<b>" + model.getCommentBy() + "</b><br> " + model.getContent(), HtmlCompat.FROM_HTML_MODE_LEGACY));
         holder.binding.createAt.setText(CustomDateTime.formatDate(model.getCreateAt()));
 
-        if (user.getId().equals(model.getUserId())) {
-            //fix compare if comment yourself
-            handleLongPress(holder.binding.commentItem, model.getCommentId());
-        }
-
+        //fix compare if comment yourself
+        handleLongPress(holder.binding.commentItem, model.getCommentId());
     }
 
     @Override
