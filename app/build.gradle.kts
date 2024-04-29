@@ -41,6 +41,7 @@ dependencies {
     implementation("com.google.android.material:material:1.9.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation("com.google.firebase:firebase-messaging:23.4.1")
+    implementation("androidx.activity:activity:1.8.0")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
@@ -64,9 +65,6 @@ dependencies {
     implementation("com.github.ybq:Android-SpinKit:1.4.0")
     implementation ("com.github.MikeOrtiz:TouchImageView:1.4.1")
     implementation("com.squareup.okhttp3:okhttp:4.10.0")
-    // https://mvnrepository.com/artifact/com.google.code.gson/gson
-    implementation("com.google.code.gson:gson:2.10.1")
-    implementation("com.google.android.exoplayer:exoplayer:2.19.1")
 
 
     // Import the Firebase BoM

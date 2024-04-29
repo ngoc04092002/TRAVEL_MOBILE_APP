@@ -6,19 +6,9 @@ import java.util.ArrayList;
 public class StoryModel {
    private String storyId;
    private String storyBy;
-   private String fullName;
-   private String image;
    private long storyAt;
    private String uri;
    private ArrayList<UserStory> userStories;
-
-    public String getFullName() {
-        return fullName;
-    }
-
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
-    }
 
     public StoryModel() {
     }
@@ -28,14 +18,6 @@ public class StoryModel {
         this.storyBy = storyBy;
         this.storyAt = storyAt;
         this.uri = uri;
-    }
-
-    public String getImage() {
-        return image;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
     }
 
     public ArrayList<UserStory> getUserStories() {
@@ -83,8 +65,6 @@ public class StoryModel {
         return "StoryModel{" +
                 "storyId='" + storyId + '\'' +
                 ", storyBy='" + storyBy + '\'' +
-                ", fullName='" + fullName + '\'' +
-                ", image='" + image + '\'' +
                 ", storyAt=" + storyAt +
                 ", uri='" + uri + '\'' +
                 ", userStories=" + userStories +

@@ -2,7 +2,6 @@ package com.example.travel_mobile_app.fragments;
 
 import android.os.Bundle;
 
-import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -12,37 +11,27 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.example.travel_mobile_app.Adapter.FollowAdapter;
-import com.example.travel_mobile_app.MainActivity;
 import com.example.travel_mobile_app.R;
 import com.example.travel_mobile_app.databinding.FragmentFriendFollowingBinding;
-import com.example.travel_mobile_app.dto.DataChangeListener;
 import com.example.travel_mobile_app.dto.FollowDTO;
 import com.example.travel_mobile_app.models.UserModel;
-import com.example.travel_mobile_app.services.SharedPreferencesManager;
 import com.github.ybq.android.spinkit.sprite.Sprite;
 import com.github.ybq.android.spinkit.style.Circle;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.auth.User;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
-public class FriendFollowingFragment extends Fragment implements DataChangeListener {
+public class FriendFollowingFragment extends Fragment {
 
     private RecyclerView followingRv;
-    private List<FollowDTO> list;
+    private ArrayList<FollowDTO> list;
     private FirebaseFirestore db;
-    FragmentFriendFollowingBinding binding;
-    FollowAdapter followAdapter;
 
+    FragmentFriendFollowingBinding binding;
 
     public FriendFollowingFragment() {
         // Required empty public constructor
@@ -61,27 +50,28 @@ public class FriendFollowingFragment extends Fragment implements DataChangeListe
         View view = inflater.inflate(R.layout.fragment_friend_following, container, false);
         binding = FragmentFriendFollowingBinding.bind(view);
         followingRv = view.findViewById(R.id.followingRv);
-        UserModel user = SharedPreferencesManager.readUserInfo();
+
+        String userId = "qbJW6GgDkqgv6H5tvCPfLty2Bto2";
 
         list = new ArrayList<>();
-        final boolean[] isFollow = {true};
-        followAdapter = new FollowAdapter(list, getContext(), isFollow, db,requireActivity().getSupportFragmentManager());
+        FollowAdapter followAdapter = new FollowAdapter(list, getContext(), true);
         followingRv.setHasFixedSize(true);
         followingRv.setLayoutManager(new StaggeredGridLayoutManager(1, LinearLayoutManager.VERTICAL));
         followingRv.setAdapter(followAdapter);
-        getFollowingData(followAdapter, user.getId());
+        getFollowingData(followAdapter, userId);
 
         return view;
     }
 
 
     public void getFollowingData(FollowAdapter followAdapter, String userId) {
+        showProgressBar();
         CollectionReference users = db.collection("users");
 
         users.document(userId).get().addOnSuccessListener(task -> {
-            showProgressBar();
             UserModel userModel = task.toObject(UserModel.class);
             getAllFollowingUser(userModel, users, followAdapter);
+            binding.badRequest.setVisibility(View.GONE);
         }).addOnFailureListener(unused -> {
             binding.badRequest.setVisibility(View.VISIBLE);
             System.out.println("CHECK_ERROR::" + unused.getMessage());
@@ -90,33 +80,23 @@ public class FriendFollowingFragment extends Fragment implements DataChangeListe
     }
 
     private void getAllFollowingUser(UserModel userModel, CollectionReference users, FollowAdapter followAdapter) {
-        if (userModel == null) {
-            dismissProgressBar();
-            Toast.makeText(getContext(), "Người dùng không tồn tại!",
-                           Toast.LENGTH_SHORT).show();
-            //not found
-            return;
-        }
-
         if (userModel != null && userModel.getFollowing() != null) {
-            users.whereIn("id", userModel.getFollowing())
+            users.whereIn("following", userModel.getFollowing())
                  .get()
                  .addOnCompleteListener(task -> {
                      if (task.isSuccessful()) {
                          for (QueryDocumentSnapshot document : task.getResult()) {
                              UserModel model = document.toObject(UserModel.class);
                              if (model.getFollowers() != null) {
-                                 list.add(new FollowDTO(model.getId(), model.getAvatarURL(), model.getFullName(), model.getFollowers().size()));
+                                 list.add(new FollowDTO(model.getAvatarURL(), model.getUsername(), model.getFollowers().size()));
                              }
                          }
                          binding.badRequest.setVisibility(View.GONE);
-                         showNotFound(list);
                      } else {
                          binding.badRequest.setVisibility(View.VISIBLE);
                          Log.d("ERROR::", "Error getting documents: ", task.getException());
                      }
                      dismissProgressBar();
-
                      followAdapter.notifyDataSetChanged();
                  }).addOnFailureListener(
                          unused ->
@@ -137,24 +117,5 @@ public class FriendFollowingFragment extends Fragment implements DataChangeListe
 
     private void dismissProgressBar() {
         binding.spinKit.setVisibility(View.GONE);
-    }
-
-    @Override
-    public void onDataChange(String data) {
-        if(list!=null){
-            List<FollowDTO> searchList = list.stream().filter(item -> item.getUsername().contains(data)).collect(Collectors.toList());
-            followAdapter.setData(searchList);
-            followAdapter.notifyDataSetChanged();
-            showNotFound(searchList);
-        }
-    }
-
-
-    private void showNotFound(List<FollowDTO> checkList) {
-        if (checkList.size() == 0) {
-            binding.notFound.setVisibility(View.VISIBLE);
-        } else {
-            binding.notFound.setVisibility(View.GONE);
-        }
     }
 }

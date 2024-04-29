@@ -30,23 +30,6 @@ public class UserModel {
         this.enableUpdate = enableUpdate;
     }
 
-    @Override
-    public String toString() {
-        return "UserModel{" +
-                "id='" + id + '\'' +
-                ", fullName='" + fullName + '\'' +
-                ", username='" + username + '\'' +
-                ", email='" + email + '\'' +
-                ", address='" + address + '\'' +
-                ", password='" + password + '\'' +
-                ", avatarURL='" + avatarURL + '\'' +
-                ", following=" + following +
-                ", followers=" + followers +
-                ", enableNotification=" + enableNotification +
-                ", enableUpdate=" + enableUpdate +
-                '}';
-    }
-
     public boolean isEnableNotification() {
         return enableNotification;
     }

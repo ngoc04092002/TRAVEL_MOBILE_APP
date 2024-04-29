@@ -1,16 +1,14 @@
 package com.example.travel_mobile_app.models;
 
 public class CommentModel {
-    private String image;
+    private int profile;
     private String commentBy;
-    private String userId;
     private String content;
     private long createAt;
     private String commentId;
 
-    public CommentModel(String userId,String commentId, String image, String commentBy, String content, long createAt) {
-        this.userId = userId;
-        this.image = image;
+    public CommentModel(String commentId, int profile, String commentBy, String content, long createAt) {
+        this.profile = profile;
         this.commentBy = commentBy;
         this.content = content;
         this.createAt = createAt;
@@ -29,20 +27,13 @@ public class CommentModel {
         this.commentId = commentId;
     }
 
-    public String getUserId() {
-        return userId;
+
+    public int getProfile() {
+        return profile;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
-    public String getImage() {
-        return image;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
+    public void setProfile(int profile) {
+        this.profile = profile;
     }
 
     public String getCommentBy() {

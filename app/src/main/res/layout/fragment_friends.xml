@@ -40,15 +40,14 @@
     </FrameLayout>
 
     <androidx.appcompat.widget.SearchView
-        android:id="@+id/search_friends"
         android:layout_width="@dimen/_250mdp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="30dp"
         android:background="@drawable/shapebgsearch"
         app:iconifiedByDefault="false"
-        android:inputType="text"
-        app:queryBackground="@null"/>
+        app:queryBackground="@null"
+        app:queryHint="Tìm kiếm..." />
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/friend_tabLayout"
@@ -63,7 +62,7 @@
         app:tabSelectedTextColor="@color/yellow" />
 
     <androidx.viewpager.widget.ViewPager
-        android:id="@+id/viewpager"
+        android:id="@+id/pager"
         android:layout_marginStart="14dp"
         android:layout_marginEnd="14dp"
         android:layout_width="match_parent"

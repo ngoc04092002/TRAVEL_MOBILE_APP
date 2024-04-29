@@ -1,59 +1,31 @@
 package com.example.travel_mobile_app.models;
 
 public class SaveItemModel {
-    private String id;
-    private String img;
-    private String title;
-    private Long time;
-    private String savedBy;
-    private String postId;
+    private Long id;
+    private int profile;
+    private String title,time;
 
-    public SaveItemModel(String id, String img, String title, Long time) {
+    public SaveItemModel(Long id, int profile, String title, String time) {
         this.id = id;
-        this.img = img;
+        this.profile = profile;
         this.title = title;
         this.time = time;
     }
 
-    public SaveItemModel(String id, String img, String title, Long time, String savedBy, String postId) {
-        this.id = id;
-        this.img = img;
-        this.title = title;
-        this.time = time;
-        this.savedBy = savedBy;
-        this.postId = postId;
-    }
-
-    public String getPostId() {
-        return postId;
-    }
-
-    public void setPostId(String postId) {
-        this.postId = postId;
-    }
-
-    public String getSavedBy() {
-        return savedBy;
-    }
-
-    public void setSavedBy(String savedBy) {
-        this.savedBy = savedBy;
-    }
-
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public String getImg() {
-        return img;
+    public int getProfile() {
+        return profile;
     }
 
-    public void setImg(String img) {
-        this.img = img;
+    public void setProfile(int profile) {
+        this.profile = profile;
     }
 
     public String getTitle() {
@@ -64,11 +36,11 @@ public class SaveItemModel {
         this.title = title;
     }
 
-    public Long getTime() {
+    public String getTime() {
         return time;
     }
 
-    public void setTime(Long time) {
+    public void setTime(String time) {
         this.time = time;
     }
 }
