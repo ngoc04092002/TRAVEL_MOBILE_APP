@@ -1,6 +1,8 @@
 package com.example.travel_mobile_app.fragments;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -22,6 +24,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.example.travel_mobile_app.R;
 import com.example.travel_mobile_app.models.UserModel;
+import com.example.travel_mobile_app.services.SharedPreferencesManager;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -74,10 +77,10 @@ public class AccountFragment extends Fragment implements View.OnClickListener{
         View view = inflater.inflate(R.layout.fragment_account, container, false);
 
         progressBar = view.findViewById(R.id.progress_bar);
-        progressBar.setVisibility(View.VISIBLE);
+        progressBar.setVisibility(View.GONE);
 
         imvAvatar = view.findViewById(R.id.profile_image);
-        imvAvatar.setOnClickListener(this);
+//        imvAvatar.setOnClickListener(this);
 
         tvFullname = view.findViewById(R.id.detail_info_name);
         tvUsername = view.findViewById(R.id.detail_info_username);
@@ -97,15 +100,23 @@ public class AccountFragment extends Fragment implements View.OnClickListener{
         btnLogout = view.findViewById(R.id.btnLogout);
         btnLogout.setOnClickListener(this);
 
-        FirebaseUser user = mAuth.getCurrentUser();
-        getUserDataById(user.getUid());
+        UserModel userModel = SharedPreferencesManager.readUserInfo();
+        currentUser = userModel;
+
+        updateUI(userModel);
+
         return view;
     }
     @Override
     public void onClick(View v) {
         FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
+        fragmentTransaction.setCustomAnimations(
+                R.anim.enter_animation,  // Hoạt ảnh cho fragment mới khi nó xuất hiện
+                R.anim.exit_animation,   // Hoạt ảnh cho fragment cũ khi nó biến mất
+                R.anim.pop_enter_animation,  // Hoạt ảnh cho fragment mới khi "pop"
+                R.anim.pop_exit_animation    // Hoạt ảnh cho fragment cũ khi "pop"
+        );
         if(v.getId()==R.id.btnSaved){
             fragmentTransaction.replace(R.id.container, new ProfileSaveFragment());
         }
@@ -113,7 +124,7 @@ public class AccountFragment extends Fragment implements View.OnClickListener{
             fragmentTransaction.replace(R.id.container, new SettingFragment(currentUser));
         }
         else if(v.getId()==R.id.btnManagePost){
-            fragmentTransaction.replace(R.id.container, new SocialUserDetailInfoFragment());
+            fragmentTransaction.replace(R.id.container, new MyPostsFragment());
         }
         else if(v.getId()==R.id.btnLogout){
 //            fragmentTransaction.replace(R.id.container, new SettingFragment());
@@ -137,7 +148,12 @@ public class AccountFragment extends Fragment implements View.OnClickListener{
         tvEmail.setText(user.getEmail());
         tvFollower.setText(String.valueOf(user.getFollowers().size()));
         tvFollowing.setText(String.valueOf(user.getFollowing().size()));
-        Glide.with(requireContext()).load(user.getAvatarURL()).into(imvAvatar);
+        @SuppressLint("UseCompatLoadingForDrawables") Drawable defaultAvatar = getResources().getDrawable(R.drawable.avatar_men);
+
+        Glide.with(requireContext())
+                .load(user.getAvatarURL())
+                .placeholder(defaultAvatar)
+                .into(imvAvatar);
     }
     private void getUserDataById(String userId) {
         DocumentReference docRef = firestore.collection("users").document(userId);

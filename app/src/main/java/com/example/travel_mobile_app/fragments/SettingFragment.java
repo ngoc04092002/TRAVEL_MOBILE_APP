@@ -95,7 +95,12 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
     public void onClick(View v) {
         FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
+        fragmentTransaction.setCustomAnimations(
+                R.anim.enter_animation,  // Hoạt ảnh cho fragment mới khi nó xuất hiện
+                R.anim.exit_animation,   // Hoạt ảnh cho fragment cũ khi nó biến mất
+                R.anim.pop_enter_animation,  // Hoạt ảnh cho fragment mới khi "pop"
+                R.anim.pop_exit_animation    // Hoạt ảnh cho fragment cũ khi "pop"
+        );
         if (v.getId() == R.id.tvEditInfo) {
             fragmentTransaction.replace(R.id.container, new EditInfoFragment(currentUser));
         } else if (v.getId() == R.id.tvChangePass) {

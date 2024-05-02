@@ -1,8 +1,9 @@
 package com.example.travel_mobile_app.models;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class UserModel {
+public class UserModel implements Serializable {
     private String id, fullName, username, email, address, password, avatarURL;
     private List<String> following, followers;
     private boolean enableNotification, enableUpdate;
