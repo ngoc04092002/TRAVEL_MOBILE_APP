@@ -2,12 +2,9 @@ package com.example.travel_mobile_app.fragments;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -18,6 +15,7 @@ import androidx.lifecycle.viewmodel.CreationExtras;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -31,7 +29,6 @@ import android.widget.Toast;
 
 import com.example.travel_mobile_app.Adapter.PostAdapter;
 import com.example.travel_mobile_app.Adapter.StoryAdapter;
-import com.example.travel_mobile_app.MainActivity;
 import com.example.travel_mobile_app.R;
 import com.example.travel_mobile_app.SocialSearchPost;
 import com.example.travel_mobile_app.models.PostModel;
@@ -43,20 +40,13 @@ import com.facebook.shimmer.ShimmerFrameLayout;
 import com.github.dhaval2404.imagepicker.ImagePicker;
 import com.github.ybq.android.spinkit.sprite.Sprite;
 import com.github.ybq.android.spinkit.style.WanderingCubes;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.common.reflect.TypeToken;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.firestore.auth.User;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.google.gson.Gson;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -77,6 +67,8 @@ public class SocialFragment extends Fragment implements View.OnClickListener {
     private LinearLayout backdrop;
     private ProgressBar progressBar;
     private StoryAdapter storyAdapter;
+    SwipeRefreshLayout mSwipeRefreshLayout;
+    private PostAdapter postAdapter;
 
     public SocialFragment() {
         // Required empty public constructor
@@ -101,6 +93,11 @@ public class SocialFragment extends Fragment implements View.OnClickListener {
         shimmerFrameLayout = view.findViewById(R.id.shimmer_layout);
         shimmerFrameLayoutStory = view.findViewById(R.id.shimmer_layout_story);
 
+        mSwipeRefreshLayout = view.findViewById(R.id.fragment_social);
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary,
+                                                    android.R.color.holo_green_dark,
+                                                    android.R.color.holo_orange_dark,
+                                                    android.R.color.holo_blue_dark);
 
         progressBar = view.findViewById(R.id.spin_kit);
         backdrop = view.findViewById(R.id.backdrop);
@@ -112,24 +109,15 @@ public class SocialFragment extends Fragment implements View.OnClickListener {
         storyRv.setLayoutManager(new StaggeredGridLayoutManager(1, LinearLayoutManager.HORIZONTAL));
 
         dashboardRv = view.findViewById(R.id.dashboardRv);
-        PostAdapter postAdapter = new PostAdapter(postList, getContext(), requireActivity().getSupportFragmentManager(), getActivity(), db);
+        postAdapter = new PostAdapter(postList, getContext(), requireActivity().getSupportFragmentManager(), getActivity(), db);
         dashboardRv.setHasFixedSize(true);
         dashboardRv.setLayoutManager(new StaggeredGridLayoutManager(1, LinearLayoutManager.VERTICAL));
-        dashboardRv.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                if (!recyclerView.canScrollVertically(1)) {
-                    System.out.println("end reach");
-                }
-            }
-        });
+
 
         if (postList.size() != 0) {
             postAdapter = new PostAdapter(postList, getContext(), requireActivity().getSupportFragmentManager(), getActivity(), db);
         } else {
-            shimmerFrameLayout.setVisibility(View.VISIBLE);
-            shimmerFrameLayout.startShimmer();
-            setPostListData(postAdapter);
+            loadRecyclerViewData();
         }
 
 
@@ -141,6 +129,10 @@ public class SocialFragment extends Fragment implements View.OnClickListener {
         storyRv.setAdapter(storyAdapter);
         dashboardRv.setAdapter(postAdapter);
 
+        mSwipeRefreshLayout.setOnRefreshListener(() -> {
+            mSwipeRefreshLayout.setRefreshing(false);
+            loadRecyclerViewData();
+        });
 
         btnFriends = view.findViewById(R.id.friends);
         btnFriends.setOnClickListener(this);
@@ -171,6 +163,12 @@ public class SocialFragment extends Fragment implements View.OnClickListener {
                        .start();
         }
 
+    }
+
+    private void loadRecyclerViewData() {
+        shimmerFrameLayout.setVisibility(View.VISIBLE);
+        shimmerFrameLayout.startShimmer();
+        setPostListData(postAdapter);
     }
 
     private void replaceScreen(@IdRes int containerViewId, @NonNull Fragment fragment, String backTrackName) {
@@ -340,5 +338,6 @@ public class SocialFragment extends Fragment implements View.OnClickListener {
     public CreationExtras getDefaultViewModelCreationExtras() {
         return super.getDefaultViewModelCreationExtras();
     }
+
 
 }
