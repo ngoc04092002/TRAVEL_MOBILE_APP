@@ -1,6 +1,7 @@
 package com.example.travel_mobile_app.fragments;
 
 import android.annotation.SuppressLint;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -112,7 +113,12 @@ public class ChangePasswordFragment extends Fragment implements View.OnClickList
     private void setUpUI() {
         tvName.setText(currentUser.getFullName());
         tvUsername.setText("@" + currentUser.getUsername());
-        Glide.with(getContext()).load(currentUser.getAvatarURL()).into(avataImageView);
+        Drawable defaultAvatar = getResources().getDrawable(R.drawable.avatar_men);
+
+        Glide.with(requireContext())
+                .load(currentUser.getAvatarURL())
+                .placeholder(defaultAvatar)
+                .into(avataImageView);
     }
 
     @Override

@@ -67,7 +67,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.viewHolder> {
 
     ArrayList<PostModel> list;
     Context context;
-
     FragmentManager fragmentManager;
     Activity activity;
     private FirebaseFirestore db;

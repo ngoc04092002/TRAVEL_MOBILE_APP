@@ -1,6 +1,7 @@
 package com.example.travel_mobile_app.fragments;
 
 import android.annotation.SuppressLint;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -95,7 +96,12 @@ public class EditInfoFragment extends Fragment implements View.OnClickListener {
         editName.setText(currentUser.getFullName());
         editEmail.setText(currentUser.getEmail());
 
-        Glide.with(getContext()).load(currentUser.getAvatarURL()).into(avataImageView);
+        Drawable defaultAvatar = getResources().getDrawable(R.drawable.avatar_men);
+
+        Glide.with(requireContext())
+                .load(currentUser.getAvatarURL())
+                .placeholder(defaultAvatar)
+                .into(avataImageView);
     }
     @Override
     public void onClick(View v) {

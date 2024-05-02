@@ -2,6 +2,7 @@ package com.example.travel_mobile_app.fragments;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -116,7 +117,7 @@ public class AccountFragment extends Fragment implements View.OnClickListener{
             fragmentTransaction.replace(R.id.container, new SettingFragment(currentUser));
         }
         else if(v.getId()==R.id.btnManagePost){
-            fragmentTransaction.replace(R.id.container, new SocialUserDetailInfoFragment());
+            fragmentTransaction.replace(R.id.container, new MyPostsFragment());
         }
         else if(v.getId()==R.id.btnLogout){
 //            fragmentTransaction.replace(R.id.container, new SettingFragment());
@@ -140,7 +141,12 @@ public class AccountFragment extends Fragment implements View.OnClickListener{
         tvEmail.setText(user.getEmail());
         tvFollower.setText(String.valueOf(user.getFollowers().size()));
         tvFollowing.setText(String.valueOf(user.getFollowing().size()));
-        Glide.with(requireContext()).load(user.getAvatarURL()).into(imvAvatar);
+        Drawable defaultAvatar = getResources().getDrawable(R.drawable.avatar_men);
+
+        Glide.with(requireContext())
+                .load(user.getAvatarURL())
+                .placeholder(defaultAvatar)
+                .into(imvAvatar);
     }
     private void getUserDataById(String userId) {
         DocumentReference docRef = firestore.collection("users").document(userId);
