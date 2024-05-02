@@ -406,9 +406,9 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.viewHolder> {
     private void addNotification(PostModel post, String type) {
         UserModel user = SharedPreferencesManager.readUserInfo();
 
-//        if (post.getPostedBy().equals(user.getId())) {
-//            return;
-//        }
+        if (post.getPostedBy().equals(user.getId())) {
+            return;
+        }
 
         String notificationId = UUID.randomUUID().toString().replace("-", "");
 
@@ -429,9 +429,9 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.viewHolder> {
     private void sendNotification(PostModel post, String type) {
         UserModel user = SharedPreferencesManager.readUserInfo();
 
-//        if (post.getPostedBy().equals(user.getId())) {
-//            return;
-//        }
+        if (post.getPostedBy().equals(user.getId())) {
+            return;
+        }
 
         HashMap<String, String> conent = new HashMap<>();
         if (type.equals("like")) {
