@@ -152,7 +152,7 @@ public class DetailInfor extends Fragment {
         btnback.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Fragment otherFragment = new SuggestionFragment();
+                Fragment otherFragment = new suggestion();
                 FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
                 transaction.replace(R.id.container, otherFragment);
                 transaction.addToBackStack(null); // Để cho phép người dùng quay lại Fragment trước đó

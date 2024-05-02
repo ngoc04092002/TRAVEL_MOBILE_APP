@@ -66,6 +66,8 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp:4.10.0")
     implementation("androidx.cardview:cardview:1.0.0")
     implementation("androidx.recyclerview:recyclerview-selection:1.1.0")
+    implementation("me.relex:circleindicator:2.1.6")
+
 
 
 

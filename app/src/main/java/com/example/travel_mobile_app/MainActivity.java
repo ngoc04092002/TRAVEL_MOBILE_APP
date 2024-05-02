@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
             } else if (itemId == R.id.user) {
                 transaction.replace(R.id.container, new AccountFragment());
             } else if (itemId == R.id.search) {
-                transaction.replace(R.id.container,new SuggestionFragment());
+                transaction.replace(R.id.container,new suggestion());
 
             }
 

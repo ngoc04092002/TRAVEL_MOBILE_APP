@@ -2,79 +2,78 @@
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_margin="10dp"
-    app:cardCornerRadius="11dp"
-    app:cardBackgroundColor="@color/lightyellow"
-    app:cardElevation="4dp"
+    android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     >
-
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:background="@drawable/border"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="match_parent"
+        android:layout_margin="20dp">
 
-        <TextView
-            android:id="@+id/namesug"
+
+        <LinearLayout
+            android:id="@+id/linearLayout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:gravity="center"
-            android:text="Example"
-            android:fontFamily="@font/montserrat_bold"
-            android:textColor="@color/black"
-            android:textSize="20dp"/>
-
-        <FrameLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:background="@drawable/border"
-            android:layout_margin="10dp">
-        <androidx.cardview.widget.CardView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="2dp"
-            app:cardCornerRadius="8dp">
+            android:orientation="vertical">
 
+            <TextView
+                android:id="@+id/namesug"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:fontFamily="@font/montserrat_bold"
+                android:gravity="center"
+                android:text="Example"
+                android:textColor="@color/black"
+                android:textSize="18dp" />
 
-        <ImageView
-            android:id="@+id/imgsug"
-            android:layout_width="match_parent"
-            android:layout_height="450dp"
-            android:scaleType="centerCrop"
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="15dp"
+                android:layout_marginVertical="5dp"
+                android:background="@drawable/border">
 
-            android:src="@drawable/boy" />
-        </androidx.cardview.widget.CardView>
-        </FrameLayout>
+                <androidx.cardview.widget.CardView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="2dp"
+                    app:cardCornerRadius="8dp">
 
+                    <ImageView
+                        android:id="@+id/imgsug"
+                        android:layout_width="match_parent"
+                        android:layout_height="400dp"
+                        android:scaleType="centerCrop" />
+                </androidx.cardview.widget.CardView>
+            </FrameLayout>
 
-
-
-
-
-        <TextView
-            android:id="@+id/addsug"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingLeft="10dp"
-            android:text="Example"
-            android:layout_marginBottom="5dp"
-            android:fontFamily="@font/montserrat"
-            android:textColor="@color/black"
-            android:textSize="15dp"/>
+            <TextView
+                android:id="@+id/addsug"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:fontFamily="@font/montserrat"
+                android:paddingLeft="15dp"
+                android:text="Example"
+                android:textColor="@color/black"
+                android:textSize="12dp" />
+        </LinearLayout>
 
         <ImageButton
             android:id="@+id/disbtn"
             android:layout_width="283dp"
             android:layout_height="40dp"
             android:layout_gravity="center"
-            android:layout_marginBottom="10dp"
-            android:background="@drawable/discoverybtn" />
-
-
-    </LinearLayout>
+            android:background="@drawable/discoverybtn"
+            app:layout_constraintBottom_toBottomOf="@+id/linearLayout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/linearLayout"
+            android:layout_marginBottom="15dp"
+            tools:ignore="MissingConstraints" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 
 
