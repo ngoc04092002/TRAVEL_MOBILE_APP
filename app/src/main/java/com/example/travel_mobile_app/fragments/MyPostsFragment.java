@@ -93,8 +93,7 @@ public class MyPostsFragment extends Fragment implements View.OnClickListener {
                             PostModel postModel = document.toObject(PostModel.class);
                             postList.add(postModel);
                         }
-//                        shimmerFrameLayout.showShimmer(false);
-//                        shimmerFrameLayout.setVisibility(View.GONE);
+
                         postAdapter.notifyDataSetChanged();
                     } else {
                         Log.d("record", "Error getting documents: ", task.getException());

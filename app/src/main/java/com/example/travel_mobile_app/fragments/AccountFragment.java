@@ -56,12 +56,6 @@ public class AccountFragment extends Fragment implements View.OnClickListener{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        View view = LayoutInflater.from(getContext()).inflate(R.layout.fragment_account, null);
-        mAuth = FirebaseAuth.getInstance();
-
-
-//        FirebaseUser user = mAuth.getCurrentUser();
-//        getUserDataById(user.getUid());
     }
     @Override
     public void onStart() {
@@ -80,7 +74,6 @@ public class AccountFragment extends Fragment implements View.OnClickListener{
         progressBar.setVisibility(View.GONE);
 
         imvAvatar = view.findViewById(R.id.profile_image);
-//        imvAvatar.setOnClickListener(this);
 
         tvFullname = view.findViewById(R.id.detail_info_name);
         tvUsername = view.findViewById(R.id.detail_info_username);
@@ -112,10 +105,10 @@ public class AccountFragment extends Fragment implements View.OnClickListener{
         FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.setCustomAnimations(
-                R.anim.enter_animation,  // Hoạt ảnh cho fragment mới khi nó xuất hiện
-                R.anim.exit_animation,   // Hoạt ảnh cho fragment cũ khi nó biến mất
-                R.anim.pop_enter_animation,  // Hoạt ảnh cho fragment mới khi "pop"
-                R.anim.pop_exit_animation    // Hoạt ảnh cho fragment cũ khi "pop"
+                R.anim.enter_animation,
+                R.anim.exit_animation,
+                R.anim.pop_enter_animation,
+                R.anim.pop_exit_animation
         );
         if(v.getId()==R.id.btnSaved){
             fragmentTransaction.replace(R.id.container, new ProfileSaveFragment());
@@ -127,14 +120,17 @@ public class AccountFragment extends Fragment implements View.OnClickListener{
             fragmentTransaction.replace(R.id.container, new MyPostsFragment());
         }
         else if(v.getId()==R.id.btnLogout){
-//            fragmentTransaction.replace(R.id.container, new SettingFragment());
-        } else if(v.getId() == R.id.profile_image) {
-            getContent.launch("image/*");
+            FirebaseAuth.getInstance().signOut();
+
+//            Intent intent = new Intent(requireActivity(), ActivityLogin.class);
+//
+//            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+//
+//            startActivity(intent);
+//            requireActivity().finish();
         }
 
-        // Thêm transaction vào back stack (nếu cần)
         fragmentTransaction.addToBackStack("account_fragment");
-
         // Commit transaction
         fragmentTransaction.commit();
 
@@ -155,99 +151,5 @@ public class AccountFragment extends Fragment implements View.OnClickListener{
                 .placeholder(defaultAvatar)
                 .into(imvAvatar);
     }
-    private void getUserDataById(String userId) {
-        DocumentReference docRef = firestore.collection("users").document(userId);
-        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(Task<DocumentSnapshot> task) {
-                progressBar.setVisibility(View.GONE);
 
-                if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    if (document.exists()) {
-                        // Lấy dữ liệu từ Firestore
-                        UserModel userModel = document.toObject(UserModel.class);
-
-//                        String name = document.getString("fullName");
-//                        String username = document.getString("username");
-//                        String email = document.getString("email");
-//                        String address = document.getString("address");
-//                        String password = document.getString("password");
-//                        String avataURL = document.getString("avatarURL");
-//                        String[] following = document.get("following");
-//                        String[] followers = document.getLong("followers");
-
-                        // Tạo một đối tượng UserModel
-//                        UserModel userModel = new UserModel(userId, name, username, email, address, password, avataURL, (int) followers, (int) following);
-                        currentUser = userModel;
-                        assert userModel != null;
-                        updateUI(userModel);
-                    } else {
-                        Log.e(TAG, "Document userid not exist!");
-                    }
-                } else {
-                    Log.e(TAG, "Get User Info Error!");
-                }
-            }
-        });
-    }
-
-    private static final int PICK_IMAGE_REQUEST = 1;
-
-    private final ActivityResultLauncher<String> getContent = registerForActivityResult(
-            new ActivityResultContracts.GetContent(),
-            result -> {
-                if (result != null) {
-                    // Cập nhật ImageView với ảnh đã chọn
-//                    imvAvatar.setImageURI(result);
-                    progressBar.setVisibility(View.VISIBLE);
-                    uploadImageToFirebaseStorage(result);
-
-                }
-            });
-
-    // Assuming you have initialized FirebaseApp and FirebaseAuth
-
-    // Step 1: Upload Image to Firebase Storage
-    private void uploadImageToFirebaseStorage(Uri imageUri) {
-        StorageReference storageRef = FirebaseStorage.getInstance().getReference();
-        StorageReference imageRef = storageRef.child("avatars/" + FirebaseAuth.getInstance().getCurrentUser().getUid());
-
-        imageRef.putFile(imageUri)
-                .addOnSuccessListener(taskSnapshot -> {
-                    // Image uploaded successfully, now get the download URL
-                    imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
-                        String downloadUrl = uri.toString();
-                        // Step 2: Update User Document in Firestore with download URL
-                        updateAvatar(downloadUrl, imageUri);
-                    });
-                })
-                .addOnFailureListener(exception -> {
-                    // Handle unsuccessful uploads
-                    Log.e("TAG", "Upload failed: " + exception.getMessage());
-                    Toast.makeText(getContext(), "Upload failed: " + exception.getMessage(), Toast.LENGTH_SHORT).show();
-                    progressBar.setVisibility(View.GONE);
-                });
-    }
-
-    // Step 2: Update User Document in Firestore
-    private void updateAvatar(String downloadUrl, Uri imageUri) {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        DocumentReference userRef = db.collection("users").document(currentUser.getId());
-
-        userRef.update("avatarURL", downloadUrl)
-                .addOnSuccessListener(aVoid -> {
-                    // Avatar URL updated successfully
-                    Log.d("TAG", "Avatar URL updated successfully");
-                    Toast.makeText(getContext(), "Avatar URL updated successfully", Toast.LENGTH_SHORT).show();
-                    imvAvatar.setImageURI(imageUri);
-                    progressBar.setVisibility(View.GONE);
-                })
-                .addOnFailureListener(e -> {
-                    // Handle errors
-                    Log.e("TAG", "Error updating avatar URL", e);
-                    Toast.makeText(getContext(), "Error updating avatar URL", Toast.LENGTH_SHORT).show();
-                    progressBar.setVisibility(View.GONE);
-                });
-    }
 }

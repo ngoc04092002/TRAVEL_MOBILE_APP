@@ -58,11 +58,9 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
         tvChangePass.setOnClickListener(this);
 
         swNotification = view.findViewById(R.id.swNotification);
-        swNotification.setOnClickListener(this);
         swNotification.setChecked(currentUser.isEnableNotification());
 
         swUpdate = view.findViewById(R.id.swUpdate);
-        swUpdate.setOnClickListener(this);
         swUpdate.setChecked(currentUser.isEnableUpdate());
 
         imvAvatar = view.findViewById(R.id.imv_avatar);
@@ -105,16 +103,11 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
             fragmentTransaction.replace(R.id.container, new EditInfoFragment(currentUser));
         } else if (v.getId() == R.id.tvChangePass) {
             fragmentTransaction.replace(R.id.container, new ChangePasswordFragment(currentUser));
-        } else if (v.getId() == R.id.swNotification) {
-//            fragmentTransaction.replace(R.id.container, new SettingFragment());
-        } else if (v.getId() == R.id.swUpdate) {
-//            fragmentTransaction.replace(R.id.container, new SettingFragment());
         }
         if (v.getId() == R.id.createPost_btnBack) {
             fragmentManager.popBackStack("account_fragment", FragmentManager.POP_BACK_STACK_INCLUSIVE);
         }
 
-        // Thêm transaction vào back stack (nếu cần)
         fragmentTransaction.addToBackStack("setting_fragment");
 
         // Commit transaction
@@ -131,7 +124,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()) {
-                            Toast.makeText(getContext(), "Notification preference updated", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), "Notification changed to " + (isEnabled ? "ON" : "OFF"), Toast.LENGTH_SHORT).show();
                         } else {
                             Toast.makeText(getContext(), "Failed to update notification preference", Toast.LENGTH_SHORT).show();
                         }
@@ -149,7 +142,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()) {
-                            Toast.makeText(getContext(), "Notification preference updated", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), "Notification update version changed to " + (isEnabled ? "ON" : "OFF"), Toast.LENGTH_SHORT).show();
                         } else {
                             Toast.makeText(getContext(), "Failed to update notification preference", Toast.LENGTH_SHORT).show();
                         }
