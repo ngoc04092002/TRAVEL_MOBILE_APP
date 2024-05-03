@@ -68,10 +68,8 @@ public class SuggestionAdapter extends RecyclerView.Adapter<SuggestionAdapter.Su
                 bundle.putString("location_address", loc.getAddress());
                 bundle.putString("location_intro", loc.getIntroduce());
                 bundle.putString("location_imglink", loc.getImglink());
-                bundle.putString("location_event", loc.getEvent());
                 bundle.putString("location_number", loc.getNumber());
                 bundle.putString("location_price", loc.getPrice());
-                bundle.putString("location_opentime", loc.getOpentime());
                 // Thêm các dữ liệu khác nếu cần
 
                 // Mở Fragment chi tiết và truyền dữ liệu

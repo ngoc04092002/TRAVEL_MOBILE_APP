@@ -25,10 +25,11 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
         android:layout_marginLeft="10dp"
-        android:text="TÊN DI TÍCH"
+        android:paddingRight="40dp"
+        android:text="TÊN DI TÍCH DÀI ĐỂ TEST GIAO DIỆN"
         android:fontFamily="@font/montserrat_bold"
         android:textColor="@color/black"
-        android:textSize="24dp"
+        android:textSize="25dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -104,7 +105,7 @@
         android:fontFamily="@font/montserrat_bold"
         android:text="Giờ mở của:"
         android:textColor="@color/black"
-        android:textSize="16dp"
+        android:textSize="18dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -125,6 +126,36 @@
         app:layout_constraintTop_toBottomOf="@+id/text3" />
 
     <TextView
+        android:id="@+id/text5"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:fontFamily="@font/montserrat_bold"
+        android:text="Giờ đóng của:"
+        android:textColor="@color/black"
+        android:textSize="18dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/giomocua" />
+
+
+    <TextView
+        android:id="@+id/giodongcua"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:fontFamily="@font/montserrat"
+        android:text="Loading"
+        android:textColor="@color/black"
+        android:textSize="15dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/text5" />
+
+    <TextView
         android:id="@+id/text4"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -133,11 +164,11 @@
         android:fontFamily="@font/montserrat_bold"
         android:text="Giá vé"
         android:textColor="@color/black"
-        android:textSize="16dp"
+        android:textSize="18dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/giomocua" />
+        app:layout_constraintTop_toBottomOf="@+id/giodongcua" />
 
     <TextView
         android:id="@+id/giave"
@@ -152,6 +183,35 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/text4" />
+    <TextView
+        android:id="@+id/text6"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:fontFamily="@font/montserrat_bold"
+        android:text="Số điện thoại ban quản lý"
+        android:textColor="@color/black"
+        android:textSize="18dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/giave" />
+
+    <TextView
+        android:id="@+id/sdttv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:fontFamily="@font/montserrat"
+        android:text="Loading"
+        android:textColor="@color/black"
+        android:textSize="15dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/text6" />
+
 
 
 
@@ -163,7 +223,7 @@
         android:text="THÔNG TIN"
         android:textColor="@color/black"
         android:gravity="center"
-        android:textSize="40dp"
+        android:textSize="30dp"
         android:fontFamily="@font/montserrat"
         android:background="@drawable/titlebar"
         app:layout_constraintEnd_toEndOf="parent"
@@ -173,10 +233,10 @@
 
     <ImageButton
         android:id="@+id/backbtn3"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="12dp"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="8dp"
         android:background="@color/transparent"
         android:scaleType="fitXY"
         android:src="@drawable/img"
@@ -204,6 +264,18 @@
         android:background="@color/transparent"
         android:scaleType="fitXY"
         android:src="@drawable/event"
+        app:layout_constraintEnd_toEndOf="@+id/tenditich"
+        app:layout_constraintTop_toTopOf="@+id/tenditich" />
+
+    <ImageButton
+        android:id="@+id/savebtn"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="96dp"
+        android:layout_marginEnd="16dp"
+        android:background="@color/transparent"
+        android:scaleType="fitXY"
+        android:src="@drawable/savebtn"
         app:layout_constraintEnd_toEndOf="@+id/tenditich"
         app:layout_constraintTop_toTopOf="@+id/tenditich" />
 

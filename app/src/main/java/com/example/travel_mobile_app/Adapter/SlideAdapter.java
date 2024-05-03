@@ -52,14 +52,16 @@ public class SlideAdapter extends PagerAdapter {
             public void onClick(View view) {
                 // Tạo Bundle để truyền dữ liệu
                 Bundle bundle = new Bundle();
+                bundle.putString("location_id", loc.getId());
                 bundle.putString("location_name", loc.getName());
                 bundle.putString("location_address", loc.getAddress());
                 bundle.putString("location_intro", loc.getIntroduce());
                 bundle.putString("location_imglink", loc.getImglink());
-                bundle.putString("location_event", loc.getEvent());
                 bundle.putString("location_number", loc.getNumber());
                 bundle.putString("location_price", loc.getPrice());
-                bundle.putString("location_opentime", loc.getOpentime());
+                bundle.putLong("location_opentime", loc.getOpentime());
+                bundle.putLong("location_closetime", loc.getClosetime());
+
                 // Thêm các dữ liệu khác nếu cần
 
                 // Mở Fragment chi tiết và truyền dữ liệu

@@ -23,10 +23,14 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.example.travel_mobile_app.models.NotificationModel;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.WriteBatch;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -44,10 +48,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
-        // Trong Activity hoặc Fragment của bạn
-        /*FragmentTransaction newhome = getSupportFragmentManager().beginTransaction();
-        newhome.replace(R.id.container, new SuggestionFragment()); // Thay thế R.id.container với id của layout container trong màn hình chính của bạn
-        newhome.commit();*/
 
 
         //screen change from search screen to social screen

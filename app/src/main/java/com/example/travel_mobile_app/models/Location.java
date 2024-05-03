@@ -1,24 +1,35 @@
 package com.example.travel_mobile_app.models;
 
 public class Location {
+    private long closetime;
     private String address;
-    private String event;
     private String imglink;
     private String introduce;
     private String name;
     private String number;
-    private String opentime;
+    private long opentime;
     private String price;
 
-    public Location(String address, String event, String imglink, String introduce, String name, String number, String opentime, String price) {
+    private String id;
+
+    public Location(String id, String address,  String imglink, String introduce, String name, String number, long opentime, long closetine, String price) {
+        this.id = id;
         this.address = address;
-        this.event = event;
         this.imglink = imglink;
         this.introduce = introduce;
         this.name = name;
         this.number = number;
         this.opentime = opentime;
+        this.closetime = closetine;
         this.price = price;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getAddress() {
@@ -29,12 +40,13 @@ public class Location {
         this.address = address;
     }
 
-    public String getEvent() {
-        return event;
+
+    public long getClosetime() {
+        return closetime;
     }
 
-    public void setEvent(String event) {
-        this.event = event;
+    public void setClosetime(long closetime) {
+        this.closetime = closetime;
     }
 
     public String getImglink() {
@@ -69,11 +81,11 @@ public class Location {
         this.number = number;
     }
 
-    public String getOpentime() {
+    public long getOpentime() {
         return opentime;
     }
 
-    public void setOpentime(String opentime) {
+    public void setOpentime(long opentime) {
         this.opentime = opentime;
     }
 
@@ -91,9 +103,9 @@ public class Location {
                 "name='" + name + '\'' +
                 ", address='" + address + '\'' +
                 ", price='" + price + '\'' +
-                ", event='" + event + '\'' +
                 ", intro='" + introduce + '\'' +
                 ", openTime='" + opentime + '\'' +
+                ", closeTime='" + closetime + '\'' +
                 ", imgLink='" + imglink + '\'' +
                 ", number='" + number + '\'' +
                 '}';

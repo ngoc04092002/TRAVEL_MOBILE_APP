@@ -108,13 +108,14 @@ public class SuggestionFragment extends Fragment {
                             String name = document.getString("name");
                             String address = document.getString("address");
                             String price = document.getString("price");
-                            String event = document.getString("event");
+                            Long closeTime = document.getLong("closetime");
                             String intro = document.getString("introduce");
-                            String openTime = document.getString("opentime");
+                            Long openTime = document.getLong("opentime");
                             String imgLink = document.getString("imglink");
                             String number = document.getString("number");
+                            String id = document.getId();
 
-                            Location location = new Location(address,event,imgLink,intro,name,number,openTime,price);
+                            Location location = new Location(id,address,imgLink,intro,name,number,openTime,closeTime,price);
 
                             list.add(location);
                             System.out.println(list);

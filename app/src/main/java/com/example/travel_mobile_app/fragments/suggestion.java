@@ -111,12 +111,13 @@ public class suggestion extends Fragment  {
                                 String name = document.getString("name");
                                 String address = document.getString("address");
                                 String price = document.getString("price");
-                                String event = document.getString("event");
                                 String intro = document.getString("introduce");
-                                String openTime = document.getString("opentime");
+                                Long openTime = document.getLong("opentime");
+                                Long closeTime = document.getLong("closetime");
                                 String imgLink = document.getString("imglink");
                                 String number = document.getString("number");
-                                Location location = new Location(address,event,imgLink,intro,name,number,openTime,price);
+                                String id = document.getId();
+                                Location location = new Location(id,address,imgLink,intro,name,number,openTime,closeTime,price);
                                 list.add(location);
                                 Collections.shuffle(list);
                                 List<Location> randomLocations = list.subList(0, Math.min(list.size(), 7));

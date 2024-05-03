@@ -16,7 +16,7 @@
         android:paddingBottom="3dp"
         android:text="CHỈ ĐƯỜNG"
         android:textColor="@color/black"
-        android:textSize="40dp"
+        android:textSize="30dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
@@ -24,10 +24,10 @@
 
     <ImageButton
         android:id="@+id/backbtn2"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="12dp"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="8dp"
         android:background="@color/transparent"
         android:scaleType="fitXY"
         android:src="@drawable/img"
@@ -37,92 +37,41 @@
     <ImageButton
         android:id="@+id/ggmapsbtn"
         android:layout_width="280dp"
-        android:layout_height="60dp"
-        android:layout_marginTop="120dp"
-        android:scaleType="centerCrop"
-        android:src="@drawable/ggmap"
+        android:layout_height="100dp"
+        android:layout_marginTop="56dp"
         android:background="@color/transparent"
+        android:scaleType="fitXY"
+        android:src="@drawable/ggmap"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.503"
+        app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/titledirection" />
 
     <ImageButton
         android:id="@+id/phonebtn"
         android:layout_width="280dp"
-        android:layout_height="60dp"
-        android:layout_marginTop="84dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="12dp"
         android:background="@color/transparent"
+        android:scaleType="fitXY"
         android:src="@drawable/phonebtn"
-        android:scaleType="centerCrop"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ggmapsbtn" />
 
     <ImageButton
         android:id="@+id/taxibtn"
         android:layout_width="280dp"
-        android:layout_height="60dp"
-        android:layout_marginTop="80dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="12dp"
         android:background="@color/transparent"
+        android:scaleType="fitXY"
         android:src="@drawable/bebtn"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.519"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/phonebtn" />
-
-    <TextView
-        android:id="@+id/textView6"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-
-        android:layout_marginTop="68dp"
-        android:fontFamily="@font/montserrat"
-        android:text="Chuyển đến ứng dụng:"
-        android:textColor="@color/black"
-        android:textSize="25dp"
-
-        app:layout_constraintBottom_toTopOf="@+id/ggmapsbtn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/titledirection"
-        app:layout_constraintVertical_bias="1.0" />
-
-    <TextView
-        android:id="@+id/textView7"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-
-        android:layout_marginTop="68dp"
-        android:fontFamily="@font/montserrat"
-        android:text="Chuyển đến ứng dụng:"
-        android:textColor="@color/black"
-        android:textSize="25dp"
-
-        app:layout_constraintBottom_toTopOf="@+id/phonebtn"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.519"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ggmapsbtn"
-        app:layout_constraintVertical_bias="1.0" />
-    <TextView
-        android:id="@+id/textView9"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-
-        android:layout_marginTop="68dp"
-        android:fontFamily="@font/montserrat"
-        android:text="Chuyển đến ứng dụng:"
-        android:textColor="@color/black"
-        android:textSize="25dp"
-
-        app:layout_constraintBottom_toTopOf="@+id/taxibtn"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.519"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/phonebtn"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintTop_toBottomOf="@+id/phonebtn" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

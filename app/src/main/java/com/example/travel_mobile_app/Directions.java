@@ -86,17 +86,34 @@ public class Directions extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_directions, container, false);
+        Bundle bundle = getArguments();
+        String number = bundle.getString("location_number");
+        btnphone = view.findViewById(R.id.phonebtn);
+        btnphone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                // Tạo Intent với hành động ACTION_DIAL
+                Intent intentphone = new Intent(Intent.ACTION_DIAL);
+                System.out.println(number);
+
+                // Đặt dữ liệu URI cho số điện thoại mà bạn muốn gọi
+                intentphone.setData(Uri.parse("tel:" + number));
+
+
+                // Khởi chạy Intent
+                startActivity(intentphone);}
+        });
+
         btnback3 = view.findViewById(R.id.backbtn2);
         btnback3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Fragment otherFragment = new DetailInfor();
-                FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
-                transaction.replace(R.id.container, otherFragment);
-                transaction.addToBackStack(null); // Để cho phép người dùng quay lại Fragment trước đó
-                transaction.commit();
+                getParentFragmentManager().popBackStack();
+
             }
         });
+
         btnmaps = view.findViewById(R.id.ggmapsbtn);
         btnmaps.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -107,19 +124,7 @@ public class Directions extends Fragment {
                 startActivity(intentmap);
             }
         });
-        btnphone = view.findViewById(R.id.phonebtn);
-        btnphone.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Tạo Intent với hành động ACTION_DIAL
-                Intent intentphone = new Intent(Intent.ACTION_DIAL);
 
-                // Đặt dữ liệu URI cho số điện thoại mà bạn muốn gọi
-                intentphone.setData(Uri.parse("tel:0336695260"));
-
-                // Khởi chạy Intent
-                startActivity(intentphone);}
-        });
         btntaxi = view.findViewById(R.id.taxibtn);
         btntaxi.setOnClickListener(new View.OnClickListener() {
             @Override
