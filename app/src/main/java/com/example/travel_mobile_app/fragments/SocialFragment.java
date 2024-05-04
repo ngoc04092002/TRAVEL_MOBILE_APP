@@ -5,8 +5,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -17,6 +15,7 @@ import androidx.lifecycle.viewmodel.CreationExtras;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -30,22 +29,21 @@ import android.widget.Toast;
 
 import com.example.travel_mobile_app.Adapter.PostAdapter;
 import com.example.travel_mobile_app.Adapter.StoryAdapter;
-import com.example.travel_mobile_app.MainActivity;
 import com.example.travel_mobile_app.R;
 import com.example.travel_mobile_app.SocialSearchPost;
 import com.example.travel_mobile_app.models.PostModel;
 import com.example.travel_mobile_app.models.StoryModel;
+import com.example.travel_mobile_app.models.UserModel;
 import com.example.travel_mobile_app.models.UserStory;
+import com.example.travel_mobile_app.services.SharedPreferencesManager;
 import com.facebook.shimmer.ShimmerFrameLayout;
 import com.github.dhaval2404.imagepicker.ImagePicker;
 import com.github.ybq.android.spinkit.sprite.Sprite;
 import com.github.ybq.android.spinkit.style.WanderingCubes;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -57,6 +55,7 @@ import java.util.UUID;
 
 public class SocialFragment extends Fragment implements View.OnClickListener {
 
+    private final static int A_DAY = 24 * 60 * 60 * 1000;
     private RecyclerView storyRv, dashboardRv;
     private ArrayList<StoryModel> list;
     private ArrayList<PostModel> postList;
@@ -67,9 +66,16 @@ public class SocialFragment extends Fragment implements View.OnClickListener {
     private FrameLayout createStory;
     private LinearLayout backdrop;
     private ProgressBar progressBar;
+    private StoryAdapter storyAdapter;
+    SwipeRefreshLayout mSwipeRefreshLayout;
+    private PostAdapter postAdapter;
 
     public SocialFragment() {
         // Required empty public constructor
+    }
+
+    public SocialFragment(ArrayList<PostModel> postList) {
+        this.postList = postList;
     }
 
     @Override
@@ -86,30 +92,47 @@ public class SocialFragment extends Fragment implements View.OnClickListener {
         View view = inflater.inflate(R.layout.fragment_social, container, false);
         shimmerFrameLayout = view.findViewById(R.id.shimmer_layout);
         shimmerFrameLayoutStory = view.findViewById(R.id.shimmer_layout_story);
-        shimmerFrameLayout.setVisibility(View.VISIBLE);
-        shimmerFrameLayout.startShimmer();
-        shimmerFrameLayoutStory.setVisibility(View.VISIBLE);
-        shimmerFrameLayoutStory.startShimmer();
+
+        mSwipeRefreshLayout = view.findViewById(R.id.fragment_social);
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary,
+                                                    android.R.color.holo_green_dark,
+                                                    android.R.color.holo_orange_dark,
+                                                    android.R.color.holo_blue_dark);
 
         progressBar = view.findViewById(R.id.spin_kit);
         backdrop = view.findViewById(R.id.backdrop);
 
         storyRv = view.findViewById(R.id.storyRv);
         list = new ArrayList<>();
-        StoryAdapter storyAdapter = new StoryAdapter(list, getContext());
-        setStoryListData(storyAdapter);
+        storyAdapter = new StoryAdapter(list, getContext());
         storyRv.setHasFixedSize(true);
         storyRv.setLayoutManager(new StaggeredGridLayoutManager(1, LinearLayoutManager.HORIZONTAL));
-        storyRv.setAdapter(storyAdapter);
-
 
         dashboardRv = view.findViewById(R.id.dashboardRv);
-        postList = new ArrayList<>();
-        PostAdapter postAdapter = new PostAdapter(postList, getContext(), requireActivity().getSupportFragmentManager(), getActivity(), db);
-        setPostListData(postAdapter);
+        postAdapter = new PostAdapter(postList, getContext(), requireActivity().getSupportFragmentManager(), getActivity(), db);
         dashboardRv.setHasFixedSize(true);
         dashboardRv.setLayoutManager(new StaggeredGridLayoutManager(1, LinearLayoutManager.VERTICAL));
+
+
+        if (postList.size() != 0) {
+            postAdapter = new PostAdapter(postList, getContext(), requireActivity().getSupportFragmentManager(), getActivity(), db);
+        } else {
+            loadRecyclerViewData();
+        }
+
+
+        shimmerFrameLayoutStory.setVisibility(View.VISIBLE);
+        shimmerFrameLayoutStory.startShimmer();
+        setStoryListData(storyAdapter);
+
+
+        storyRv.setAdapter(storyAdapter);
         dashboardRv.setAdapter(postAdapter);
+
+        mSwipeRefreshLayout.setOnRefreshListener(() -> {
+            mSwipeRefreshLayout.setRefreshing(false);
+            loadRecyclerViewData();
+        });
 
         btnFriends = view.findViewById(R.id.friends);
         btnFriends.setOnClickListener(this);
@@ -132,7 +155,7 @@ public class SocialFragment extends Fragment implements View.OnClickListener {
         } else if (v.getId() == R.id.btnSearch) {
             Intent i = new Intent(getActivity(), SocialSearchPost.class);
             startActivity(i);
-            getActivity().overridePendingTransition(0, 0);
+            getActivity().overridePendingTransition(0, android.R.anim.slide_out_right);
         } else if (v.getId() == R.id.createStory) {
             ImagePicker.with(this)
                        .galleryOnly()
@@ -140,6 +163,12 @@ public class SocialFragment extends Fragment implements View.OnClickListener {
                        .start();
         }
 
+    }
+
+    private void loadRecyclerViewData() {
+        shimmerFrameLayout.setVisibility(View.VISIBLE);
+        shimmerFrameLayout.startShimmer();
+        setPostListData(postAdapter);
     }
 
     private void replaceScreen(@IdRes int containerViewId, @NonNull Fragment fragment, String backTrackName) {
@@ -154,65 +183,100 @@ public class SocialFragment extends Fragment implements View.OnClickListener {
     }
 
     private void setPostListData(PostAdapter postAdapter) {
-        db.collection("posts")
-          .get()
-          .addOnCompleteListener(task -> {
-              if (task.isSuccessful()) {
-                  for (QueryDocumentSnapshot document : task.getResult()) {
-                      PostModel postModel = document.toObject(PostModel.class);
-                      postList.add(postModel);
-                  }
-                  shimmerFrameLayout.showShimmer(false);
-                  shimmerFrameLayout.setVisibility(View.GONE);
-                  postAdapter.notifyDataSetChanged();
-              } else {
-                  Log.d("record", "Error getting documents: ", task.getException());
-              }
-          });
+        CollectionReference postsRef = db.collection("posts");
+
+        UserModel user = SharedPreferencesManager.readUserInfo();
+        List<String> following = user.getFollowing();
+        //fix
+        postsRef
+//                .whereIn("postedBy", following)
+.orderBy("postedAt", Query.Direction.DESCENDING)
+.get()
+.addOnCompleteListener(task -> {
+    if (task.isSuccessful()) {
+        for (QueryDocumentSnapshot document : task.getResult()) {
+            PostModel postModel = document.toObject(PostModel.class);
+            postList.add(postModel);
+        }
+        shimmerFrameLayout.showShimmer(false);
+        shimmerFrameLayout.setVisibility(View.GONE);
+        postAdapter.notifyDataSetChanged();
+    } else {
+        Log.d("record", "Error getting documents: ", task.getException());
+    }
+});
     }
 
     private void setStoryListData(StoryAdapter storyAdapter) {
-        //fix 8c89d98007c54f34b44f2f619a8684b3 is userID and add filter table user
-        db.collection("stories")
-          .whereEqualTo("storyBy", "8c89d98007c54f34b44f2f619a8684b3")
-          .get()
-          .addOnCompleteListener(task -> {
-              if (task.isSuccessful() && task.getResult() != null) {
-                  ArrayList<UserStory> userStories = new ArrayList<>();
-                  for (QueryDocumentSnapshot document : task.getResult()) {
-                      Date currentTime = new Date();
-                      StoryModel storyModel = document.toObject(StoryModel.class);
+        UserModel user = SharedPreferencesManager.readUserInfo();
+        CollectionReference storiesRef = db.collection("stories");
+        CollectionReference usersRef = db.collection("users");
 
-                      if (currentTime.getTime() - storyModel.getStoryAt() < (24 * 60 * 60 * 1000)) {
-                          userStories.add(new UserStory(storyModel.getUri(), storyModel.getStoryAt()));
-                      }
-                  }
-                  if(userStories.size()>0){
-                      StoryModel storyModel = new StoryModel();
-                      storyModel.setUserStories(userStories);
-                      storyModel.setStoryBy("8c89d98007c54f34b44f2f619a8684b3");
-                      list.add(storyModel);
-                  }
 
-                  shimmerFrameLayoutStory.showShimmer(false);
-                  shimmerFrameLayoutStory.setVisibility(View.GONE);
-                  storyAdapter.notifyDataSetChanged();
-              } else {
-                  Log.d("record", "Error getting documents: ", task.getException());
-              }
-          });
+        usersRef
+//                .whereIn("id", user.getFollowing())
+.get()
+.addOnCompleteListener(task -> {
+    if (task.isSuccessful() && task.getResult() != null) {
+        for (QueryDocumentSnapshot document : task.getResult()) {
+            UserModel userModel = document.toObject(UserModel.class);
+            if (userModel.getId() != null) {
+                getAllUserStory(userModel, storiesRef);
+            }
+        }
+
+    }
+});
+
     }
 
-    private void uploadImages(Uri imageUri, String userId) {
+    private void getAllUserStory(UserModel user, CollectionReference storiesRef) {
+        storiesRef
+                .whereEqualTo("storyBy", user.getId())
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && task.getResult() != null) {
+                        ArrayList<UserStory> userStories = new ArrayList<>();
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            Date currentTime = new Date();
+                            StoryModel storyModel = document.toObject(StoryModel.class);
+
+                            if (currentTime.getTime() - storyModel.getStoryAt() < A_DAY) {
+                                userStories.add(new UserStory(storyModel.getUri(), storyModel.getStoryAt()));
+                            }
+                        }
+
+                        if (userStories.size() > 0) {
+                            StoryModel firstStoryModel = task.getResult().getDocuments().get(0).toObject(StoryModel.class);
+                            StoryModel storyModel = new StoryModel();
+                            storyModel.setUserStories(userStories);
+                            storyModel.setUri(firstStoryModel.getUri());
+                            storyModel.setStoryBy(user.getId());
+                            storyModel.setFullName(user.getFullName());
+                            storyModel.setImage(user.getAvatarURL());
+                            list.add(storyModel);
+                        }
+                        shimmerFrameLayoutStory.showShimmer(false);
+                        shimmerFrameLayoutStory.setVisibility(View.GONE);
+                        storyAdapter.notifyDataSetChanged();
+                    } else {
+                        Log.e("record", "Error getting documents: ", task.getException());
+                    }
+                }).addOnFailureListener(e -> {
+                    Log.e("ERROR-GET-STORY::", e.getMessage());
+                });
+    }
+
+    private void uploadImages(Uri imageUri, UserModel user) {
         final StorageReference reference = storage.getReference().child("stories")
-                                                  .child(userId)
+                                                  .child(user.getId())
                                                   .child(new Date().getTime() + "");
 
         reference.putFile(imageUri).addOnSuccessListener(taskSnapshot -> {
             reference.getDownloadUrl().addOnSuccessListener(uri -> {
                 StoryModel story = new StoryModel();
                 story.setUri(uri.toString());
-                saveNewStory(userId, story);
+                saveNewStory(user, story);
             }).addOnFailureListener(e -> {
                 Toast.makeText(getContext(), "Đã có lỗi khi tạo ảnh", Toast.LENGTH_SHORT).show();
                 dismissProgressBar();
@@ -223,17 +287,20 @@ public class SocialFragment extends Fragment implements View.OnClickListener {
         });
     }
 
-    private void saveNewStory(String userId, StoryModel story) {
+    private void saveNewStory(UserModel user, StoryModel story) {
         CollectionReference stories = db.collection("stories");
         String storyId = UUID.randomUUID().toString().replace("-", "");
 
         story.setStoryId(storyId);
-        story.setStoryBy("8c89d98007c54f34b44f2f619a8684b3"); // get name and set fix
+        story.setImage(user.getAvatarURL());
+        story.setFullName(user.getFullName());
+        story.setStoryBy(user.getId()); // get name and set fix
         story.setStoryAt(new Date().getTime());
 
         stories.document(storyId).set(story).addOnSuccessListener(unused -> {
             Toast.makeText(getContext(), "Tạo thành công", Toast.LENGTH_SHORT).show();
             dismissProgressBar();
+            storyAdapter.notifyDataSetChanged();
         }).addOnFailureListener(e -> {
             Log.e("ERROR", "[ERROR-CREATE-POST]", e);
             Toast.makeText(getContext(), "Đã có lỗi xảy ra.", Toast.LENGTH_SHORT).show();
@@ -258,8 +325,8 @@ public class SocialFragment extends Fragment implements View.OnClickListener {
         if (resultCode == Activity.RESULT_OK) {
             Uri uri = data.getData();
             showProgressBar();
-            String userId = UUID.randomUUID().toString().replace("-", "");
-            uploadImages(uri, userId);
+            UserModel user = SharedPreferencesManager.readUserInfo();
+            uploadImages(uri, user);
         } else {
             Toast.makeText(getContext(), "Nhiệm vụ đã được hủy", Toast.LENGTH_SHORT).show();
         }
@@ -271,5 +338,6 @@ public class SocialFragment extends Fragment implements View.OnClickListener {
     public CreationExtras getDefaultViewModelCreationExtras() {
         return super.getDefaultViewModelCreationExtras();
     }
+
 
 }

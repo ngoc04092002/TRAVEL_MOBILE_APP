@@ -24,12 +24,13 @@
             app:civ_border_width="2dp" />
 
         <LinearLayout
+            android:id="@+id/info_friends"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:layout_weight="1"
             android:layout_marginLeft="@dimen/_4mdp"
             android:layout_marginRight="6dp"
-            android:layout_weight="2"
             android:orientation="vertical">
 
             <TextView
@@ -38,6 +39,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="NgocVan"
+                android:ellipsize="end"
                 android:maxLines="1"
                 android:textSize="20sp"
                 android:textStyle="bold" />
@@ -53,9 +55,8 @@
 
         <Button
             android:id="@+id/btnFollow"
-            android:layout_width="wrap_content"
+            android:layout_width="@dimen/_110mdp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:text="Đang theo dõi"
             android:backgroundTint="@color/gray"
             android:layout_gravity="center"

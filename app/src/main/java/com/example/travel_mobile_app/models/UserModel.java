@@ -1,8 +1,9 @@
 package com.example.travel_mobile_app.models;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class UserModel {
+public class UserModel implements Serializable {
     private String id, fullName, username, email, address, password, avatarURL;
     private List<String> following, followers;
     private boolean enableNotification, enableUpdate;
@@ -28,6 +29,23 @@ public class UserModel {
         this.following = following;
         this.enableNotification = enableNotification;
         this.enableUpdate = enableUpdate;
+    }
+
+    @Override
+    public String toString() {
+        return "UserModel{" +
+                "id='" + id + '\'' +
+                ", fullName='" + fullName + '\'' +
+                ", username='" + username + '\'' +
+                ", email='" + email + '\'' +
+                ", address='" + address + '\'' +
+                ", password='" + password + '\'' +
+                ", avatarURL='" + avatarURL + '\'' +
+                ", following=" + following +
+                ", followers=" + followers +
+                ", enableNotification=" + enableNotification +
+                ", enableUpdate=" + enableUpdate +
+                '}';
     }
 
     public boolean isEnableNotification() {

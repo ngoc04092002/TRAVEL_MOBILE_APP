@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="@dimen/_8mdp"
+    android:paddingBottom="@dimen/_8mdp"
+    android:paddingStart="@dimen/_6mdp"
+    android:paddingEnd="@dimen/_6mdp"
+    android:orientation="vertical"
+    android:background="@color/transparent"
+    android:minHeight="100dp"
+    android:maxHeight="100dp"
+    >
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/_8mdp"
+        android:paddingBottom="@dimen/_8mdp"
+        android:paddingStart="@dimen/_6mdp"
+        android:paddingEnd="@dimen/_6mdp"
+        android:orientation="horizontal"
+        android:background="@color/transparent"
+        android:id="@+id/notification_item"
+        android:minHeight="100dp"
+        android:maxHeight="100dp"
+        >
+
+        <com.makeramen.roundedimageview.RoundedImageView
+            android:id="@+id/imageView"
+            android:layout_width="130dp"
+            android:layout_height="100dp"
+            android:clickable="false"
+            android:scaleType="centerCrop"
+            android:src="@drawable/image_empty"
+            android:layout_marginEnd="10dp"
+            app:riv_border_color="#333333"
+            app:riv_border_width="1dip"
+            app:riv_corner_radius="10dip"
+            app:riv_mutate_background="true" />
+        />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:fontFamily="sans-serif-medium"
+                android:maxLines="3"
+                android:text="ngocvan "
+                android:textColor="@color/black"
+                android:textSize="23sp" />
+
+            <TextView
+                android:id="@+id/time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:text="Vừa mới"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/un_saved"
+            android:layout_width="50dp"
+            android:layout_marginLeft="5dp"
+            android:layout_height="match_parent"
+            android:src="@drawable/icn_unsave"
+            android:background="@color/transparent"/>
+
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/black"/>
+</LinearLayout>

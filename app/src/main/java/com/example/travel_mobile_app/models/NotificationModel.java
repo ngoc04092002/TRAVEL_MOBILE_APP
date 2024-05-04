@@ -4,6 +4,8 @@ public class NotificationModel {
 
     private String notificationId;
     private String notificationBy;
+    private String userId;
+    private String userImage;
     private long notificationAt;
     private String type;
     private String postId;
@@ -13,7 +15,8 @@ public class NotificationModel {
     public NotificationModel() {
     }
 
-    public NotificationModel(String notificationBy, long notificationAt, String type, String postId, String postedBy, boolean checkOpen) {
+    public NotificationModel(String userId,String notificationBy, long notificationAt, String type, String postId, String postedBy, boolean checkOpen) {
+        this.userId = userId;
         this.notificationBy = notificationBy;
         this.notificationAt = notificationAt;
         this.type = type;
@@ -22,12 +25,28 @@ public class NotificationModel {
         this.checkOpen = checkOpen;
     }
 
+    public String getUserImage() {
+        return userImage;
+    }
+
+    public void setUserImage(String userImage) {
+        this.userImage = userImage;
+    }
+
     public String getNotificationId() {
         return notificationId;
     }
 
     public void setNotificationId(String notificationId) {
         this.notificationId = notificationId;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public String getNotificationBy() {

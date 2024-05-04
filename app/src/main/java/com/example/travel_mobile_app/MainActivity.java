@@ -5,13 +5,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Toast;
+import android.view.View;
 
+import com.example.travel_mobile_app.Adapter.PostAdapter;
+import com.example.travel_mobile_app.Adapter.StoryAdapter;
 import com.example.travel_mobile_app.Manager.FirebaseManager;
 import com.example.travel_mobile_app.databinding.ActivityMainBinding;
 import com.example.travel_mobile_app.fragments.AccountFragment;
+import com.example.travel_mobile_app.fragments.FriendFollowingFragment;
 import com.example.travel_mobile_app.fragments.NotificationFragment;
 import com.example.travel_mobile_app.fragments.SocialFragment;
 import com.example.travel_mobile_app.fragments.SuggestionFragment;
@@ -23,31 +27,47 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.example.travel_mobile_app.models.NotificationModel;
 import com.google.firebase.auth.FirebaseAuth;
+import com.example.travel_mobile_app.models.PostModel;
+import com.example.travel_mobile_app.models.StoryModel;
+import com.example.travel_mobile_app.models.UserModel;
+import com.example.travel_mobile_app.models.UserStory;
+import com.example.travel_mobile_app.services.SharedPreferencesManager;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.example.travel_mobile_app.models.NotificationModel;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.WriteBatch;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity {
 
     ActivityMainBinding binding;
-    FirebaseManager firebaseManager = FirebaseManager.getInstance();
     private FirebaseFirestore db;
-    private FirebaseAuth mAuth;
+    private ArrayList<PostModel> postList;
+    private ArrayList<StoryModel> storyList;
 
-    private static final String TAG = "Main Activity";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         db = FirebaseFirestore.getInstance();
-        mAuth = FirebaseAuth.getInstance();
+
+
+        postList = new ArrayList<>();
+        storyList = new ArrayList<>();
+
 
 
         //screen change from search screen to social screen
@@ -55,10 +75,17 @@ public class MainActivity extends AppCompatActivity {
         if (previousFragment != null && previousFragment.equals("social_screen")) {
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             binding.readableBottomBar.setSelectedItemId(R.id.insta);
-            transaction.replace(R.id.container, new SocialFragment());
+            transaction.replace(R.id.container, new SocialFragment(postList));
             transaction.commit();
-            return;
         }
+
+        if (previousFragment != null && previousFragment.equals("notification")) {
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            binding.readableBottomBar.setSelectedItemId(R.id.bell);
+            transaction.replace(R.id.container, new NotificationFragment());
+            transaction.commit();
+        }
+
 
         binding.readableBottomBar.setOnItemSelectedListener(item -> {
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -66,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
             int itemId = item.getItemId();
 
             if (itemId == R.id.insta) { // Replace this with the correct ID for the social item
-                transaction.replace(R.id.container, new SocialFragment());
+                transaction.replace(R.id.container, new SocialFragment(postList));
             } else if (itemId == R.id.bell) {
                 transaction.replace(R.id.container, new NotificationFragment());
                 updateNotificationCheckOpen();
@@ -81,28 +108,52 @@ public class MainActivity extends AppCompatActivity {
             return true;
         });
 
-        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
-            firebaseManager.loginUser("ngocngu@gmail.com", "1234567890", task -> {
-                if (task.isSuccessful()) {
-                    // Sign in success, update UI with the signed-in user's information
-                    Log.d(TAG, "signInWithEmail:success");
-                    // You can navigate to another activity here if needed
-                    Toast.makeText(MainActivity.this, "Login successful.",
-                            Toast.LENGTH_SHORT).show();
-                } else {
-                    // If sign in fails, display a message to the user.
-                    Log.w(TAG, "signInWithEmail:failure", task.getException());
-                }
-                Toast.makeText(MainActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
-            });
+        setUserInfoToLocal("qbJW6GgDkqgv6H5tvCPfLty2Bto2");
+
+    }
+
+
+    private void setUserInfoToLocal(String uId) {
+        SharedPreferencesManager.init(this);
+        CollectionReference users = db.collection("users");
+        users.document(uId)
+             .get()
+             .addOnCompleteListener(taskUser -> {
+                 if (taskUser.isSuccessful() && taskUser.getResult() != null) {
+                     UserModel userModel = taskUser.getResult().toObject(UserModel.class);
+                     SharedPreferencesManager.writeUserInfo(userModel);
+                     fetchPostListData(userModel);
+                     fetchNotificationBadge(userModel);
+                 }
+             });
+    }
+
+    private void fetchPostListData( UserModel user) {
+        CollectionReference postsRef = db.collection("posts");
+
+        List<String> following = user.getFollowing();
+        //fix
+        postsRef
+//                .whereIn("postedBy", following)
+.orderBy("postedAt", Query.Direction.DESCENDING)
+.get()
+.addOnCompleteListener(task -> {
+    if (task.isSuccessful()) {
+        for (QueryDocumentSnapshot document : task.getResult()) {
+            PostModel postModel = document.toObject(PostModel.class);
+            postList.add(postModel);
         }
-        fetchNotificationBadge();
+    } else {
+        Log.d("record", "Error getting documents: ", task.getException());
+    }
+});
     }
 
     private void updateNotificationCheckOpen() {
-        //fix I2cG4PNtPmSCnPSS0BQib3rRxxl2 userId
+        UserModel user = SharedPreferencesManager.readUserInfo();
+
         db.collection("notifications")
-          .whereEqualTo("postedBy", "I2cG4PNtPmSCnPSS0BQib3rRxxl2")
+          .whereEqualTo("postedBy", user.getId())
           .whereEqualTo("checkOpen", false)
           .get().addOnCompleteListener(task -> {
               if (task.isSuccessful()) {
@@ -125,10 +176,9 @@ public class MainActivity extends AppCompatActivity {
           });
     }
 
-    private void fetchNotificationBadge() {
-        //fix I2cG4PNtPmSCnPSS0BQib3rRxxl2 userId
+    private void fetchNotificationBadge( UserModel user) {
         db.collection("notifications")
-          .whereEqualTo("postedBy", "I2cG4PNtPmSCnPSS0BQib3rRxxl2")
+          .whereEqualTo("postedBy", user.getId())
           .whereEqualTo("checkOpen", false)
           .get().addOnCompleteListener(task -> {
               if (task.isSuccessful()) {

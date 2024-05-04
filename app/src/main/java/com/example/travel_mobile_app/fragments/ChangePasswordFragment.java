@@ -1,6 +1,7 @@
 package com.example.travel_mobile_app.fragments;
 
 import android.annotation.SuppressLint;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -10,6 +11,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.bumptech.glide.Glide;
 import com.example.travel_mobile_app.models.UserModel;
+import com.example.travel_mobile_app.services.SharedPreferencesManager;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
@@ -112,7 +114,12 @@ public class ChangePasswordFragment extends Fragment implements View.OnClickList
     private void setUpUI() {
         tvName.setText(currentUser.getFullName());
         tvUsername.setText("@" + currentUser.getUsername());
-        Glide.with(getContext()).load(currentUser.getAvatarURL()).into(avataImageView);
+        Drawable defaultAvatar = getResources().getDrawable(R.drawable.avatar_men);
+
+        Glide.with(requireContext())
+                .load(currentUser.getAvatarURL())
+                .placeholder(defaultAvatar)
+                .into(avataImageView);
     }
 
     @Override
@@ -174,8 +181,6 @@ public class ChangePasswordFragment extends Fragment implements View.OnClickList
                                                     if (task.isSuccessful()) {
                                                         // Password updated successfully
                                                         updatePasswordInFirestore(user.getUid(), newPassword);
-                                                        Toast.makeText(getContext(), "Password updated successfully", Toast.LENGTH_SHORT).show();
-//                                                        finish(); // Finish the activity
                                                     } else {
                                                         progressBar.setVisibility(View.GONE);
                                                         Log.e(TAG, "Error updating password", task.getException());
@@ -211,6 +216,11 @@ public class ChangePasswordFragment extends Fragment implements View.OnClickList
                     public void onComplete(@NonNull Task<Void> task) {
                         progressBar.setVisibility(View.GONE);
                         if (task.isSuccessful()) {
+                            Toast.makeText(getContext(), "Password updated successfully", Toast.LENGTH_SHORT).show();
+                            currentUser.setPassword(newPassword);
+                            SharedPreferencesManager.writeUserInfo(currentUser);
+                            FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
+                            fragmentManager.popBackStack("account_fragment", FragmentManager.POP_BACK_STACK_INCLUSIVE);
                             Log.d(TAG, "Password updated in Firestore");
                         } else {
                             Log.e(TAG, "Error updating password in Firestore", task.getException());

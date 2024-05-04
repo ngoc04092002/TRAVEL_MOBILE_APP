@@ -51,7 +51,6 @@ public class StoryAdapter extends RecyclerView.Adapter<StoryAdapter.viewHolder> 
     public void onBindViewHolder(@NonNull viewHolder holder, int position) {
 
         StoryModel storyModel = list.get(position);
-
         // fix add load user image
         //load image
         if (storyModel.getUri() != null) {
@@ -61,6 +60,16 @@ public class StoryAdapter extends RecyclerView.Adapter<StoryAdapter.viewHolder> 
                  .placeholder(R.drawable.image_empty)
                  .into(holder.binding.story);
         }
+
+        if (storyModel.getImage() != null) {
+            Glide.with(context)
+                 .load(Uri.parse(storyModel.getImage()))
+                 .centerCrop()
+                 .placeholder(R.drawable.image_empty)
+                 .into(holder.binding.profileImage);
+        }
+
+        holder.binding.name.setText(storyModel.getFullName());
 
         holder.binding.story.setOnClickListener(v -> {
             ArrayList<MyStory> myStories = new ArrayList<>();
@@ -73,11 +82,11 @@ public class StoryAdapter extends RecyclerView.Adapter<StoryAdapter.viewHolder> 
 
             // fix
             new StoryView.Builder(((AppCompatActivity) context).getSupportFragmentManager())
-                    .setStoriesList(myStories) // Required
-                    .setStoryDuration(5000) // Default is 2000 Millis (2 Seconds)
-                    .setTitleText("NgocVan") // Default is Hidden
-                    .setSubtitleText("@NgocVan") // Default is Hidden
-                    .setTitleLogoUrl("https://images.pexels.com/photos/20440051/pexels-photo-20440051/free-photo-of-a-woman-leaning-against-a-railing-with-her-hand-on-her-chin.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1") // Default is Hidden
+                    .setStoriesList(myStories)
+                    .setStoryDuration(5000)
+                    .setTitleText(storyModel.getFullName())
+                    .setSubtitleText(storyModel.getFullName())
+                    .setTitleLogoUrl(storyModel.getImage())
                     .setStoryClickListeners(new StoryClickListeners() {
                         @Override
                         public void onDescriptionClickListener(int position) {
