@@ -472,6 +472,23 @@ public class SocialUserDetailInfoAdapter {
             conent.put("1", user.getFullName() + " Bình luận bài đăng của bạn");
         }
 
+        db.collection("users").document(post.getPostedBy())
+          .get()
+          .addOnCompleteListener(task -> {
+              if (task.isSuccessful()) {
+                  UserModel userModel = task.getResult().toObject(UserModel.class);
+                  if (userModel.isEnableNotification()) {
+                      accessSend(post, conent);
+                  }
+              }
+          }).addOnFailureListener(e -> {
+              Log.e("ERROR::", e.getMessage());
+          });
+
+
+    }
+
+    private void accessSend(PostModel post, HashMap<String, String> conent) {
         FirebaseFirestore.getInstance().collection("tokens")
                          .whereEqualTo("userId", post.getPostedBy())
                          .get()
