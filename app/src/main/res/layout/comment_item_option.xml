@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
@@ -21,9 +21,32 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Xóa bài viết"
+            android:text="Xóa bình luận"
             android:textSize="@dimen/_16font_mdp"
             android:textStyle="bold"
             />
     </LinearLayout>
-</RelativeLayout>
+    <LinearLayout
+        android:layout_centerInParent="true"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:orientation="horizontal"
+        android:gravity="start|center"
+        android:paddingLeft="@dimen/_4mdp"
+        android:id="@+id/btnCopy_comment"
+        >
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/content_copy"
+            android:layout_marginRight="@dimen/_8mdp"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Copy"
+            android:textSize="@dimen/_16font_mdp"
+            android:textStyle="bold"
+            />
+    </LinearLayout>
+</LinearLayout>

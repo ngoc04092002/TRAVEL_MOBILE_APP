@@ -7,8 +7,6 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
 import com.example.travel_mobile_app.dto.DataChangeListener;
-import com.example.travel_mobile_app.fragments.FriendFollowerFragment;
-import com.example.travel_mobile_app.fragments.FriendFollowingFragment;
 
 import java.util.List;
 

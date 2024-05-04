@@ -2,12 +2,9 @@ package com.example.travel_mobile_app.fragments;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -18,6 +15,7 @@ import androidx.lifecycle.viewmodel.CreationExtras;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -31,7 +29,6 @@ import android.widget.Toast;
 
 import com.example.travel_mobile_app.Adapter.PostAdapter;
 import com.example.travel_mobile_app.Adapter.StoryAdapter;
-import com.example.travel_mobile_app.MainActivity;
 import com.example.travel_mobile_app.R;
 import com.example.travel_mobile_app.SocialSearchPost;
 import com.example.travel_mobile_app.models.PostModel;
@@ -43,20 +40,13 @@ import com.facebook.shimmer.ShimmerFrameLayout;
 import com.github.dhaval2404.imagepicker.ImagePicker;
 import com.github.ybq.android.spinkit.sprite.Sprite;
 import com.github.ybq.android.spinkit.style.WanderingCubes;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.common.reflect.TypeToken;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.firestore.auth.User;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.google.gson.Gson;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -65,6 +55,7 @@ import java.util.UUID;
 
 public class SocialFragment extends Fragment implements View.OnClickListener {
 
+    private final static int A_DAY = 24 * 60 * 60 * 1000;
     private RecyclerView storyRv, dashboardRv;
     private ArrayList<StoryModel> list;
     private ArrayList<PostModel> postList;
@@ -76,14 +67,15 @@ public class SocialFragment extends Fragment implements View.OnClickListener {
     private LinearLayout backdrop;
     private ProgressBar progressBar;
     private StoryAdapter storyAdapter;
+    SwipeRefreshLayout mSwipeRefreshLayout;
+    private PostAdapter postAdapter;
 
     public SocialFragment() {
         // Required empty public constructor
     }
 
-    public SocialFragment(ArrayList<PostModel> postList, ArrayList<StoryModel> list) {
+    public SocialFragment(ArrayList<PostModel> postList) {
         this.postList = postList;
-        this.list = list;
     }
 
     @Override
@@ -101,48 +93,46 @@ public class SocialFragment extends Fragment implements View.OnClickListener {
         shimmerFrameLayout = view.findViewById(R.id.shimmer_layout);
         shimmerFrameLayoutStory = view.findViewById(R.id.shimmer_layout_story);
 
+        mSwipeRefreshLayout = view.findViewById(R.id.fragment_social);
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary,
+                                                    android.R.color.holo_green_dark,
+                                                    android.R.color.holo_orange_dark,
+                                                    android.R.color.holo_blue_dark);
 
         progressBar = view.findViewById(R.id.spin_kit);
         backdrop = view.findViewById(R.id.backdrop);
 
         storyRv = view.findViewById(R.id.storyRv);
+        list = new ArrayList<>();
         storyAdapter = new StoryAdapter(list, getContext());
         storyRv.setHasFixedSize(true);
         storyRv.setLayoutManager(new StaggeredGridLayoutManager(1, LinearLayoutManager.HORIZONTAL));
 
         dashboardRv = view.findViewById(R.id.dashboardRv);
-        PostAdapter postAdapter = new PostAdapter(postList, getContext(), requireActivity().getSupportFragmentManager(), getActivity(), db);
+        postAdapter = new PostAdapter(postList, getContext(), requireActivity().getSupportFragmentManager(), getActivity(), db);
         dashboardRv.setHasFixedSize(true);
         dashboardRv.setLayoutManager(new StaggeredGridLayoutManager(1, LinearLayoutManager.VERTICAL));
-        dashboardRv.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                if (!recyclerView.canScrollVertically(1)) {
-                    System.out.println("end reach");
-                }
-            }
-        });
+
 
         if (postList.size() != 0) {
             postAdapter = new PostAdapter(postList, getContext(), requireActivity().getSupportFragmentManager(), getActivity(), db);
         } else {
-            shimmerFrameLayout.setVisibility(View.VISIBLE);
-            shimmerFrameLayout.startShimmer();
-            setPostListData(postAdapter);
+            loadRecyclerViewData();
         }
 
-        if (list.size() != 0) {
-            storyAdapter = new StoryAdapter(list, getContext());
-        } else {
-            shimmerFrameLayoutStory.setVisibility(View.VISIBLE);
-            shimmerFrameLayoutStory.startShimmer();
-            setStoryListData(storyAdapter);
-        }
+
+        shimmerFrameLayoutStory.setVisibility(View.VISIBLE);
+        shimmerFrameLayoutStory.startShimmer();
+        setStoryListData(storyAdapter);
 
 
         storyRv.setAdapter(storyAdapter);
         dashboardRv.setAdapter(postAdapter);
 
+        mSwipeRefreshLayout.setOnRefreshListener(() -> {
+            mSwipeRefreshLayout.setRefreshing(false);
+            loadRecyclerViewData();
+        });
 
         btnFriends = view.findViewById(R.id.friends);
         btnFriends.setOnClickListener(this);
@@ -165,7 +155,7 @@ public class SocialFragment extends Fragment implements View.OnClickListener {
         } else if (v.getId() == R.id.btnSearch) {
             Intent i = new Intent(getActivity(), SocialSearchPost.class);
             startActivity(i);
-            getActivity().overridePendingTransition(0,android.R.anim.slide_out_right);
+            getActivity().overridePendingTransition(0, android.R.anim.slide_out_right);
         } else if (v.getId() == R.id.createStory) {
             ImagePicker.with(this)
                        .galleryOnly()
@@ -173,6 +163,12 @@ public class SocialFragment extends Fragment implements View.OnClickListener {
                        .start();
         }
 
+    }
+
+    private void loadRecyclerViewData() {
+        shimmerFrameLayout.setVisibility(View.VISIBLE);
+        shimmerFrameLayout.startShimmer();
+        setPostListData(postAdapter);
     }
 
     private void replaceScreen(@IdRes int containerViewId, @NonNull Fragment fragment, String backTrackName) {
@@ -245,13 +241,16 @@ public class SocialFragment extends Fragment implements View.OnClickListener {
                             Date currentTime = new Date();
                             StoryModel storyModel = document.toObject(StoryModel.class);
 
-                            if (currentTime.getTime() - storyModel.getStoryAt() < (24 * 60 * 60 * 1000)) {
+                            if (currentTime.getTime() - storyModel.getStoryAt() < A_DAY) {
                                 userStories.add(new UserStory(storyModel.getUri(), storyModel.getStoryAt()));
                             }
                         }
+
                         if (userStories.size() > 0) {
+                            StoryModel firstStoryModel = task.getResult().getDocuments().get(0).toObject(StoryModel.class);
                             StoryModel storyModel = new StoryModel();
                             storyModel.setUserStories(userStories);
+                            storyModel.setUri(firstStoryModel.getUri());
                             storyModel.setStoryBy(user.getId());
                             storyModel.setFullName(user.getFullName());
                             storyModel.setImage(user.getAvatarURL());
@@ -293,6 +292,8 @@ public class SocialFragment extends Fragment implements View.OnClickListener {
         String storyId = UUID.randomUUID().toString().replace("-", "");
 
         story.setStoryId(storyId);
+        story.setImage(user.getAvatarURL());
+        story.setFullName(user.getFullName());
         story.setStoryBy(user.getId()); // get name and set fix
         story.setStoryAt(new Date().getTime());
 
@@ -337,5 +338,6 @@ public class SocialFragment extends Fragment implements View.OnClickListener {
     public CreationExtras getDefaultViewModelCreationExtras() {
         return super.getDefaultViewModelCreationExtras();
     }
+
 
 }

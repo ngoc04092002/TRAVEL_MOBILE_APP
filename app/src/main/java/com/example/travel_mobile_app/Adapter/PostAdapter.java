@@ -3,11 +3,15 @@ package com.example.travel_mobile_app.Adapter;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.ColorStateList;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -28,7 +32,9 @@ import android.widget.Toast;
 
 import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
+import androidx.core.app.ShareCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -61,22 +67,25 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import org.json.JSONException;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.viewHolder> {
 
     List<PostModel> list;
     Context context;
-
     FragmentManager fragmentManager;
     Activity activity;
     private FirebaseFirestore db;
@@ -242,7 +251,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.viewHolder> {
             } else if (itemId == R.id.save_post) {
                 savePost(post, user.getId());
             } else if (itemId == R.id.edit_post) {
-                replaceScreen(R.id.container,new CreatePostFragment(post.getPostId()),"social_fragment");
+                replaceScreen(R.id.container, new CreatePostFragment(post.getPostId()), "social_fragment");
             }
             return true;
         });
@@ -326,7 +335,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.viewHolder> {
     }
 
     private void seeInfoDetail(PostModel post) {
-        replaceScreen(R.id.container,new SocialUserDetailInfoFragment(post.getPostedBy()),"userDetailInfo_fragment");
+        replaceScreen(R.id.container, new SocialUserDetailInfoFragment(post.getPostedBy()), "userDetailInfo_fragment");
     }
 
     private void replaceScreen(@IdRes int containerViewId, @NonNull Fragment fragment, String backTrackName) {
@@ -367,7 +376,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.viewHolder> {
 
     private void savePost(PostModel post, String userId) {
         String savePostId = UUID.randomUUID().toString().replace("-", "");
-        SaveItemModel itemModel = new SaveItemModel(savePostId, post.getPostImage(), post.getPostDescription(), new Date().getTime(), userId, post.getPostId());
+        SaveItemModel itemModel = new SaveItemModel(savePostId, post.getPostId(), userId, post.getPostDescription(), new Date().getTime(), post.getPostImage());
         CollectionReference posts = db.collection("save_posts");
         posts.document(savePostId)
              .set(itemModel)
@@ -395,6 +404,11 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.viewHolder> {
 
     private void addNotification(PostModel post, String type) {
         UserModel user = SharedPreferencesManager.readUserInfo();
+
+        if (post.getPostedBy().equals(user.getId())) {
+            return;
+        }
+
         String notificationId = UUID.randomUUID().toString().replace("-", "");
 
         NotificationModel notification = new NotificationModel();
@@ -413,6 +427,11 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.viewHolder> {
 
     private void sendNotification(PostModel post, String type) {
         UserModel user = SharedPreferencesManager.readUserInfo();
+
+        if (post.getPostedBy().equals(user.getId())) {
+            return;
+        }
+
         HashMap<String, String> conent = new HashMap<>();
         if (type.equals("like")) {
             conent.put("0", "Bài đăng");
@@ -498,6 +517,30 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.viewHolder> {
                      Toast.makeText(context, "Đã có lỗi xảy ra.", Toast.LENGTH_SHORT).show();
                      dialog.dismiss();
                  });
+        });
+
+        dialog.findViewById(R.id.btn_share_external).setOnClickListener(v -> {
+            Intent shareIntent;
+
+            StringBuilder text = new StringBuilder("");
+            if (post.getPostDescription() != null) {
+                text.append(post.getPostDescription());
+                text.append("\n");
+            }
+
+            if (post.getPostImage() != null) {
+                text.append(post.getPostImage());
+            }
+            shareIntent = ShareCompat
+                    .IntentBuilder
+                    .from(activity)
+                    .setType("*/*")
+                    .setText(text)
+                    .getIntent();
+            shareIntent = Intent.createChooser(shareIntent, "Chia sẻ");
+            activity.startActivity(shareIntent);
+
+            dialog.dismiss();
         });
 
 

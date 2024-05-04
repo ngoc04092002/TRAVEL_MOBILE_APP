@@ -17,6 +17,7 @@ import com.example.travel_mobile_app.MainActivity;
 import com.example.travel_mobile_app.R;
 import com.example.travel_mobile_app.dto.UserToken;
 import com.example.travel_mobile_app.models.NotificationModel;
+import com.example.travel_mobile_app.models.UserModel;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -58,10 +59,11 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         if (token.equals(oldToken)) {
             return;
         }
-        String userId = "I2cG4PNtPmSCnPSS0BQib3rRxxl2";
+        UserModel user = SharedPreferencesManager.readUserInfo();
+        String userId = user.getId();
 
         //remove old token
-//        removeToken(token, userId);
+        removeToken(token, userId);
 
         //fix user id
         UserToken userToken = new UserToken(userId, token, new Date().getTime());
@@ -197,7 +199,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         Response response = client.newCall(request).execute();
         String responseBody = response.body().string();
-        System.out.println(responseBody);
+        System.out.println("responseBody" + responseBody);
     }
 
 }

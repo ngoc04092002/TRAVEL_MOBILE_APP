@@ -42,17 +42,32 @@ public class DetailPostInfo extends AppCompatActivity {
 
         //handle click
         binding.detailPostBtnBack.setOnClickListener(v -> {
-            Intent intent = new Intent(this, MainActivity.class);
+            String activityType = getIntent().getStringExtra("activity_type");
 
-            String type = getIntent().getStringExtra("detail_post_activity");
-            if (type != null && type.equals("notification")) {
-                intent.putExtra("previous_fragment", "notification");
+            if (activityType != null) {
+                if (activityType.equals("profile_save_fragment")) {
+                    // Quay lại ProfileSaveFragment
+                    finish(); // Kết thúc DetailPostInfo và quay lại fragment trước đó trong back stack
+                } else if (activityType.equals("notification")) {
+                    // Điều hướng đến MainActivity và mở NotificationFragment
+                    Intent intent = new Intent(this, MainActivity.class);
+                    intent.putExtra("previous_fragment", "notification");
+                    startActivity(intent);
+                    overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
+                } else {
+                    // Điều hướng đến MainActivity và mở SocialScreen
+                    Intent intent = new Intent(this, MainActivity.class);
+                    intent.putExtra("previous_fragment", "social_screen");
+                    startActivity(intent);
+                    overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
+                }
             } else {
+                // Mặc định điều hướng đến MainActivity và mở SocialScreen nếu không có thông tin loại hoạt động
+                Intent intent = new Intent(this, MainActivity.class);
                 intent.putExtra("previous_fragment", "social_screen");
+                startActivity(intent);
+                overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
             }
-
-            startActivity(intent);
-            overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
         });
 
 

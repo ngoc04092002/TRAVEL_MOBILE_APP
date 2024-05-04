@@ -3,6 +3,7 @@ package com.example.travel_mobile_app.Adapter;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -27,6 +28,7 @@ import android.widget.Toast;
 
 import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
+import androidx.core.app.ShareCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -419,7 +421,7 @@ public class SocialUserDetailInfoAdapter {
 
     private void savePost(PostModel post, String userId) {
         String savePostId = UUID.randomUUID().toString().replace("-", "");
-        SaveItemModel itemModel = new SaveItemModel(savePostId, post.getPostImage(), post.getPostDescription(), new Date().getTime(), userId, post.getPostId());
+        SaveItemModel itemModel = new SaveItemModel(savePostId, post.getPostId(), userId, post.getPostDescription(), new Date().getTime(), post.getPostImage());
         CollectionReference posts = db.collection("save_posts");
         posts.document(savePostId)
              .set(itemModel)
@@ -433,6 +435,11 @@ public class SocialUserDetailInfoAdapter {
 
     private void addNotification(PostModel post, String type) {
         UserModel user = SharedPreferencesManager.readUserInfo();
+
+        if (post.getPostedBy().equals(user.getId())) {
+            return;
+        }
+
         String notificationId = UUID.randomUUID().toString().replace("-", "");
 
         NotificationModel notification = new NotificationModel();
@@ -451,6 +458,11 @@ public class SocialUserDetailInfoAdapter {
 
     private void sendNotification(PostModel post, String type) {
         UserModel user = SharedPreferencesManager.readUserInfo();
+
+        if (post.getPostedBy().equals(user.getId())) {
+            return;
+        }
+
         HashMap<String, String> conent = new HashMap<>();
         if (type.equals("like")) {
             conent.put("0", "Bài đăng");
@@ -520,6 +532,29 @@ public class SocialUserDetailInfoAdapter {
                  });
         });
 
+        dialog.findViewById(R.id.btn_share_external).setOnClickListener(v -> {
+            Intent shareIntent;
+
+            StringBuilder text = new StringBuilder("");
+            if (post.getPostDescription() != null) {
+                text.append(post.getPostDescription());
+                text.append("\n");
+            }
+
+            if (post.getPostImage() != null) {
+                text.append(post.getPostImage());
+            }
+            shareIntent = ShareCompat
+                    .IntentBuilder
+                    .from(activity)
+                    .setType("*/*")
+                    .setText(text)
+                    .getIntent();
+            shareIntent = Intent.createChooser(shareIntent, "Chia sẻ");
+            activity.startActivity(shareIntent);
+
+            dialog.dismiss();
+        });
 
         dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
