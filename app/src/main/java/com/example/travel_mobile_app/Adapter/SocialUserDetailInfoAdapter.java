@@ -122,7 +122,7 @@ public class SocialUserDetailInfoAdapter {
                          name.setText("bot");
                      }
 
-                     if (userModel != null & userModel.getAvatarURL() != null) {
+                     if (userModel != null && userModel.getAvatarURL() != null) {
                          Glide.with(context)
                               .load(Uri.parse(userModel.getAvatarURL()))
                               .centerCrop()
