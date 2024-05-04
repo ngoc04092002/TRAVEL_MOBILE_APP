@@ -21,11 +21,14 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.travel_mobile_app.models.UserModel;
+import com.example.travel_mobile_app.services.SharedPreferencesManager;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -53,7 +56,6 @@ public class Register extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-
         register_fullname = findViewById(R.id.register_fullname);
         register_email = findViewById(R.id.register_email);
         register_password = findViewById(R.id.register_password);
@@ -66,7 +68,11 @@ public class Register extends AppCompatActivity {
         progressBar = findViewById(R.id.progressBar);
 
         if (fAuth.getCurrentUser() != null) {
-            startActivity(new Intent(getApplicationContext(), MainActivity.class));
+            setUserInfoToLocal(fAuth.getCurrentUser().getUid());
+            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+            intent.putExtra("previous_fragment", "home_screen");
+            intent.putExtra("userId", fAuth.getCurrentUser().getUid());
+            startActivity(intent);
             finish();
         }
 
@@ -144,5 +150,18 @@ public class Register extends AppCompatActivity {
                 startActivity(new Intent(getApplicationContext(), Login.class));
             }
         });
+    }
+
+    private void setUserInfoToLocal(String uId) {
+        SharedPreferencesManager.init(getApplicationContext());
+        CollectionReference users = fStore.collection("users");
+        users.document(uId)
+             .get()
+             .addOnCompleteListener(taskUser -> {
+                 if (taskUser.isSuccessful() && taskUser.getResult() != null) {
+                     UserModel userModel = taskUser.getResult().toObject(UserModel.class);
+                     SharedPreferencesManager.writeUserInfo(userModel);
+                 }
+             });
     }
 }

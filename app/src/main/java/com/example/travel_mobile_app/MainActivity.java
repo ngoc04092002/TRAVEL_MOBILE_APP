@@ -9,6 +9,7 @@ import androidx.fragment.app.FragmentTransaction;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import com.example.travel_mobile_app.Adapter.PostAdapter;
 import com.example.travel_mobile_app.Adapter.StoryAdapter;
@@ -20,6 +21,7 @@ import com.example.travel_mobile_app.fragments.NotificationFragment;
 import com.example.travel_mobile_app.fragments.SocialFragment;
 import com.example.travel_mobile_app.fragments.SuggestionFragment;
 import com.example.travel_mobile_app.fragments.suggestion;
+import com.example.travel_mobile_app.models.CommentModel;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.Firebase;
@@ -69,7 +71,6 @@ public class MainActivity extends AppCompatActivity {
         storyList = new ArrayList<>();
 
 
-
         //screen change from search screen to social screen
         String previousFragment = getIntent().getStringExtra("previous_fragment");
         if (previousFragment != null && previousFragment.equals("social_screen")) {
@@ -86,6 +87,13 @@ public class MainActivity extends AppCompatActivity {
             transaction.commit();
         }
 
+        if (previousFragment != null && previousFragment.equals("home_screen")) {
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            binding.readableBottomBar.setSelectedItemId(R.id.home);
+            transaction.replace(R.id.container, new suggestion());
+            transaction.commit();
+        }
+
 
         binding.readableBottomBar.setOnItemSelectedListener(item -> {
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -99,16 +107,18 @@ public class MainActivity extends AppCompatActivity {
                 updateNotificationCheckOpen();
             } else if (itemId == R.id.user) {
                 transaction.replace(R.id.container, new AccountFragment());
-            } else if (itemId == R.id.search) {
-                transaction.replace(R.id.container,new suggestion());
-
+            } else if (itemId == R.id.home) {
+                transaction.replace(R.id.container, new suggestion());
             }
 
             transaction.commit();
             return true;
         });
 
-        setUserInfoToLocal("qbJW6GgDkqgv6H5tvCPfLty2Bto2");
+        String userId = getIntent().getStringExtra("userId");
+        if (userId != null) {
+            setUserInfoToLocal(userId);
+        }
 
     }
 
@@ -121,14 +131,13 @@ public class MainActivity extends AppCompatActivity {
              .addOnCompleteListener(taskUser -> {
                  if (taskUser.isSuccessful() && taskUser.getResult() != null) {
                      UserModel userModel = taskUser.getResult().toObject(UserModel.class);
-                     SharedPreferencesManager.writeUserInfo(userModel);
                      fetchPostListData(userModel);
                      fetchNotificationBadge(userModel);
                  }
              });
     }
 
-    private void fetchPostListData( UserModel user) {
+    private void fetchPostListData(UserModel user) {
         CollectionReference postsRef = db.collection("posts");
 
         List<String> following = user.getFollowing();
@@ -176,20 +185,21 @@ public class MainActivity extends AppCompatActivity {
           });
     }
 
-    private void fetchNotificationBadge( UserModel user) {
-        db.collection("notifications")
-          .whereEqualTo("postedBy", user.getId())
-          .whereEqualTo("checkOpen", false)
-          .get().addOnCompleteListener(task -> {
-              if (task.isSuccessful()) {
-                  int badgeNumber = task.getResult().size();
-                  if (badgeNumber > 0) {
-                      binding.readableBottomBar.getOrCreateBadge(R.id.bell).setNumber(badgeNumber);
-                  }
-              } else {
-                  Log.d("record", "Error getting documents: ", task.getException());
-              }
-          });
+    private void fetchNotificationBadge(UserModel user) {
+        Query query = db.collection("notifications")
+                        .whereEqualTo("postedBy", user.getId())
+                        .whereEqualTo("checkOpen", false);
+
+        query.addSnapshotListener((value, e) -> {
+                 if (e != null) {
+                     Log.e("ERROR", "Error getting badge:", e);
+                     return;
+                 }
+                 int badgeNumber = value.getDocuments().size();
+                 if (badgeNumber > 0) {
+                     binding.readableBottomBar.getOrCreateBadge(R.id.bell).setNumber(badgeNumber);
+                 }
+             });
     }
 
     @Override
@@ -199,4 +209,4 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    }
+}

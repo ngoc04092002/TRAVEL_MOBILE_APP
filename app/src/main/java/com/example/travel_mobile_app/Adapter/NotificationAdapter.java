@@ -99,8 +99,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
             if (v.getItemId() == R.id.del_notification) {
                 db.collection("notifications").document(model.getNotificationId()).delete().addOnSuccessListener(unused -> {
                     List<NotificationModel> assignData = list.stream().filter(item -> !item.getNotificationId().equals(model.getNotificationId())).collect(Collectors.toList());
-                    list.clear();
-                    list.addAll(assignData);
+                    list = assignData;
                     notifyDataSetChanged();
                 }).addOnFailureListener(e -> {
                     Toast.makeText(context, "Mạng kém", Toast.LENGTH_SHORT).show();

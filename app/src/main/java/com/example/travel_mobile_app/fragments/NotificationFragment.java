@@ -24,10 +24,13 @@ import com.example.travel_mobile_app.services.SharedPreferencesManager;
 import com.github.ybq.android.spinkit.SpinKitView;
 import com.github.ybq.android.spinkit.sprite.Sprite;
 import com.github.ybq.android.spinkit.style.Circle;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class NotificationFragment extends Fragment {
@@ -83,22 +86,24 @@ public class NotificationFragment extends Fragment {
     private void setNotificationListData(NotificationAdapter notificationAdapter) {
         showProgressBar();
         UserModel user = SharedPreferencesManager.readUserInfo();
-        db.collection("notifications").whereEqualTo("postedBy", user.getId())
-          .get()
-          .addOnCompleteListener(task -> {
-              if (task.isSuccessful()) {
-                  for (QueryDocumentSnapshot document : task.getResult()) {
-                      NotificationModel model = document.toObject(NotificationModel.class);
-                      model.setNotificationId(document.getId());
-                      list.add(model);
-                  }
-                  dismissProgressBar();
-                  notificationAdapter.notifyDataSetChanged();
-              } else {
-                  dismissProgressBar();
-                  Log.d("record", "Error getting documents: ", task.getException());
-              }
-          });
+
+        Query query = db.collection("notifications").whereEqualTo("postedBy", user.getId());
+        query.addSnapshotListener((value, e) -> {
+            if (e != null) {
+                dismissProgressBar();
+                Log.d("record", "Error getting documents notification:: "+ e.getMessage());
+                return;
+            }
+
+            list.clear();
+            for (DocumentSnapshot document : value.getDocuments()) {
+                NotificationModel model = document.toObject(NotificationModel.class);
+                model.setNotificationId(document.getId());
+                list.add(model);
+            }
+            dismissProgressBar();
+            notificationAdapter.notifyDataSetChanged();
+        });
     }
 
     private void showProgressBar() {

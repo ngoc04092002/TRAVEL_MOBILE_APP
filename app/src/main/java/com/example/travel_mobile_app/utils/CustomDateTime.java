@@ -33,7 +33,7 @@ public class CustomDateTime {
         } else if (minutes > 0) {
             return minutes + " phút trước";
         } else {
-            if (seconds == 0) {
+            if (seconds <= 0) {
                 return "Vừa mới";
             }
             return seconds + " giây trước";

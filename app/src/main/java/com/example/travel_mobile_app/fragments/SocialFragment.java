@@ -41,6 +41,7 @@ import com.github.dhaval2404.imagepicker.ImagePicker;
 import com.github.ybq.android.spinkit.sprite.Sprite;
 import com.github.ybq.android.spinkit.style.WanderingCubes;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -114,7 +115,7 @@ public class SocialFragment extends Fragment implements View.OnClickListener {
         dashboardRv.setLayoutManager(new StaggeredGridLayoutManager(1, LinearLayoutManager.VERTICAL));
 
 
-        if (postList.size() != 0) {
+        if (postList.size() != 0 ) {
             postAdapter = new PostAdapter(postList, getContext(), requireActivity().getSupportFragmentManager(), getActivity(), db);
         } else {
             loadRecyclerViewData();
@@ -245,9 +246,9 @@ public class SocialFragment extends Fragment implements View.OnClickListener {
                                 userStories.add(new UserStory(storyModel.getUri(), storyModel.getStoryAt()));
                             }
                         }
-
+                        List<DocumentSnapshot> documents = task.getResult().getDocuments();
                         if (userStories.size() > 0) {
-                            StoryModel firstStoryModel = task.getResult().getDocuments().get(0).toObject(StoryModel.class);
+                            StoryModel firstStoryModel = documents.get(documents.size() - 1).toObject(StoryModel.class);
                             StoryModel storyModel = new StoryModel();
                             storyModel.setUserStories(userStories);
                             storyModel.setUri(firstStoryModel.getUri());

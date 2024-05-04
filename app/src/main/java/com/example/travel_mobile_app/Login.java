@@ -19,17 +19,23 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.travel_mobile_app.models.UserModel;
+import com.example.travel_mobile_app.services.SharedPreferencesManager;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class Login extends AppCompatActivity {
 
     EditText login_email, login_password;
     Button login_button;
+    private FirebaseFirestore db;
+
     TextView signupRedirectText, forgotPassword;
     ProgressBar progressBar;
     FirebaseAuth fAuth;
@@ -45,6 +51,7 @@ public class Login extends AppCompatActivity {
             return insets;
         });
 
+        db = FirebaseFirestore.getInstance();
         login_email = findViewById(R.id.login_email);
         login_password = findViewById(R.id.login_password);
         progressBar = findViewById(R.id.progressBar);
@@ -83,7 +90,11 @@ public class Login extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             Toast.makeText(Login.this, "Đăng nhập thành công!", Toast.LENGTH_LONG).show();
-                            startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                            setUserInfoToLocal(task.getResult().getUser().getUid());
+                            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                            intent.putExtra("previous_fragment", "home_screen");
+                            intent.putExtra("userId", task.getResult().getUser().getUid());
+                            startActivity(intent);
                         } else {
                             Toast.makeText(Login.this, "Error! " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
                             progressBar.setVisibility(View.GONE);
@@ -149,4 +160,19 @@ public class Login extends AppCompatActivity {
 
 
     }
+
+
+    private void setUserInfoToLocal(String uId) {
+        SharedPreferencesManager.init(getApplicationContext());
+        CollectionReference users = db.collection("users");
+        users.document(uId)
+             .get()
+             .addOnCompleteListener(taskUser -> {
+                 if (taskUser.isSuccessful() && taskUser.getResult() != null) {
+                     UserModel userModel = taskUser.getResult().toObject(UserModel.class);
+                     SharedPreferencesManager.writeUserInfo(userModel);
+                 }
+             });
+    }
+
 }
