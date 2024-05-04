@@ -188,7 +188,9 @@ public class SocialFragment extends Fragment implements View.OnClickListener {
 
         UserModel user = SharedPreferencesManager.readUserInfo();
         List<String> following = user.getFollowing();
-        //fix
+
+        postList.clear();
+
         postsRef
 //                .whereIn("postedBy", following)
 .orderBy("postedAt", Query.Direction.DESCENDING)
