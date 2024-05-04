@@ -36,6 +36,7 @@
             </intent-filter>
         </activity>
 
+
         <meta-data
             android:name="com.onesignal.BadgeCount"
             android:value="DISABLE" />

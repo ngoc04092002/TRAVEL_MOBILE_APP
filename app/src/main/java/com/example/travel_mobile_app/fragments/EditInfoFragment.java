@@ -1,6 +1,7 @@
 package com.example.travel_mobile_app.fragments;
 
 import android.annotation.SuppressLint;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -23,6 +24,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.example.travel_mobile_app.R;
 import com.example.travel_mobile_app.models.UserModel;
+import com.example.travel_mobile_app.services.SharedPreferencesManager;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -78,6 +80,7 @@ public class EditInfoFragment extends Fragment implements View.OnClickListener {
         editEmail = view.findViewById(R.id.editEmail);
         editEmail.setSingleLine();
         editEmail.setFocusable(false);
+        editEmail.setOnClickListener(this);
 
         btnUpdate= view.findViewById(R.id.btnUpdate);
         btnUpdate.setOnClickListener(this);
@@ -95,7 +98,12 @@ public class EditInfoFragment extends Fragment implements View.OnClickListener {
         editName.setText(currentUser.getFullName());
         editEmail.setText(currentUser.getEmail());
 
-        Glide.with(getContext()).load(currentUser.getAvatarURL()).into(avataImageView);
+        Drawable defaultAvatar = getResources().getDrawable(R.drawable.avatar_men);
+
+        Glide.with(requireContext())
+                .load(currentUser.getAvatarURL())
+                .placeholder(defaultAvatar)
+                .into(avataImageView);
     }
     @Override
     public void onClick(View v) {
@@ -118,6 +126,8 @@ public class EditInfoFragment extends Fragment implements View.OnClickListener {
             } else {
                 updateUserInfo(currentUser);
             }
+        } else if (v.getId() == R.id.editEmail) {
+            Toast.makeText(getContext(), "Can't Edit Email!", Toast.LENGTH_SHORT).show();
         }
         if(v.getId()==R.id.createPost_btnBack){
             fragmentManager.popBackStack("setting_fragment", FragmentManager.POP_BACK_STACK_INCLUSIVE);
@@ -173,6 +183,8 @@ public class EditInfoFragment extends Fragment implements View.OnClickListener {
                     Toast.makeText(getContext(), "Avatar URL updated successfully", Toast.LENGTH_SHORT).show();
                     avataImageView.setImageURI(imageUri);
                     progressBar.setVisibility(View.GONE);
+
+
                 })
                 .addOnFailureListener(e -> {
                     // Handle errors
@@ -198,6 +210,9 @@ public class EditInfoFragment extends Fragment implements View.OnClickListener {
                     Log.d("TAG", "Avatar URL updated successfully");
                     Toast.makeText(getContext(), "Updated successfully", Toast.LENGTH_SHORT).show();
                     progressBar.setVisibility(View.GONE);
+                    SharedPreferencesManager.writeUserInfo(currentUser);
+                    FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
+                    fragmentManager.popBackStack("account_fragment", FragmentManager.POP_BACK_STACK_INCLUSIVE);
                 })
                 .addOnFailureListener(e -> {
                     // Handle errors

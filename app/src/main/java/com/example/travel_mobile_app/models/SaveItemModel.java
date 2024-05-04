@@ -2,43 +2,20 @@ package com.example.travel_mobile_app.models;
 
 public class SaveItemModel {
     private String id;
-    private String img;
-    private String title;
+    private String postID, savedBy;
+    private String title, img;
     private Long time;
-    private String savedBy;
-    private String postId;
 
-    public SaveItemModel(String id, String img, String title, Long time) {
+    public SaveItemModel(String id, String postID, String savedBy, String title, Long time, String img) {
         this.id = id;
-        this.img = img;
+        this.postID = postID;
+        this.savedBy = savedBy;
         this.title = title;
         this.time = time;
-    }
-
-    public SaveItemModel(String id, String img, String title, Long time, String savedBy, String postId) {
-        this.id = id;
         this.img = img;
-        this.title = title;
-        this.time = time;
-        this.savedBy = savedBy;
-        this.postId = postId;
     }
 
-    public String getPostId() {
-        return postId;
-    }
-
-    public void setPostId(String postId) {
-        this.postId = postId;
-    }
-
-    public String getSavedBy() {
-        return savedBy;
-    }
-
-    public void setSavedBy(String savedBy) {
-        this.savedBy = savedBy;
-    }
+    public SaveItemModel() {}
 
     public String getId() {
         return id;
@@ -48,12 +25,20 @@ public class SaveItemModel {
         this.id = id;
     }
 
-    public String getImg() {
-        return img;
+    public String getPostID() {
+        return postID;
     }
 
-    public void setImg(String img) {
-        this.img = img;
+    public void setPostID(String postID) {
+        this.postID = postID;
+    }
+
+    public String getSavedBy() {
+        return savedBy;
+    }
+
+    public void setSavedBy(String savedBy) {
+        this.savedBy = savedBy;
     }
 
     public String getTitle() {
@@ -70,5 +55,13 @@ public class SaveItemModel {
 
     public void setTime(Long time) {
         this.time = time;
+    }
+
+    public String getImg() {
+        return img;
+    }
+
+    public void setImg(String img) {
+        this.img = img;
     }
 }

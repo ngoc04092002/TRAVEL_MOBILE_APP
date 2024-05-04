@@ -86,7 +86,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.viewHolder> {
 
     List<PostModel> list;
     Context context;
-
     FragmentManager fragmentManager;
     Activity activity;
     private FirebaseFirestore db;
@@ -377,7 +376,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.viewHolder> {
 
     private void savePost(PostModel post, String userId) {
         String savePostId = UUID.randomUUID().toString().replace("-", "");
-        SaveItemModel itemModel = new SaveItemModel(savePostId, post.getPostImage(), post.getPostDescription(), new Date().getTime(), userId, post.getPostId());
+        SaveItemModel itemModel = new SaveItemModel(savePostId, post.getPostId(), userId, post.getPostDescription(), new Date().getTime(), post.getPostImage());
         CollectionReference posts = db.collection("save_posts");
         posts.document(savePostId)
              .set(itemModel)
