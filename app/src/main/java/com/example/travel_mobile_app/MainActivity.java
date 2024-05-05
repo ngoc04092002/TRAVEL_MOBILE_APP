@@ -145,6 +145,7 @@ public class MainActivity extends AppCompatActivity {
         postsRef
 //                .whereIn("postedBy", following)
 .orderBy("postedAt", Query.Direction.DESCENDING)
+.limit(50)
 .get()
 .addOnCompleteListener(task -> {
     if (task.isSuccessful()) {

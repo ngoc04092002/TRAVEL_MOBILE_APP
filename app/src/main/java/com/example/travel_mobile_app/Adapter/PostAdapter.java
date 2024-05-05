@@ -173,7 +173,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.viewHolder> {
         getLikeInfo(btnLike, isLike, post, user.getId());
 
         btnLike.setOnClickListener(v -> {
-            toggleBtnLike(post, isLike);
+            toggleBtnLike(post, isLike, position);
         });
         if (post.getLikes() == null || post.getLikes().size() == 0) {
             btnLike.setText("");
@@ -346,7 +346,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.viewHolder> {
         fragmentTransaction.commit();
     }
 
-    private void toggleBtnLike(PostModel post, final boolean[] isLike) {
+    private void toggleBtnLike(PostModel post, final boolean[] isLike, Integer position) {
         UserModel user = SharedPreferencesManager.readUserInfo();
         CollectionReference posts = db.collection("posts");
         List<String> likes;
@@ -371,7 +371,12 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.viewHolder> {
             post.setLikes(likes);
             posts.document(post.getPostId()).set(post);
         }
-        notifyDataSetChanged();
+
+        if (position != null) {
+            notifyItemChanged(position);
+        } else {
+            notifyDataSetChanged();
+        }
     }
 
     private void savePost(PostModel post, String userId) {
@@ -586,7 +591,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.viewHolder> {
         int cntLike = post.getLikes() != null ? post.getLikes().size() : 0;
         refreshBtnLikeDialog(btnLike, isLike, post, cntLike);
         btnLike.setOnClickListener(v -> {
-            toggleBtnLike(post, isLike);
+            toggleBtnLike(post, isLike, null);
             refreshBtnLikeDialog(btnLike, isLike, post, post.getLikes().size());
         });
 

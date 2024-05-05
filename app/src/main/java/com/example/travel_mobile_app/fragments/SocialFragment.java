@@ -1,6 +1,8 @@
 package com.example.travel_mobile_app.fragments;
 
 import android.app.Activity;
+import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -8,6 +10,7 @@ import android.os.Bundle;
 import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -17,10 +20,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -39,6 +44,7 @@ import com.example.travel_mobile_app.services.SharedPreferencesManager;
 import com.facebook.shimmer.ShimmerFrameLayout;
 import com.github.dhaval2404.imagepicker.ImagePicker;
 import com.github.ybq.android.spinkit.sprite.Sprite;
+import com.github.ybq.android.spinkit.style.Circle;
 import com.github.ybq.android.spinkit.style.WanderingCubes;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -65,11 +71,14 @@ public class SocialFragment extends Fragment implements View.OnClickListener {
     private FirebaseStorage storage;
     private ShimmerFrameLayout shimmerFrameLayout, shimmerFrameLayoutStory;
     private FrameLayout createStory;
-    private LinearLayout backdrop;
-    private ProgressBar progressBar;
+    private ProgressBar progressBarLoadMore;
     private StoryAdapter storyAdapter;
     SwipeRefreshLayout mSwipeRefreshLayout;
     private PostAdapter postAdapter;
+    boolean isLoading = false;
+    private Dialog pd;
+    NestedScrollView nestedScrollView;
+    private boolean isLoadMore = false;
 
     public SocialFragment() {
         // Required empty public constructor
@@ -100,8 +109,9 @@ public class SocialFragment extends Fragment implements View.OnClickListener {
                                                     android.R.color.holo_orange_dark,
                                                     android.R.color.holo_blue_dark);
 
-        progressBar = view.findViewById(R.id.spin_kit);
-        backdrop = view.findViewById(R.id.backdrop);
+
+        progressBarLoadMore = view.findViewById(R.id.spin_kit_load_more);
+        nestedScrollView = view.findViewById(R.id.NestedScrollView);
 
         storyRv = view.findViewById(R.id.storyRv);
         list = new ArrayList<>();
@@ -115,12 +125,12 @@ public class SocialFragment extends Fragment implements View.OnClickListener {
         dashboardRv.setLayoutManager(new StaggeredGridLayoutManager(1, LinearLayoutManager.VERTICAL));
 
 
-        if (postList.size() != 0 ) {
+        if (postList.size() != 0) {
             postAdapter = new PostAdapter(postList, getContext(), requireActivity().getSupportFragmentManager(), getActivity(), db);
         } else {
-            loadRecyclerViewData();
+            loadRecyclerViewData(0L);
         }
-
+        initScrollListener();
 
         shimmerFrameLayoutStory.setVisibility(View.VISIBLE);
         shimmerFrameLayoutStory.startShimmer();
@@ -132,7 +142,7 @@ public class SocialFragment extends Fragment implements View.OnClickListener {
 
         mSwipeRefreshLayout.setOnRefreshListener(() -> {
             mSwipeRefreshLayout.setRefreshing(false);
-            loadRecyclerViewData();
+            loadRecyclerViewData(0L);
         });
 
         btnFriends = view.findViewById(R.id.friends);
@@ -166,10 +176,38 @@ public class SocialFragment extends Fragment implements View.OnClickListener {
 
     }
 
-    private void loadRecyclerViewData() {
+
+    private void initScrollListener() {
+        nestedScrollView.setOnScrollChangeListener((NestedScrollView.OnScrollChangeListener) (v, scrollX, scrollY, oldScrollX, oldScrollY) -> {
+            if (scrollY == v.getChildAt(0).getMeasuredHeight() - v.getMeasuredHeight()) {
+                if (!isLoadMore) {
+                    isLoadMore = true;
+                    loadMore();
+                }
+            }
+        });
+    }
+
+    private void loadMore() {
+        showProgressBarLoadMore();
+        Handler handler = new Handler();
+        handler.postDelayed(() -> {
+            long startAt = 0;
+            if (postList.size() != 0) {
+                startAt = postList.get(0).getPostedAt();
+            }
+            setPostListData(postAdapter, startAt);
+
+            isLoading = false;
+        }, 300);
+
+
+    }
+
+    private void loadRecyclerViewData(Long startAt) {
         shimmerFrameLayout.setVisibility(View.VISIBLE);
         shimmerFrameLayout.startShimmer();
-        setPostListData(postAdapter);
+        setPostListData(postAdapter, startAt);
     }
 
     private void replaceScreen(@IdRes int containerViewId, @NonNull Fragment fragment, String backTrackName) {
@@ -183,17 +221,21 @@ public class SocialFragment extends Fragment implements View.OnClickListener {
         fragmentTransaction.commit();
     }
 
-    private void setPostListData(PostAdapter postAdapter) {
+    private void setPostListData(PostAdapter postAdapter, Long startAt) {
         CollectionReference postsRef = db.collection("posts");
 
         UserModel user = SharedPreferencesManager.readUserInfo();
         List<String> following = user.getFollowing();
 
-        postList.clear();
+        if (startAt == 0L) {
+            postList.clear();
+        }
 
         postsRef
 //                .whereIn("postedBy", following)
 .orderBy("postedAt", Query.Direction.DESCENDING)
+.whereGreaterThan("postedAt", startAt)
+.limit(50)
 .get()
 .addOnCompleteListener(task -> {
     if (task.isSuccessful()) {
@@ -203,6 +245,8 @@ public class SocialFragment extends Fragment implements View.OnClickListener {
         }
         shimmerFrameLayout.showShimmer(false);
         shimmerFrameLayout.setVisibility(View.GONE);
+        dismissProgressBarLoadMore();
+        isLoadMore = false;
         postAdapter.notifyDataSetChanged();
     } else {
         Log.d("record", "Error getting documents: ", task.getException());
@@ -312,14 +356,29 @@ public class SocialFragment extends Fragment implements View.OnClickListener {
     }
 
     private void showProgressBar() {
-        backdrop.setVisibility(View.VISIBLE);
+        pd = new Dialog(getActivity(), android.R.style.Theme_Black);
+        View view = LayoutInflater.from(getActivity()).inflate(R.layout.progress_bar_loading, null);
+        pd.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        pd.getWindow().setBackgroundDrawableResource(R.color.transparent);
+        pd.setContentView(view);
 
         Sprite wanderingCubes = new WanderingCubes();
-        progressBar.setIndeterminateDrawable(wanderingCubes);
+        ((ProgressBar) pd.findViewById(R.id.spin_kit)).setIndeterminateDrawable(wanderingCubes);
+        pd.show();
     }
 
     private void dismissProgressBar() {
-        backdrop.setVisibility(View.GONE);
+        pd.dismiss();
+    }
+
+    private void showProgressBarLoadMore() {
+        progressBarLoadMore.setVisibility(View.VISIBLE);
+        Sprite circle = new Circle();
+        progressBarLoadMore.setIndeterminateDrawable(circle);
+    }
+
+    private void dismissProgressBarLoadMore() {
+        progressBarLoadMore.setVisibility(View.GONE);
     }
 
     @Override

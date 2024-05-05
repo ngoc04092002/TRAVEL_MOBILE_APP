@@ -22,6 +22,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Optional;
 
 import omari.hamza.storyview.StoryView;
 import omari.hamza.storyview.callback.StoryClickListeners;
@@ -53,13 +54,12 @@ public class StoryAdapter extends RecyclerView.Adapter<StoryAdapter.viewHolder> 
         StoryModel storyModel = list.get(position);
         // fix add load user image
         //load image
-        if (storyModel.getUri() != null) {
-            Glide.with(context)
-                 .load(Uri.parse(storyModel.getUri()))
-                 .centerCrop()
-                 .placeholder(R.drawable.image_empty)
-                 .into(holder.binding.story);
-        }
+        String uri = Optional.ofNullable(storyModel.getUri()).orElse("");
+        Glide.with(context)
+             .load(Uri.parse(uri))
+             .centerCrop()
+             .placeholder(R.drawable.image_empty)
+             .into(holder.binding.story);
 
         if (storyModel.getImage() != null) {
             Glide.with(context)
@@ -74,8 +74,9 @@ public class StoryAdapter extends RecyclerView.Adapter<StoryAdapter.viewHolder> 
         holder.binding.story.setOnClickListener(v -> {
             ArrayList<MyStory> myStories = new ArrayList<>();
             for (UserStory userStory : storyModel.getUserStories()) {
+                String imageStory = Optional.ofNullable(userStory.getUri()).orElse("https://firebasestorage.googleapis.com/v0/b/travel-app-130de.appspot.com/o/avatar%2Ft.png?alt=media&token=4796a392-533b-485c-a6ff-878f2e12316a");
                 myStories.add(new MyStory(
-                        userStory.getUri(),
+                        imageStory,
                         new Date(userStory.getStoryAt())
                 ));
             }
