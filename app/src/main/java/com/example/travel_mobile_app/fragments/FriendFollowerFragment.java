@@ -67,7 +67,7 @@ public class FriendFollowerFragment extends Fragment implements DataChangeListen
 
         list = new ArrayList<>();
         final boolean[] isFollow = {false};
-        followAdapter = new FollowAdapter(list, getContext(), isFollow, db,requireActivity().getSupportFragmentManager());
+        followAdapter = new FollowAdapter(list, getContext(), isFollow, db, requireActivity().getSupportFragmentManager());
         followerRv.setHasFixedSize(true);
         followerRv.setLayoutManager(new StaggeredGridLayoutManager(1, LinearLayoutManager.VERTICAL));
         followerRv.setAdapter(followAdapter);
@@ -103,8 +103,34 @@ public class FriendFollowerFragment extends Fragment implements DataChangeListen
             return;
         }
 
-        if (userModel != null && userModel.getFollowing() != null) {
+        if (userModel != null && userModel.getFollowing() != null && userModel.getFollowing().size() != 0) {
             users.whereNotIn("id", userModel.getFollowing())
+                 .get()
+                 .addOnCompleteListener(task -> {
+                     if (task.isSuccessful()) {
+                         for (QueryDocumentSnapshot document : task.getResult()) {
+                             UserModel model = document.toObject(UserModel.class);
+                             if (model.getFollowers() != null) {
+                                 list.add(new FollowDTO(model.getId(), model.getAvatarURL(), model.getFullName(), model.getFollowers().size()));
+                             }
+                         }
+                         binding.badRequest.setVisibility(View.GONE);
+                         showNotFound(list);
+                     } else {
+                         binding.badRequest.setVisibility(View.VISIBLE);
+                         Log.d("ERROR::", "Error getting documents: ", task.getException());
+                     }
+
+                     followAdapter.notifyDataSetChanged();
+                     dismissProgressBar();
+                 }).addOnFailureListener(
+                         unused ->
+                         {
+                             binding.badRequest.setVisibility(View.VISIBLE);
+                             dismissProgressBar();
+                         });
+        } else {
+            users.whereNotEqualTo("id", userModel.getId())
                  .get()
                  .addOnCompleteListener(task -> {
                      if (task.isSuccessful()) {
@@ -145,7 +171,7 @@ public class FriendFollowerFragment extends Fragment implements DataChangeListen
 
     @Override
     public void onDataChange(String data) {
-        if(list!=null){
+        if (list != null) {
             List<FollowDTO> searchList = list.stream().filter(item -> item.getUsername().contains(data)).collect(Collectors.toList());
             followAdapter.setData(searchList);
             followAdapter.notifyDataSetChanged();
