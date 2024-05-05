@@ -18,7 +18,13 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.travel_mobile_app.fragments.event;
+import com.example.travel_mobile_app.models.Location;
+import com.example.travel_mobile_app.models.PostModel;
+import com.example.travel_mobile_app.models.SaveItemModel;
+import com.example.travel_mobile_app.services.SharedPreferencesManager;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -32,6 +38,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -54,7 +61,7 @@ public class DetailInfor extends Fragment {
     private FirebaseUser currentUser;
     private TextView nametv, introducetv, addresstv, opentimetv, pricetv;
     private ImageView imgv;
-
+    private String saveLocationID;
 
     public DetailInfor() {
         // Required empty public constructor
@@ -158,14 +165,19 @@ public class DetailInfor extends Fragment {
             btnsave.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    saveLocation();
+                    if(saveLocationID == null ) {
+                        String saveId = UUID.randomUUID().toString().replace("-", "");
+                        String userId = SharedPreferencesManager.readUserInfo().getId();
+
+                        SaveItemModel itemModel = new SaveItemModel(saveId, id, userId, name, new Date().getTime(), imglink, 1);
+
+                        saveLocation(itemModel);
+                    } else {
+                        unsaveLocation();
+                    }
                 }
             });
-
-
-
-
-
+            checkSavedLocation(id);
         }
 
         btnback = view.findViewById(R.id.backbtn3);
@@ -177,7 +189,72 @@ public class DetailInfor extends Fragment {
             }
         });
 
+
         return view;}
+
+    private void saveLocation(SaveItemModel itemModel) {
+        CollectionReference posts = db.collection("save_posts");
+        posts.document(itemModel.getId())
+                .set(itemModel)
+                .addOnSuccessListener(unused -> {
+                    saveLocationID = itemModel.getId();
+                    Toast.makeText(getContext(), "Lưu thành công!", Toast.LENGTH_SHORT).show();
+                    btnsave.setImageResource(R.drawable.icn_unsave);
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(getContext(), "Đã có lỗi xảy ra!", Toast.LENGTH_SHORT).show();
+                });
+    }
+
+    public void unsaveLocation() {
+        // Xóa tài liệu từ Firestore
+        db.collection("save_posts").document(saveLocationID)
+                .delete()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        saveLocationID = null;
+                        btnsave.setImageResource(R.drawable.savebtn);
+                        Toast.makeText(getContext(), "Bỏ lưu thành công!", Toast.LENGTH_SHORT).show();
+
+                        Log.d("TAG", "DocumentSnapshot successfully deleted!");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        // Xóa tài liệu thất bại
+                        Log.w("TAG", "Error deleting document", e);
+                    }
+                });
+    }
+
+
+    private void checkSavedLocation(String locationID) {
+        System.out.println("locationID: " + locationID);
+        db.collection("save_posts").whereEqualTo("postID", locationID)
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot querySnapshot) {
+                        // Kiểm tra nếu có bất kỳ document nào thỏa mãn điều kiện truy vấn
+                        if (!querySnapshot.isEmpty()) {
+                            saveLocationID = querySnapshot.getDocuments().get(0).getId();
+                            btnsave.setImageResource(R.drawable.icn_unsave);
+                        } else {
+                            // Không có tài liệu nào trong collection thỏa mãn điều kiện truy vấn
+                            btnsave.setImageResource(R.drawable.savebtn);
+                        }
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        // Xử lý lỗi khi thực hiện truy vấn
+                        System.err.println("Lỗi: " + e.getMessage());
+                    }
+                });
+    }
+
     private void saveLocation() {
         if (currentUser == null) {
             // Người dùng chưa đăng nhập, bạn có thể yêu cầu họ đăng nhập hoặc xử lý tùy ý
@@ -248,6 +325,7 @@ public class DetailInfor extends Fragment {
                     }
                 });
     }
+
 
 }
 

@@ -39,7 +39,7 @@ import com.google.firebase.storage.StorageReference;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 
-public class AccountFragment extends Fragment implements View.OnClickListener{
+public class AccountFragment extends Fragment implements View.OnClickListener {
     private static final String TAG = "AccountFragment";
     private ProgressBar progressBar;
     private UserModel currentUser;
@@ -59,12 +59,14 @@ public class AccountFragment extends Fragment implements View.OnClickListener{
         super.onCreate(savedInstanceState);
 
     }
+
     @Override
     public void onStart() {
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly.
 
     }
+
     @SuppressLint({"WrongViewCast", "MissingInflatedId"})
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -108,6 +110,7 @@ public class AccountFragment extends Fragment implements View.OnClickListener{
 
         return view;
     }
+
     @Override
     public void onClick(View v) {
         FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
@@ -118,16 +121,13 @@ public class AccountFragment extends Fragment implements View.OnClickListener{
                 R.anim.pop_enter_animation,
                 R.anim.pop_exit_animation
         );
-        if(v.getId()==R.id.btnSaved){
+        if (v.getId() == R.id.btnSaved) {
             fragmentTransaction.replace(R.id.container, new ProfileSaveFragment());
-        }
-        else if(v.getId()==R.id.btnSetting){
+        } else if (v.getId() == R.id.btnSetting) {
             fragmentTransaction.replace(R.id.container, new SettingFragment(currentUser));
-        }
-        else if(v.getId()==R.id.btnManagePost){
+        } else if (v.getId() == R.id.btnManagePost) {
             fragmentTransaction.replace(R.id.container, new MyPostsFragment());
-        }
-        else if(v.getId()==R.id.btnLogout){
+        } else if (v.getId() == R.id.btnLogout) {
             FirebaseAuth.getInstance().signOut();
 
             Intent intent = new Intent(requireActivity(), Login.class);
@@ -136,12 +136,10 @@ public class AccountFragment extends Fragment implements View.OnClickListener{
 
             startActivity(intent);
             requireActivity().finish();
-        }
-        else if (v.getId() == R.id.liner_follower) {
-            fragmentTransaction.replace(R.id.container, new MyPostsFragment());
-        }
-        else if (v.getId() == R.id.liner_follower) {
-            fragmentTransaction.replace(R.id.container, new MyPostsFragment());
+        } else if (v.getId() == R.id.liner_following) {
+            fragmentTransaction.replace(R.id.container, new ListFollowingFragment());
+        } else if (v.getId() == R.id.liner_follower) {
+            fragmentTransaction.replace(R.id.container, new ListFollowerFragment());
 
         }
 
@@ -152,7 +150,7 @@ public class AccountFragment extends Fragment implements View.OnClickListener{
     }
 
     @SuppressLint("SetTextI18n")
-    private void  updateUI(UserModel user) {
+    private void updateUI(UserModel user) {
         System.out.println("NAME: " + user.getFullName());
         tvFullname.setText(user.getFullName());
         tvUsername.setText("@" + user.getUsername());
