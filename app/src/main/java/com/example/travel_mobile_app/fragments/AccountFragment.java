@@ -22,6 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.travel_mobile_app.Login;
 import com.example.travel_mobile_app.R;
 import com.example.travel_mobile_app.models.UserModel;
 import com.example.travel_mobile_app.services.SharedPreferencesManager;
@@ -45,6 +46,7 @@ public class AccountFragment extends Fragment implements View.OnClickListener{
     private LinearLayout btnSaved, btnSetting, btnManagePost, btnLogout;
     private CircleImageView imvAvatar;
     private TextView tvFullname, tvUsername, tvEmail, tvFollower, tvFollowing;
+    private LinearLayout follwing, follower;
     private FirebaseAuth mAuth;
     private FirebaseFirestore firestore = FirebaseFirestore.getInstance();
 
@@ -63,7 +65,7 @@ public class AccountFragment extends Fragment implements View.OnClickListener{
         // Check if user is signed in (non-null) and update UI accordingly.
 
     }
-    @SuppressLint("WrongViewCast")
+    @SuppressLint({"WrongViewCast", "MissingInflatedId"})
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -92,6 +94,12 @@ public class AccountFragment extends Fragment implements View.OnClickListener{
 
         btnLogout = view.findViewById(R.id.btnLogout);
         btnLogout.setOnClickListener(this);
+
+        follwing = view.findViewById(R.id.liner_following);
+        follwing.setOnClickListener(this);
+
+        follower = view.findViewById(R.id.liner_follower);
+        follower.setOnClickListener(this);
 
         UserModel userModel = SharedPreferencesManager.readUserInfo();
         currentUser = userModel;
@@ -122,12 +130,19 @@ public class AccountFragment extends Fragment implements View.OnClickListener{
         else if(v.getId()==R.id.btnLogout){
             FirebaseAuth.getInstance().signOut();
 
-//            Intent intent = new Intent(requireActivity(), ActivityLogin.class);
-//
-//            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-//
-//            startActivity(intent);
-//            requireActivity().finish();
+            Intent intent = new Intent(requireActivity(), Login.class);
+
+            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+
+            startActivity(intent);
+            requireActivity().finish();
+        }
+        else if (v.getId() == R.id.liner_follower) {
+            fragmentTransaction.replace(R.id.container, new MyPostsFragment());
+        }
+        else if (v.getId() == R.id.liner_follower) {
+            fragmentTransaction.replace(R.id.container, new MyPostsFragment());
+
         }
 
         fragmentTransaction.addToBackStack("account_fragment");

@@ -8,6 +8,7 @@
     tools:context=".fragments.SocialFragment">
 
     <androidx.core.widget.NestedScrollView
+        android:id="@+id/NestedScrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scrollbars="none">
@@ -132,23 +133,29 @@
                             android:textColor="@color/white"
                             android:textStyle="bold" />
                     </FrameLayout>
+
                     <com.facebook.shimmer.ShimmerFrameLayout
                         android:id="@+id/shimmer_layout_story"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:visibility="gone"
-                        >
+                        android:visibility="gone">
+
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:orientation="horizontal">
+
                             <include layout="@layout/shimmer_story" />
+
                             <include layout="@layout/shimmer_story" />
+
                             <include layout="@layout/shimmer_story" />
+
                             <include layout="@layout/shimmer_story" />
                         </LinearLayout>
 
                     </com.facebook.shimmer.ShimmerFrameLayout>
+
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/storyRv"
                         android:layout_width="match_parent"
@@ -168,51 +175,40 @@
                 android:id="@+id/shimmer_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:visibility="gone"
-                >
+                android:visibility="gone">
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
+
                     <include layout="@layout/shimmer_post" />
+
                     <include layout="@layout/shimmer_post" />
+
                     <include layout="@layout/shimmer_post" />
+
                     <include layout="@layout/shimmer_post" />
                 </LinearLayout>
 
             </com.facebook.shimmer.ShimmerFrameLayout>
 
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/dashboardRv"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="12dp" />
 
-<!--                <androidx.swiperefreshlayout.widget.SwipeRefreshLayout-->
-<!--                    android:id="@+id/swipeToRefresh"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="match_parent"-->
-<!--                    >-->
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/dashboardRv"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_margin="12dp" />
-<!--                </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>-->
+            <com.github.ybq.android.spinkit.SpinKitView xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/spin_kit_load_more"
+                style="@style/SpinKitView.Circle"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="6dp"
+                android:visibility="gone"
+                app:SpinKit_Color="@color/yellow" />
+
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
-
-    <LinearLayout
-        android:id="@+id/backdrop"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_centerInParent="true"
-        android:layout_centerHorizontal="true"
-        android:background="#3CA8A8A8"
-        android:gravity="center"
-        android:orientation="horizontal"
-        android:visibility="gone">
-
-        <com.github.ybq.android.spinkit.SpinKitView xmlns:app="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/spin_kit"
-            style="@style/SpinKitView.WanderingCubes"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:SpinKit_Color="@color/yellow" />
-    </LinearLayout>
 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

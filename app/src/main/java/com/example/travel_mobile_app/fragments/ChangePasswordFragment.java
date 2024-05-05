@@ -197,11 +197,11 @@ public class ChangePasswordFragment extends Fragment implements View.OnClickList
                         });
             } else {
                 Log.e(TAG, "Confirm Password Not Match!");
-                Toast.makeText(getContext(), "Confirm Password Not Match!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Mật khẩu mới không khớp!", Toast.LENGTH_SHORT).show();
             }
         } else {
             Log.e(TAG, "Current Password Not Correct!");
-            Toast.makeText(getContext(), "Current Password Not Correct!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Mật khẩu hiện tại không đúng!", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -216,7 +216,7 @@ public class ChangePasswordFragment extends Fragment implements View.OnClickList
                     public void onComplete(@NonNull Task<Void> task) {
                         progressBar.setVisibility(View.GONE);
                         if (task.isSuccessful()) {
-                            Toast.makeText(getContext(), "Password updated successfully", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), "Cập nhật mật khẩu thành công!", Toast.LENGTH_SHORT).show();
                             currentUser.setPassword(newPassword);
                             SharedPreferencesManager.writeUserInfo(currentUser);
                             FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();

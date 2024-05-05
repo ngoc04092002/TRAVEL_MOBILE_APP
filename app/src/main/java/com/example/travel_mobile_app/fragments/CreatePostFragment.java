@@ -75,12 +75,11 @@ public class CreatePostFragment extends Fragment implements View.OnClickListener
     private MaterialButton btnCreatePost;
     private EditText des;
     private FirebaseFirestore db;
-    ProgressBar progressBar;
-    LinearLayout backdrop;
     StorageReference reference;
     ImageView btnRefresh;
     private String postId;
     private String oldUrl;
+    private Dialog pd;
 
     public CreatePostFragment() {
         // Required empty public constructor
@@ -112,8 +111,6 @@ public class CreatePostFragment extends Fragment implements View.OnClickListener
         videoView = view.findViewById(R.id.videoView);
         btnCreatePost = view.findViewById(R.id.btn_create_post);
         des = view.findViewById(R.id.des);
-        progressBar = view.findViewById(R.id.spin_kit);
-        backdrop = view.findViewById(R.id.backdrop);
 
         btnBack.setOnClickListener(this);
         btnRefresh.setOnClickListener(this);
@@ -147,18 +144,21 @@ public class CreatePostFragment extends Fragment implements View.OnClickListener
 
         } else if (v.getId() == R.id.btn_create_post) {
             UserModel user = SharedPreferencesManager.readUserInfo();
-            String mimeType = requireContext().getContentResolver().getType(uri);
+            if (uri != null) {
+                String mimeType = requireContext().getContentResolver().getType(uri);
 
-            if (mimeType != null && mimeType.contains("mp4")) {
-                reference = storage.getReference().child("posts")
-                                   .child("video")
-                                   .child(user.getId())
-                                   .child(new Date().getTime() + "");
-            } else {
-                reference = storage.getReference().child("posts")
-                                   .child(user.getId())
-                                   .child(new Date().getTime() + "");
+                if (mimeType != null && mimeType.contains("mp4")) {
+                    reference = storage.getReference().child("posts")
+                                       .child("video")
+                                       .child(user.getId())
+                                       .child(new Date().getTime() + "");
+                } else {
+                    reference = storage.getReference().child("posts")
+                                       .child(user.getId())
+                                       .child(new Date().getTime() + "");
+                }
             }
+
             createNewPost(reference, user);
         } else if (v.getId() == R.id.videoView) {
             showCenterDialog();
@@ -278,7 +278,8 @@ public class CreatePostFragment extends Fragment implements View.OnClickListener
                     fileRef.delete()
                            .addOnSuccessListener(aVoid -> Log.d("REMOVE-SUCCESS", "Xóa tệp tin thành công"))
                            .addOnFailureListener(exception -> Log.d("REMOVE-FAILURE", "Xóa tệp tin thất bại: " + exception.getMessage()));
-                }catch (Exception e){}
+                } catch (Exception e) {
+                }
             }
 
             reference.putFile(uri).addOnSuccessListener(taskSnapshot -> {
@@ -433,13 +434,18 @@ public class CreatePostFragment extends Fragment implements View.OnClickListener
     }
 
     private void showProgressBar() {
-        backdrop.setVisibility(View.VISIBLE);
+        pd = new Dialog(getActivity(), android.R.style.Theme_Black);
+        View view = LayoutInflater.from(getActivity()).inflate(R.layout.progress_bar_loading, null);
+        pd.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        pd.getWindow().setBackgroundDrawableResource(R.color.transparent);
+        pd.setContentView(view);
 
         Sprite wanderingCubes = new WanderingCubes();
-        progressBar.setIndeterminateDrawable(wanderingCubes);
+        ((ProgressBar) pd.findViewById(R.id.spin_kit)).setIndeterminateDrawable(wanderingCubes);
+        pd.show();
     }
 
     private void dismissProgressBar() {
-        backdrop.setVisibility(View.GONE);
+        pd.dismiss();
     }
 }

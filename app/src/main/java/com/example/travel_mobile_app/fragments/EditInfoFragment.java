@@ -127,7 +127,7 @@ public class EditInfoFragment extends Fragment implements View.OnClickListener {
                 updateUserInfo(currentUser);
             }
         } else if (v.getId() == R.id.editEmail) {
-            Toast.makeText(getContext(), "Can't Edit Email!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Không thể chỉnh sửa email Email!", Toast.LENGTH_SHORT).show();
         }
         if(v.getId()==R.id.createPost_btnBack){
             fragmentManager.popBackStack("setting_fragment", FragmentManager.POP_BACK_STACK_INCLUSIVE);
@@ -172,28 +172,6 @@ public class EditInfoFragment extends Fragment implements View.OnClickListener {
                 });
     }
 
-    private void updateAvatarUser(String downloadUrl, Uri imageUri) {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        DocumentReference userRef = db.collection("users").document(currentUser.getId());
-
-        userRef.update("avatarURL", downloadUrl)
-                .addOnSuccessListener(aVoid -> {
-                    // Avatar URL updated successfully
-                    Log.d("TAG", "Avatar URL updated successfully");
-                    Toast.makeText(getContext(), "Avatar URL updated successfully", Toast.LENGTH_SHORT).show();
-                    avataImageView.setImageURI(imageUri);
-                    progressBar.setVisibility(View.GONE);
-
-
-                })
-                .addOnFailureListener(e -> {
-                    // Handle errors
-                    Log.e("TAG", "Error updating avatar URL", e);
-                    Toast.makeText(getContext(), "Error updating avatar URL", Toast.LENGTH_SHORT).show();
-                    progressBar.setVisibility(View.GONE);
-                });
-    }
-
     private void updateUserInfo(UserModel user) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         DocumentReference userRef = db.collection("users").document(currentUser.getId());
@@ -208,7 +186,7 @@ public class EditInfoFragment extends Fragment implements View.OnClickListener {
                 .addOnSuccessListener(aVoid -> {
                     // Avatar URL updated successfully
                     Log.d("TAG", "Avatar URL updated successfully");
-                    Toast.makeText(getContext(), "Updated successfully", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Cập nhật thông tin thành công!", Toast.LENGTH_SHORT).show();
                     progressBar.setVisibility(View.GONE);
                     SharedPreferencesManager.writeUserInfo(currentUser);
                     FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();

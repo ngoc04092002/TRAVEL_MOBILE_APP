@@ -5,14 +5,24 @@ public class SaveItemModel {
     private String postID, savedBy;
     private String title, img;
     private Long time;
+    private int type; // 0: post, 1: address
 
-    public SaveItemModel(String id, String postID, String savedBy, String title, Long time, String img) {
+    public SaveItemModel(String id, String postID, String savedBy, String title, Long time, String img, int type) {
         this.id = id;
         this.postID = postID;
         this.savedBy = savedBy;
         this.title = title;
         this.time = time;
         this.img = img;
+        this.type = type;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
     }
 
     public SaveItemModel() {}
