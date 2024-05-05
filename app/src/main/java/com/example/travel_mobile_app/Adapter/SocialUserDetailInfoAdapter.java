@@ -60,6 +60,7 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.WriteBatch;
 import com.google.firebase.firestore.auth.User;
 
 import org.json.JSONException;
@@ -217,18 +218,24 @@ public class SocialUserDetailInfoAdapter {
         Menu menu = materialToolbar.getMenu();
         MenuItem selectDeletePost = menu.findItem(R.id.del_post);
         MenuItem selectEditPost = menu.findItem(R.id.edit_post);
+        MenuItem selectSavePost = menu.findItem(R.id.save_post);
+
+        List<String> idSavePost = new ArrayList<>();
 
         materialToolbar.setOnMenuItemClickListener(item -> {
             int itemId = item.getItemId();
             if (itemId == R.id.del_post) {
-                removePost(postModel, itemView);
+                removePost(postModel,itemView);
             } else if (itemId == R.id.save_post) {
-                savePost(postModel, user.getId());
+                savePost(postModel, user.getId(), idSavePost, selectSavePost);
             } else if (itemId == R.id.edit_post) {
                 replaceScreen(R.id.container, new CreatePostFragment(postModel.getPostId()), "social_fragment");
             }
             return true;
         });
+
+        isSavePost(postModel, user.getId(), selectSavePost, idSavePost);
+
 
         if (user.getId().equals(postModel.getPostedBy())) {
             selectDeletePost.setVisible(true);
@@ -419,14 +426,61 @@ public class SocialUserDetailInfoAdapter {
              });
     }
 
-    private void savePost(PostModel post, String userId) {
+    private void isSavePost(PostModel post, String userId, MenuItem selectSavePost, List<String> idSavePost) {
+        CollectionReference savePosts = db.collection("save_posts");
+        savePosts.whereEqualTo("savedBy", userId)
+                 .whereEqualTo("postID", post.getPostId())
+                 .get()
+                 .addOnCompleteListener(task -> {
+                     if (task.isSuccessful()) {
+                         for (QueryDocumentSnapshot document : task.getResult()) {
+                             SaveItemModel itemModel = document.toObject(SaveItemModel.class);
+                             if (itemModel != null) {
+                                 idSavePost.add(itemModel.getId());
+                                 selectSavePost.setTitle("Bỏ lưu");
+                             } else {
+                                 selectSavePost.setTitle("Lưu");
+                             }
+                         }
+
+                     }
+                 }).addOnFailureListener(e -> {
+                     selectSavePost.setTitle("Lưu");
+                 });
+
+
+    }
+
+    private void savePost(PostModel post, String userId, List<String> idSavePost,MenuItem selectSavePost) {
         String savePostId = UUID.randomUUID().toString().replace("-", "");
         SaveItemModel itemModel = new SaveItemModel(savePostId, post.getPostId(), userId, post.getPostDescription(), new Date().getTime(), post.getPostImage());
         CollectionReference posts = db.collection("save_posts");
+
+        if (idSavePost.size() != 0) {
+            posts.whereIn("id", idSavePost)
+                 .get()
+                 .addOnCompleteListener(task -> {
+                     if (task.isSuccessful()) {
+                         WriteBatch batch = db.batch();
+                         for (QueryDocumentSnapshot document : task.getResult()) {
+                             batch.delete(document.getReference());
+                         }
+                         batch.commit().addOnSuccessListener(aVoid -> {
+                             idSavePost.clear();
+                         });
+                     }
+                 });
+
+            selectSavePost.setTitle("Lưu");
+            return;
+        }
+
         posts.document(savePostId)
              .set(itemModel)
              .addOnSuccessListener(unused -> {
                  Toast.makeText(context, "Lưu thành công!", Toast.LENGTH_SHORT).show();
+                 idSavePost.add(savePostId);
+                 selectSavePost.setTitle("Bỏ lưu");
              })
              .addOnFailureListener(e -> {
                  Toast.makeText(context, "Đã có lỗi xảy ra!", Toast.LENGTH_SHORT).show();

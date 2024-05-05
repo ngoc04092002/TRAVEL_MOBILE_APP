@@ -59,6 +59,7 @@ import com.example.travel_mobile_app.utils.CustomDateTime;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.ui.StyledPlayerView;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
@@ -67,8 +68,11 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.WriteBatch;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.firestore.v1.WriteResult;
 
 import org.json.JSONException;
 
@@ -239,17 +243,25 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.viewHolder> {
         });
 
 
+        List<String> idSavePost = new ArrayList<>();
         MaterialToolbar materialToolbar = holder.binding.more;
         Menu menu = materialToolbar.getMenu();
         MenuItem selectDeletePost = menu.findItem(R.id.del_post);
         MenuItem selectEditPost = menu.findItem(R.id.edit_post);
+        MenuItem selectSavePost = menu.findItem(R.id.save_post);
+
+        MaterialToolbar materialToolbarShare = holder.binding.moreShare;
+        Menu menuShare = materialToolbarShare.getMenu();
+        MenuItem selectDeletePostShare = menuShare.findItem(R.id.del_post);
+        MenuItem selectEditPostShare = menuShare.findItem(R.id.edit_post);
+        MenuItem selectSavePostShare = menuShare.findItem(R.id.save_post);
 
         materialToolbar.setOnMenuItemClickListener(item -> {
             int itemId = item.getItemId();
             if (itemId == R.id.del_post) {
                 removePost(post);
             } else if (itemId == R.id.save_post) {
-                savePost(post, user.getId());
+                savePost(post, user.getId(), idSavePost, selectSavePostShare, selectSavePost);
             } else if (itemId == R.id.edit_post) {
                 replaceScreen(R.id.container, new CreatePostFragment(post.getPostId()), "social_fragment");
             }
@@ -264,22 +276,19 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.viewHolder> {
             selectEditPost.setVisible(false);
         }
 
-        MaterialToolbar materialToolbarShare = holder.binding.moreShare;
-        Menu menuShare = materialToolbarShare.getMenu();
-        MenuItem selectDeletePostShare = menuShare.findItem(R.id.del_post);
-        MenuItem selectEditPostShare = menuShare.findItem(R.id.edit_post);
-
         materialToolbarShare.setOnMenuItemClickListener(item -> {
             int itemId = item.getItemId();
             if (itemId == R.id.del_post) {
                 removePost(post);
             } else if (itemId == R.id.save_post) {
-                savePost(post, user.getId());
+                savePost(post, user.getId(), idSavePost, selectSavePostShare, selectSavePost);
             } else if (itemId == R.id.edit_post) {
 //                replaceScreen(R.id.container,new CreatePostFragment(post.getPostId()),"social_fragment");
             }
             return true;
         });
+
+        isSavePost(post, user.getId(), selectSavePost, selectSavePostShare, idSavePost);
 
         selectEditPostShare.setVisible(false);
         if (user.getId().equals(post.getShareBy())) {
@@ -379,14 +388,67 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.viewHolder> {
         }
     }
 
-    private void savePost(PostModel post, String userId) {
+
+    private void isSavePost(PostModel post, String userId, MenuItem selectSavePostShare, MenuItem selectSavePost, List<String> idSavePost) {
+        CollectionReference savePosts = db.collection("save_posts");
+        savePosts.whereEqualTo("savedBy", userId)
+                 .whereEqualTo("postID", post.getPostId())
+                 .get()
+                 .addOnCompleteListener(task -> {
+                     if (task.isSuccessful()) {
+                         for (QueryDocumentSnapshot document : task.getResult()) {
+                             SaveItemModel itemModel = document.toObject(SaveItemModel.class);
+                             if (itemModel != null) {
+                                 idSavePost.add(itemModel.getId());
+                                 selectSavePost.setTitle("Bỏ lưu");
+                                 selectSavePostShare.setTitle("Bỏ lưu");
+                             } else {
+                                 selectSavePost.setTitle("Lưu");
+                                 selectSavePostShare.setTitle("Lưu");
+                             }
+                         }
+
+                     }
+                 }).addOnFailureListener(e -> {
+                     selectSavePost.setTitle("Lưu");
+                     selectSavePostShare.setTitle("Lưu");
+                 });
+
+
+    }
+
+    private void savePost(PostModel post, String userId, List<String> idSavePost, MenuItem selectSavePostShare, MenuItem selectSavePost) {
         String savePostId = UUID.randomUUID().toString().replace("-", "");
         SaveItemModel itemModel = new SaveItemModel(savePostId, post.getPostId(), userId, post.getPostDescription(), new Date().getTime(), post.getPostImage());
         CollectionReference posts = db.collection("save_posts");
+
+        if (idSavePost.size() != 0) {
+            posts.whereIn("id", idSavePost)
+                 .get()
+                 .addOnCompleteListener(task -> {
+                     if (task.isSuccessful()) {
+                         WriteBatch batch = db.batch();
+                         for (QueryDocumentSnapshot document : task.getResult()) {
+                             batch.delete(document.getReference());
+                         }
+                         batch.commit().addOnSuccessListener(aVoid -> {
+                             idSavePost.clear();
+                         });
+                     }
+                 });
+
+            selectSavePost.setTitle("Lưu");
+            selectSavePostShare.setTitle("Lưu");
+            return;
+        }
+
         posts.document(savePostId)
              .set(itemModel)
              .addOnSuccessListener(unused -> {
                  Toast.makeText(context, "Lưu thành công!", Toast.LENGTH_SHORT).show();
+                 idSavePost.add(savePostId);
+                 selectSavePost.setTitle("Bỏ lưu");
+                 selectSavePostShare.setTitle("Bỏ lưu");
              })
              .addOnFailureListener(e -> {
                  Toast.makeText(context, "Đã có lỗi xảy ra!", Toast.LENGTH_SHORT).show();
