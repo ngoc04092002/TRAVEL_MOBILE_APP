@@ -45,11 +45,11 @@ public class Login extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_login);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
+//        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+//            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+//            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+//            return insets;
+//        });
 
         db = FirebaseFirestore.getInstance();
         login_email = findViewById(R.id.login_email);
@@ -60,6 +60,18 @@ public class Login extends AppCompatActivity {
         forgotPassword = findViewById(R.id.forgotPassword);
 
         fAuth = FirebaseAuth.getInstance();
+
+        // Kiểm tra nếu đã đăng nhập trước đó
+        if (fAuth.getCurrentUser() != null) {
+            // Người dùng đã đăng nhập trước đó, chuyển sang MainActivity
+            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+            intent.putExtra("previous_fragment", "home_screen");
+            intent.putExtra("userId", fAuth.getCurrentUser().getUid());
+            startActivity(intent);
+            finish(); // Kết thúc activity hiện tại
+        }
+
+
 
         login_button.setOnClickListener(new View.OnClickListener() {
             @Override
