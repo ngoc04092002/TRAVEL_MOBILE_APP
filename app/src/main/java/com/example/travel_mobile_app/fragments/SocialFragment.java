@@ -235,7 +235,7 @@ public class SocialFragment extends Fragment implements View.OnClickListener {
 //                .whereIn("postedBy", following)
 .orderBy("postedAt", Query.Direction.DESCENDING)
 .whereGreaterThan("postedAt", startAt)
-.limit(50)
+.limit(30)
 .get()
 .addOnCompleteListener(task -> {
     if (task.isSuccessful()) {
@@ -243,6 +243,7 @@ public class SocialFragment extends Fragment implements View.OnClickListener {
             PostModel postModel = document.toObject(PostModel.class);
             postList.add(postModel);
         }
+
         shimmerFrameLayout.showShimmer(false);
         shimmerFrameLayout.setVisibility(View.GONE);
         dismissProgressBarLoadMore();
