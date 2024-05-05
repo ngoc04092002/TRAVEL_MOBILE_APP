@@ -75,7 +75,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="18sp"
-                        android:text="Tên đăng nhập"
+                        android:text="Nickname"
                         android:fontFamily="@font/montserrat_bold"
                         android:layout_marginLeft="30dp"
                         android:layout_marginBottom="2dp"/>
@@ -85,7 +85,7 @@
                         android:layout_height="56dp"
                         android:layout_marginLeft="30dp"
                         android:layout_marginRight="30dp"
-                        android:hint="Username của bạn"
+                        android:hint="Nick name"
                         android:textColorHint="#A9A9A9"
                         android:padding="15dp"
                         android:textColor="@color/black"

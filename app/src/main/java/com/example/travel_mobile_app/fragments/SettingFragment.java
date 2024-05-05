@@ -124,7 +124,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()) {
-                            Toast.makeText(getContext(), "Notification changed to " + (isEnabled ? "ON" : "OFF"), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), "Thông báo: " + (isEnabled ? "BẬT" : "TẮT"), Toast.LENGTH_SHORT).show();
                         } else {
                             Toast.makeText(getContext(), "Failed to update notification preference", Toast.LENGTH_SHORT).show();
                         }
@@ -142,7 +142,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()) {
-                            Toast.makeText(getContext(), "Notification update version changed to " + (isEnabled ? "ON" : "OFF"), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), "Cập nhật: " + (isEnabled ? "BẬT" : "TẮT"), Toast.LENGTH_SHORT).show();
                         } else {
                             Toast.makeText(getContext(), "Failed to update notification preference", Toast.LENGTH_SHORT).show();
                         }
