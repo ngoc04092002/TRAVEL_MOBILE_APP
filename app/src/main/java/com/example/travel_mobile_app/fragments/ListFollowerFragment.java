@@ -16,11 +16,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.travel_mobile_app.Adapter.AccountFollowAdapter;
+import com.example.travel_mobile_app.Adapter.FollowAdapter;
 import com.example.travel_mobile_app.Adapter.NotificationAdapter;
 import com.example.travel_mobile_app.Adapter.PostAdapter;
 import com.example.travel_mobile_app.Adapter.ProfileSaveAdapter;
 import com.example.travel_mobile_app.R;
+import com.example.travel_mobile_app.dto.FollowDTO;
 import com.example.travel_mobile_app.models.NotificationModel;
 import com.example.travel_mobile_app.models.PostModel;
 import com.example.travel_mobile_app.models.SaveItemModel;
@@ -36,84 +41,114 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-    public class ListFollowerFragment extends Fragment implements View.OnClickListener {
-        private RecyclerView saveRv;
-        private CircleImageView btnBack;
-        ArrayList<SaveItemModel> list;
-        private FirebaseFirestore db;
+public class ListFollowerFragment extends Fragment implements View.OnClickListener {
+    private RecyclerView saveRv;
+    private CircleImageView btnBack;
+    private TextView tvEmpty;
+    ArrayList<FollowDTO> list;
+    private FirebaseFirestore db;
+    AccountFollowAdapter followAdapter;
 
-        public ListFollowerFragment() {
-            // Required empty public constructor
+    public ListFollowerFragment() {
+        // Required empty public constructor
+    }
+
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        db = FirebaseFirestore.getInstance();
+
+    }
+
+    @SuppressLint("MissingInflatedId")
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        View view = inflater.inflate(R.layout.fragment_list_follower, container, false);
+        tvEmpty = view.findViewById(R.id.not_found);
+        tvEmpty.setVisibility(View.GONE);
+
+        btnBack = view.findViewById(R.id.btn_back);
+        btnBack.setOnClickListener(this);
+
+        saveRv = view.findViewById(R.id.save_itemsRv);
+        list = new ArrayList<>();
+
+        UserModel user = SharedPreferencesManager.readUserInfo();
+
+        list = new ArrayList<>();
+        final boolean[] isFollow = {false};
+        followAdapter = new AccountFollowAdapter(list, getContext(), false, db, requireActivity().getSupportFragmentManager());
+        saveRv.setHasFixedSize(true);
+        saveRv.setLayoutManager(new StaggeredGridLayoutManager(1, LinearLayoutManager.VERTICAL));
+        saveRv.setAdapter(followAdapter);
+
+        getFollowerData(followAdapter, user.getId());
+
+
+        return view;
+    }
+
+    @Override
+    public void onClick(View v) {
+        FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+        if (v.getId() == R.id.btn_back) {
+            fragmentManager.popBackStack("account_fragment", FragmentManager.POP_BACK_STACK_INCLUSIVE);
+
         }
 
+        fragmentTransaction.commit();
+    }
 
-        @Override
-        public void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            db = FirebaseFirestore.getInstance();
+    public void getFollowerData(AccountFollowAdapter followAdapter, String userId) {
+        CollectionReference users = db.collection("users");
 
-        }
-
-        @SuppressLint("MissingInflatedId")
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-            // Inflate the layout for this fragment
-            View view = inflater.inflate(R.layout.fragment_list_follower, container, false);
-
-            saveRv = view.findViewById(R.id.save_itemsRv);
-            list = new ArrayList<>();
-
-
-            ProfileSaveAdapter profileSaveAdapter = new ProfileSaveAdapter(list, getContext(), requireActivity().getSupportFragmentManager());
-            saveRv.setHasFixedSize(true);
-            saveRv.setLayoutManager(new StaggeredGridLayoutManager(1, LinearLayoutManager.VERTICAL));
-            saveRv.setAdapter(profileSaveAdapter);
-
-            btnBack = view.findViewById(R.id.btn_back);
-            btnBack.setOnClickListener(this);
-
-            setRVData(profileSaveAdapter);
-            return view;
-        }
-
-        @Override
-        public void onClick(View v) {
-            FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
-            if (v.getId() == R.id.btn_back) {
-                fragmentManager.popBackStack("account_fragment", FragmentManager.POP_BACK_STACK_INCLUSIVE);
-
+        users.document(userId).get().addOnCompleteListener(task -> {
+            if (task.isSuccessful() && task.getResult() != null) {
+                UserModel userModel = task.getResult().toObject(UserModel.class);
+                getAllFollowerUser(userModel, users, followAdapter);
+            } else {
+                tvEmpty.setVisibility(View.VISIBLE);
             }
+        }).addOnFailureListener(unused -> {
+            System.out.println("CHECK_ERROR::" + unused.getMessage());
+        });
+    }
 
-            fragmentTransaction.commit();
+    private void getAllFollowerUser(UserModel userModel, CollectionReference users, AccountFollowAdapter followAdapter) {
+        if (userModel == null) {
+            Toast.makeText(getContext(), "Người dùng không tồn tại!",
+                    Toast.LENGTH_SHORT).show();
+            //not found
+            return;
         }
 
-        private void setRVData(ProfileSaveAdapter profileSaveAdapter) {
-            CollectionReference postsRef = db.collection("save_posts");
-
-            UserModel user = SharedPreferencesManager.readUserInfo();
-            List<String> following = user.getFollowing();
-            System.out.println("UserID: " + user.getId());
-            //fix
-            postsRef
-                    .whereEqualTo("savedBy", user.getId())
-                    .orderBy("time", Query.Direction.DESCENDING)
+        if (!userModel.getFollowers().isEmpty()) {
+            users.whereIn("id", userModel.getFollowers())
                     .get()
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
-                            list.clear();
-                            System.out.println("UserID: " + task.getResult().size());
                             for (QueryDocumentSnapshot document : task.getResult()) {
-                                SaveItemModel saveItemModel = document.toObject(SaveItemModel.class);
-                                list.add(saveItemModel);
+                                UserModel model = document.toObject(UserModel.class);
+                                list.add(new FollowDTO(model.getId(), model.getAvatarURL(), model.getFullName(), model.getFollowers().size()));
                             }
-
-                            profileSaveAdapter.notifyDataSetChanged();
+                            followAdapter.notifyDataSetChanged();
                         } else {
-                            Log.d("record", "Error getting documents: ", task.getException());
+                            Log.d("ERROR::", "Error getting documents: ", task.getException());
                         }
-                    });
+
+                    }).addOnFailureListener(
+                            unused ->
+                            {
+
+                            });
+        } else {
+            tvEmpty.setVisibility(View.VISIBLE);
         }
+
     }
+}

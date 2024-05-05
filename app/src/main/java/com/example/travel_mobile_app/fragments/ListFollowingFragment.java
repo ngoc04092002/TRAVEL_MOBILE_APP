@@ -1,4 +1,5 @@
 
+
 package com.example.travel_mobile_app.fragments;
 
 import android.annotation.SuppressLint;
@@ -16,11 +17,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.travel_mobile_app.Adapter.AccountFollowAdapter;
+import com.example.travel_mobile_app.Adapter.FollowAdapter;
 import com.example.travel_mobile_app.Adapter.NotificationAdapter;
 import com.example.travel_mobile_app.Adapter.PostAdapter;
 import com.example.travel_mobile_app.Adapter.ProfileSaveAdapter;
 import com.example.travel_mobile_app.R;
+import com.example.travel_mobile_app.dto.FollowDTO;
 import com.example.travel_mobile_app.models.NotificationModel;
 import com.example.travel_mobile_app.models.PostModel;
 import com.example.travel_mobile_app.models.SaveItemModel;
@@ -39,8 +45,10 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class ListFollowingFragment extends Fragment implements View.OnClickListener {
     private RecyclerView saveRv;
     private CircleImageView btnBack;
-    ArrayList<SaveItemModel> list;
+    private TextView tvEmpty;
+    ArrayList<FollowDTO> list;
     private FirebaseFirestore db;
+    AccountFollowAdapter followAdapter;
 
     public ListFollowingFragment() {
         // Required empty public constructor
@@ -60,20 +68,27 @@ public class ListFollowingFragment extends Fragment implements View.OnClickListe
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_list_following, container, false);
-
-        saveRv = view.findViewById(R.id.save_itemsRv);
-        list = new ArrayList<>();
-
-
-        ProfileSaveAdapter profileSaveAdapter = new ProfileSaveAdapter(list, getContext(), requireActivity().getSupportFragmentManager());
-        saveRv.setHasFixedSize(true);
-        saveRv.setLayoutManager(new StaggeredGridLayoutManager(1, LinearLayoutManager.VERTICAL));
-        saveRv.setAdapter(profileSaveAdapter);
+        tvEmpty = view.findViewById(R.id.not_found);
+        tvEmpty.setVisibility(View.GONE);
 
         btnBack = view.findViewById(R.id.btn_back);
         btnBack.setOnClickListener(this);
 
-        setRVData(profileSaveAdapter);
+        saveRv = view.findViewById(R.id.save_itemsRv);
+        list = new ArrayList<>();
+
+        UserModel user = SharedPreferencesManager.readUserInfo();
+
+        list = new ArrayList<>();
+        final boolean[] isFollow = {false};
+        followAdapter = new AccountFollowAdapter(list, getContext(), true, db, requireActivity().getSupportFragmentManager());
+        saveRv.setHasFixedSize(true);
+        saveRv.setLayoutManager(new StaggeredGridLayoutManager(1, LinearLayoutManager.VERTICAL));
+        saveRv.setAdapter(followAdapter);
+
+        getFollowingData(followAdapter, user.getId());
+
+
         return view;
     }
 
@@ -90,30 +105,51 @@ public class ListFollowingFragment extends Fragment implements View.OnClickListe
         fragmentTransaction.commit();
     }
 
-    private void setRVData(ProfileSaveAdapter profileSaveAdapter) {
-        CollectionReference postsRef = db.collection("save_posts");
+    public void getFollowingData(AccountFollowAdapter followAdapter, String userId) {
+        CollectionReference users = db.collection("users");
 
-        UserModel user = SharedPreferencesManager.readUserInfo();
-        List<String> following = user.getFollowing();
-        System.out.println("UserID: " + user.getId());
-        //fix
-        postsRef
-                .whereEqualTo("savedBy", user.getId())
-                .orderBy("time", Query.Direction.DESCENDING)
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        list.clear();
-                        System.out.println("UserID: " + task.getResult().size());
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            SaveItemModel saveItemModel = document.toObject(SaveItemModel.class);
-                            list.add(saveItemModel);
+        users.document(userId).get().addOnCompleteListener(task -> {
+            if (task.isSuccessful() && task.getResult() != null) {
+                UserModel userModel = task.getResult().toObject(UserModel.class);
+                getAllFollowingUser(userModel, users, followAdapter);
+            } else {
+                tvEmpty.setVisibility(View.VISIBLE);
+            }
+        }).addOnFailureListener(unused -> {
+            System.out.println("CHECK_ERROR::" + unused.getMessage());
+        });
+    }
+
+    private void getAllFollowingUser(UserModel userModel, CollectionReference users, AccountFollowAdapter followAdapter) {
+        if (userModel == null) {
+            Toast.makeText(getContext(), "Người dùng không tồn tại!",
+                    Toast.LENGTH_SHORT).show();
+            //not found
+            return;
+        }
+
+        if (!userModel.getFollowing().isEmpty()) {
+            users.whereIn("id", userModel.getFollowing())
+                    .get()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                UserModel model = document.toObject(UserModel.class);
+                                list.add(new FollowDTO(model.getId(), model.getAvatarURL(), model.getFullName(), model.getFollowers().size()));
+                            }
+                            followAdapter.notifyDataSetChanged();
+                        } else {
+                            Log.d("ERROR::", "Error getting documents: ", task.getException());
                         }
 
-                        profileSaveAdapter.notifyDataSetChanged();
-                    } else {
-                        Log.d("record", "Error getting documents: ", task.getException());
-                    }
-                });
+                    }).addOnFailureListener(
+                            unused ->
+                            {
+
+                            });
+        } else {
+            tvEmpty.setVisibility(View.VISIBLE);
+        }
+
     }
 }

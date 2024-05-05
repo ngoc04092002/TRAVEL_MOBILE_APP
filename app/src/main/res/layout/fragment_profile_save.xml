@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -38,7 +39,6 @@
             android:textSize="@dimen/_24font_mdp"
             android:textStyle="bold" />
     </FrameLayout>
-
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -49,6 +49,16 @@
         android:layout_marginTop="15dp"
         android:layout_marginBottom="10dp"
         />
+
+    <TextView
+        android:id="@+id/not_found"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="Chưa có bài lưu nào!"
+        android:textAlignment="center"
+        android:textSize="@dimen/_12mdp"
+        android:visibility="gone" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/save_itemsRv"

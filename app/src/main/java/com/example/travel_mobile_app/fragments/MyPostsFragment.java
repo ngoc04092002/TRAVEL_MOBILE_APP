@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.example.travel_mobile_app.Adapter.PostAdapter;
 import com.example.travel_mobile_app.R;
@@ -32,6 +33,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class MyPostsFragment extends Fragment implements View.OnClickListener {
     private RecyclerView myPostRv;
     private CircleImageView btnBack;
+    private TextView tvEmpty;
     private ArrayList<PostModel> postList;
     private FirebaseFirestore db;
 
@@ -64,7 +66,8 @@ public class MyPostsFragment extends Fragment implements View.OnClickListener {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_my_posts, container, false);
-
+        tvEmpty = view.findViewById(R.id.not_found);
+        tvEmpty.setVisibility(View.GONE);
         myPostRv = view.findViewById(R.id.save_itemsRv);
         postList = new ArrayList<>();
         PostAdapter postAdapter = new PostAdapter(postList, getContext(), requireActivity().getSupportFragmentManager(), getActivity(), db);
@@ -93,7 +96,11 @@ public class MyPostsFragment extends Fragment implements View.OnClickListener {
                             PostModel postModel = document.toObject(PostModel.class);
                             postList.add(postModel);
                         }
-
+                        if (task.getResult().isEmpty()) {
+                            tvEmpty.setVisibility(View.VISIBLE);
+                        } else {
+                            tvEmpty.setVisibility(View.GONE);
+                        }
                         postAdapter.notifyDataSetChanged();
                     } else {
                         Log.d("record", "Error getting documents: ", task.getException());

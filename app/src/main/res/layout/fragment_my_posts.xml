@@ -40,10 +40,11 @@
             android:textStyle="bold" />
     </FrameLayout>
 
+
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Bài đăng của tôi"
+        android:text="Bài đăng gần đây"
         android:textStyle="bold"
         android:textSize="20sp"
         android:layout_marginStart="15dp"
@@ -52,6 +53,15 @@
         android:layout_marginBottom="10dp"
         />
 
+    <TextView
+        android:id="@+id/not_found"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="Chưa có bài viết nào!"
+        android:textAlignment="center"
+        android:textSize="@dimen/_12mdp"
+        android:visibility="gone" />
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/save_itemsRv"
         android:layout_width="match_parent"

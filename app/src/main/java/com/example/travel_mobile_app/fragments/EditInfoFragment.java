@@ -122,9 +122,9 @@ public class EditInfoFragment extends Fragment implements View.OnClickListener {
             currentUser.setFullName(newName);
             progressBar.setVisibility(View.VISIBLE);
             if (newUri != null) {
-                uploadImageToFirebaseStorage(newUri, currentUser);
+                uploadImageToFirebaseStorage(newUri);
             } else {
-                updateUserInfo(currentUser);
+                updateUserInfo();
             }
         } else if (v.getId() == R.id.editEmail) {
             Toast.makeText(getContext(), "Không thể chỉnh sửa email Email!", Toast.LENGTH_SHORT).show();
@@ -143,14 +143,17 @@ public class EditInfoFragment extends Fragment implements View.OnClickListener {
                 if (result != null) {
 
                     newUri = result;
-                    avataImageView.setImageURI(result);
+                    Glide.with(requireContext())
+                            .load(result)
+                            .into(avataImageView);
+//                    avataImageView.setImageURI(result);
 //                    progressBar.setVisibility(View.VISIBLE);
 //                    uploadImageToFirebaseStorage(result);
 
                 }
             });
 
-    private void uploadImageToFirebaseStorage(Uri imageUri, UserModel user) {
+    private void uploadImageToFirebaseStorage(Uri imageUri) {
         StorageReference storageRef = FirebaseStorage.getInstance().getReference();
         StorageReference imageRef = storageRef.child("avatars/" + FirebaseAuth.getInstance().getCurrentUser().getUid());
 
@@ -160,8 +163,8 @@ public class EditInfoFragment extends Fragment implements View.OnClickListener {
                     imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
                         String downloadUrl = uri.toString();
                         // Step 2: Update User Document in Firestore with download URL
-                        user.setAvatarURL(downloadUrl);
-                        updateUserInfo(user);
+                        currentUser.setAvatarURL(downloadUrl);
+                        updateUserInfo();
                     });
                 })
                 .addOnFailureListener(exception -> {
@@ -172,15 +175,15 @@ public class EditInfoFragment extends Fragment implements View.OnClickListener {
                 });
     }
 
-    private void updateUserInfo(UserModel user) {
+    private void updateUserInfo() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         DocumentReference userRef = db.collection("users").document(currentUser.getId());
 
         Map<String, Object> updates = new HashMap<>();
-        updates.put("username", user.getUsername());
-        updates.put("fullName", user.getFullName());
-        updates.put("address", user.getAddress());
-        updates.put("avatarURL", user.getAvatarURL());
+        updates.put("username", currentUser.getUsername());
+        updates.put("fullName", currentUser.getFullName());
+        updates.put("address", currentUser.getAddress());
+        updates.put("avatarURL", currentUser.getAvatarURL());
 
         userRef.update(updates)
                 .addOnSuccessListener(aVoid -> {

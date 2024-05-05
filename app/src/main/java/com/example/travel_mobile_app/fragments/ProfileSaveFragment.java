@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.example.travel_mobile_app.Adapter.NotificationAdapter;
 import com.example.travel_mobile_app.Adapter.PostAdapter;
@@ -40,7 +41,8 @@ public class ProfileSaveFragment extends Fragment implements View.OnClickListene
     private CircleImageView btnBack;
     ArrayList<SaveItemModel> list;
     private FirebaseFirestore db;
-
+    private TextView tvEmpty;
+    ProfileSaveAdapter profileSaveAdapter;
     public ProfileSaveFragment() {
         // Required empty public constructor
     }
@@ -53,18 +55,26 @@ public class ProfileSaveFragment extends Fragment implements View.OnClickListene
 
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Gọi phương thức reload dữ liệu của bạn ở đây
+        setRVData(profileSaveAdapter);
+    }
+
     @SuppressLint("MissingInflatedId")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_profile_save, container, false);
-
+        tvEmpty = view.findViewById(R.id.not_found);
+        tvEmpty.setVisibility(View.GONE);
         saveRv = view.findViewById(R.id.save_itemsRv);
         list = new ArrayList<>();
 
 
-        ProfileSaveAdapter profileSaveAdapter = new ProfileSaveAdapter(list, getContext(), requireActivity().getSupportFragmentManager());
+        profileSaveAdapter = new ProfileSaveAdapter(list, getContext(), requireActivity().getSupportFragmentManager());
         saveRv.setHasFixedSize(true);
         saveRv.setLayoutManager(new StaggeredGridLayoutManager(1, LinearLayoutManager.VERTICAL));
         saveRv.setAdapter(profileSaveAdapter);
@@ -108,7 +118,11 @@ public class ProfileSaveFragment extends Fragment implements View.OnClickListene
                             SaveItemModel saveItemModel = document.toObject(SaveItemModel.class);
                             list.add(saveItemModel);
                         }
-
+                        if(task.getResult().isEmpty()) {
+                            tvEmpty.setVisibility(View.VISIBLE);
+                        } else {
+                            tvEmpty.setVisibility(View.GONE);
+                        }
                         profileSaveAdapter.notifyDataSetChanged();
                     } else {
                         Log.d("record", "Error getting documents: ", task.getException());
