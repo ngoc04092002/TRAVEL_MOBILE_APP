@@ -421,7 +421,7 @@ public class SocialUserDetailInfoAdapter {
 
     private void savePost(PostModel post, String userId) {
         String savePostId = UUID.randomUUID().toString().replace("-", "");
-        SaveItemModel itemModel = new SaveItemModel(savePostId, post.getPostId(), userId, post.getPostDescription(), new Date().getTime(), post.getPostImage());
+        SaveItemModel itemModel = new SaveItemModel(savePostId, post.getPostId(), userId, post.getPostDescription(), new Date().getTime(), post.getPostImage(), 0);
         CollectionReference posts = db.collection("save_posts");
         posts.document(savePostId)
              .set(itemModel)
