@@ -24,6 +24,7 @@ public class Location {
         this.price = price;
     }
 
+    public Location() {}
     public String getId() {
         return id;
     }

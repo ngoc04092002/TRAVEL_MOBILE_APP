@@ -99,7 +99,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="@dimen/_4mdp"
-                        android:text="Đang theo dõi"
+                        android:text="Đang follow"
                         android:textSize="@dimen/_14font_mdp" />
                 </LinearLayout>
 
@@ -131,7 +131,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="@dimen/_4mdp"
-                        android:text="Người theo dõi"
+                        android:text="Follower"
                         android:textSize="@dimen/_14font_mdp" />
                 </LinearLayout>
 

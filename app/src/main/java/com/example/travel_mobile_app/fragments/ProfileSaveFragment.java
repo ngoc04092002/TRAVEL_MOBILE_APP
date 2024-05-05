@@ -64,7 +64,7 @@ public class ProfileSaveFragment extends Fragment implements View.OnClickListene
         list = new ArrayList<>();
 
 
-        ProfileSaveAdapter profileSaveAdapter = new ProfileSaveAdapter(list, getContext());
+        ProfileSaveAdapter profileSaveAdapter = new ProfileSaveAdapter(list, getContext(), requireActivity().getSupportFragmentManager());
         saveRv.setHasFixedSize(true);
         saveRv.setLayoutManager(new StaggeredGridLayoutManager(1, LinearLayoutManager.VERTICAL));
         saveRv.setAdapter(profileSaveAdapter);

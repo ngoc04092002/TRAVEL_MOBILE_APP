@@ -1,66 +1,119 @@
+
 package com.example.travel_mobile_app.fragments;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
+import com.example.travel_mobile_app.Adapter.NotificationAdapter;
+import com.example.travel_mobile_app.Adapter.PostAdapter;
+import com.example.travel_mobile_app.Adapter.ProfileSaveAdapter;
 import com.example.travel_mobile_app.R;
+import com.example.travel_mobile_app.models.NotificationModel;
+import com.example.travel_mobile_app.models.PostModel;
+import com.example.travel_mobile_app.models.SaveItemModel;
+import com.example.travel_mobile_app.models.UserModel;
+import com.example.travel_mobile_app.services.SharedPreferencesManager;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link ListFollowerFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
-public class ListFollowerFragment extends Fragment {
+import java.util.ArrayList;
+import java.util.List;
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+import de.hdodenhof.circleimageview.CircleImageView;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    public class ListFollowerFragment extends Fragment implements View.OnClickListener {
+        private RecyclerView saveRv;
+        private CircleImageView btnBack;
+        ArrayList<SaveItemModel> list;
+        private FirebaseFirestore db;
 
-    public ListFollowerFragment() {
-        // Required empty public constructor
-    }
+        public ListFollowerFragment() {
+            // Required empty public constructor
+        }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ListFollowerFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static ListFollowerFragment newInstance(String param1, String param2) {
-        ListFollowerFragment fragment = new ListFollowerFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            db = FirebaseFirestore.getInstance();
+
+        }
+
+        @SuppressLint("MissingInflatedId")
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                                 Bundle savedInstanceState) {
+            // Inflate the layout for this fragment
+            View view = inflater.inflate(R.layout.fragment_list_follower, container, false);
+
+            saveRv = view.findViewById(R.id.save_itemsRv);
+            list = new ArrayList<>();
+
+
+            ProfileSaveAdapter profileSaveAdapter = new ProfileSaveAdapter(list, getContext(), requireActivity().getSupportFragmentManager());
+            saveRv.setHasFixedSize(true);
+            saveRv.setLayoutManager(new StaggeredGridLayoutManager(1, LinearLayoutManager.VERTICAL));
+            saveRv.setAdapter(profileSaveAdapter);
+
+            btnBack = view.findViewById(R.id.btn_back);
+            btnBack.setOnClickListener(this);
+
+            setRVData(profileSaveAdapter);
+            return view;
+        }
+
+        @Override
+        public void onClick(View v) {
+            FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+            if (v.getId() == R.id.btn_back) {
+                fragmentManager.popBackStack("account_fragment", FragmentManager.POP_BACK_STACK_INCLUSIVE);
+
+            }
+
+            fragmentTransaction.commit();
+        }
+
+        private void setRVData(ProfileSaveAdapter profileSaveAdapter) {
+            CollectionReference postsRef = db.collection("save_posts");
+
+            UserModel user = SharedPreferencesManager.readUserInfo();
+            List<String> following = user.getFollowing();
+            System.out.println("UserID: " + user.getId());
+            //fix
+            postsRef
+                    .whereEqualTo("savedBy", user.getId())
+                    .orderBy("time", Query.Direction.DESCENDING)
+                    .get()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            list.clear();
+                            System.out.println("UserID: " + task.getResult().size());
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                SaveItemModel saveItemModel = document.toObject(SaveItemModel.class);
+                                list.add(saveItemModel);
+                            }
+
+                            profileSaveAdapter.notifyDataSetChanged();
+                        } else {
+                            Log.d("record", "Error getting documents: ", task.getException());
+                        }
+                    });
         }
     }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_list_follower, container, false);
-    }
-}
