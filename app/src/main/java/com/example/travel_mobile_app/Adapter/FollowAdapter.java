@@ -134,9 +134,9 @@ public class FollowAdapter extends RecyclerView.Adapter<FollowAdapter.viewHolder
                    if (taskUser.isSuccessful() && taskUser.getResult() != null) {
                        UserModel userModel = taskUser.getResult().toObject(UserModel.class);
                        if (!isFollow[0]) {
-                           userModel.getFollowers().add(user.getId());
-                       } else {
                            userModel.getFollowers().remove(user.getId());
+                       } else {
+                           userModel.getFollowers().add(user.getId());
                        }
                        userRef.set(userModel);
                    }
