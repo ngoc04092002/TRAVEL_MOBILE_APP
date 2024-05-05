@@ -6,13 +6,11 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.viewmodel.CreationExtras;
 import androidx.viewpager.widget.ViewPager;
 
 import android.os.Handler;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,19 +19,21 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 
 import com.example.travel_mobile_app.Adapter.SlideAdapter;
-import com.example.travel_mobile_app.Adapter.SuggestionAdapter;
-import com.example.travel_mobile_app.DetailInfor;
+import com.example.travel_mobile_app.Adapter.AllLocationAdapter;
 import com.example.travel_mobile_app.R;
 import com.example.travel_mobile_app.models.Location;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import me.relex.circleindicator.CircleIndicator;
 
@@ -52,9 +52,9 @@ public class suggestion extends Fragment  {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-    private ImageButton disbtn;
+    private ImageButton listbtn;
     private ListView dexuatlv;
-    private SuggestionAdapter dexuatadap;
+    private AllLocationAdapter dexuatadap;
     private FirebaseFirestore db;
     private  ImageButton reloadbtn;
     private ViewPager vpg;
@@ -101,6 +101,7 @@ public class suggestion extends Fragment  {
         View view = inflater.inflate(R.layout.fragment_suggestion, container, false);
         vpg = view.findViewById(R.id.viewpager);
         ci = view.findViewById(R.id.circle_indicator);
+
         FirebaseFirestore.getInstance().collection("locations")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -155,6 +156,17 @@ public class suggestion extends Fragment  {
             @Override
             public void onClick(View v) {
                 Fragment otherFragment = new suggestion();
+                FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
+                transaction.replace(R.id.container, otherFragment);
+                transaction.addToBackStack(null); // Để cho phép người dùng quay lại Fragment trước đó
+                transaction.commit();
+            }
+        });
+        listbtn = view.findViewById(R.id.listlocationbtn);
+        listbtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Fragment otherFragment = new AllLocationFragment();
                 FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
                 transaction.replace(R.id.container, otherFragment);
                 transaction.addToBackStack(null); // Để cho phép người dùng quay lại Fragment trước đó

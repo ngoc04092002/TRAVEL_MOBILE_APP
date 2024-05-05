@@ -17,17 +17,17 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.travel_mobile_app.DetailInfor;
 import com.example.travel_mobile_app.R;
-import com.example.travel_mobile_app.fragments.SuggestionFragment;
+import com.example.travel_mobile_app.fragments.AllLocationFragment;
 import com.example.travel_mobile_app.models.Location;
 
 import java.security.AccessControlContext;
 import java.util.List;
 
-public class SuggestionAdapter extends RecyclerView.Adapter<SuggestionAdapter.SuggestionViewHolder> {
+public class AllLocationAdapter extends RecyclerView.Adapter<AllLocationAdapter.SuggestionViewHolder> {
     private AccessControlContext mContext;
     private List<Location> mListLocation;
 
-    public SuggestionAdapter(SuggestionFragment mContext) {
+    public AllLocationAdapter(AllLocationFragment mContext) {
         this.mContext = getContext();
     }
 
@@ -40,7 +40,7 @@ public class SuggestionAdapter extends RecyclerView.Adapter<SuggestionAdapter.Su
     @Override
     public SuggestionViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
-        View view =LayoutInflater.from(parent.getContext()).inflate(R.layout.itemsuggestion, parent, false) ;
+        View view =LayoutInflater.from(parent.getContext()).inflate(R.layout.all_location_item, parent, false) ;
 
         return new SuggestionViewHolder(view);
     }
@@ -54,10 +54,10 @@ public class SuggestionAdapter extends RecyclerView.Adapter<SuggestionAdapter.Su
         Glide.with(holder.itemView.getContext())
                 .load(loc.getImglink()) // Đường dẫn hình ảnh từ đối tượng Location
                 .placeholder(R.drawable.boy) // Hình ảnh mặc định trong khi đang tải
-                .into(holder.imgSuggestion); // ImageView để hiển thị hình ảnh
+                .into(holder.imglocationiv); // ImageView để hiển thị hình ảnh
 
-        holder.nameSuggestion.setText(loc.getName());
-        holder.addSuggestion.setText(loc.getAddress());
+        holder.namelocationtv.setText(loc.getName());
+        holder.addresslocationtv.setText(loc.getAddress());
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -98,15 +98,15 @@ public class SuggestionAdapter extends RecyclerView.Adapter<SuggestionAdapter.Su
     }
 
     public class SuggestionViewHolder extends RecyclerView.ViewHolder {
-        private ImageView imgSuggestion;
-        private TextView nameSuggestion;
-        private TextView addSuggestion;
+        private ImageView imglocationiv;
+        private TextView namelocationtv;
+        private TextView addresslocationtv;
 
         public SuggestionViewHolder(@NonNull View itemView) {
             super(itemView);
-            addSuggestion =itemView.findViewById(R.id.addsug);
-            imgSuggestion = itemView.findViewById(R.id.imgsug);
-            nameSuggestion = itemView.findViewById(R.id.namesug);
+            addresslocationtv =itemView.findViewById(R.id.addresslocation);
+            imglocationiv = itemView.findViewById(R.id.imglocation);
+            namelocationtv = itemView.findViewById(R.id.namelocation);
         }
     }
 }

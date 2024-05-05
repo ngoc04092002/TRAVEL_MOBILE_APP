@@ -2,11 +2,11 @@ package com.example.travel_mobile_app.fragments;
 
 import static android.content.ContentValues.TAG;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -16,33 +16,25 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 
-import com.bumptech.glide.Glide;
-import com.example.travel_mobile_app.Adapter.SuggestionAdapter;
-import com.example.travel_mobile_app.DetailInfor;
+import com.example.travel_mobile_app.Adapter.AllLocationAdapter;
 import com.example.travel_mobile_app.R;
 import com.example.travel_mobile_app.models.Location;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Random;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link SuggestionFragment#newInstance} factory method to
+ * Use the {@link AllLocationFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class SuggestionFragment extends Fragment {
+public class AllLocationFragment extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -53,11 +45,11 @@ public class SuggestionFragment extends Fragment {
     private String mParam1;
     private String mParam2;
     private RecyclerView rcvSug;
-    private SuggestionAdapter mSugAdapter;
-    private ImageButton reloadbtn;
+    private AllLocationAdapter mSugAdapter;
+    private ImageButton backbtn;
     private ImageButton disbtn;
 
-    public SuggestionFragment() {
+    public AllLocationFragment() {
         // Required empty public constructor
     }
 
@@ -67,11 +59,11 @@ public class SuggestionFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment SuggestionFragment.
+     * @return A new instance of fragment AllLocationFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static SuggestionFragment newInstance(String param1, String param2) {
-        SuggestionFragment fragment = new SuggestionFragment();
+    public static AllLocationFragment newInstance(String param1, String param2) {
+        AllLocationFragment fragment = new AllLocationFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -88,13 +80,14 @@ public class SuggestionFragment extends Fragment {
         }
     }
 
+    @SuppressLint("MissingInflatedId")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_suggestion2, container, false);
+        View view = inflater.inflate(R.layout.fragment_alllocation, container, false);
         rcvSug =view.findViewById(R.id.rcv_suggestion);
-        mSugAdapter = new SuggestionAdapter(this);
+        mSugAdapter = new AllLocationAdapter(this);
 
 
         FirebaseFirestore.getInstance().collection("locations")
@@ -118,14 +111,14 @@ public class SuggestionFragment extends Fragment {
                             Location location = new Location(id,address,imgLink,intro,name,number,openTime,closeTime,price);
 
                             list.add(location);
-                            System.out.println(list);
+                            /*System.out.println(list);
                             Collections.shuffle(list);
-                            List<Location> randomLocations = list.subList(0, Math.min(list.size(), 6));
+                            List<Location> randomLocations = list.subList(0, Math.min(list.size(), 6));*/
 
                             GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 1);
 
                             rcvSug.setLayoutManager(gridLayoutManager);
-                            mSugAdapter.setData(randomLocations);
+                            mSugAdapter.setData(list);
                             rcvSug.setAdapter(mSugAdapter);
 
                     }
@@ -134,33 +127,19 @@ public class SuggestionFragment extends Fragment {
                 }
             }
         });
-
-
-        reloadbtn = view.findViewById(R.id.reloadbtn);
-        reloadbtn.setOnClickListener(new View.OnClickListener() {
+        backbtn = view.findViewById(R.id.backbtn4);
+        backbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Fragment otherFragment = new SuggestionFragment();
-                FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
-                transaction.replace(R.id.container, otherFragment);
-                transaction.addToBackStack(null); // Để cho phép người dùng quay lại Fragment trước đó
-                transaction.commit();
+                getParentFragmentManager().popBackStack();
+
             }
         });
 
 
         return view;
     }
-    private void updateDocumentId(CollectionReference collectionReference, String documentId, String newId) {
-        DocumentReference documentReference = collectionReference.document(documentId);
-        Map<String, Object> updates = new HashMap<>();
-        updates.put("id", newId); // Thay "id" bằng trường ID của tài liệu
-        documentReference.update(updates).addOnSuccessListener(aVoid -> {
-            Log.d(TAG, "Document ID updated successfully!");
-        }).addOnFailureListener(e -> {
-            Log.w(TAG, "Error updating document ID", e);
-        });
-    }
+
    /* private List<Location> getListLocation() {
         List<Location> list = new ArrayList<>();
         FirebaseFirestore db = FirebaseFirestore.getInstance();

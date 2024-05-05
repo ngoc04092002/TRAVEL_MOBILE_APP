@@ -1,42 +1,23 @@
 package com.example.travel_mobile_app;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.widget.Toast;
 
-import com.example.travel_mobile_app.Adapter.PostAdapter;
-import com.example.travel_mobile_app.Adapter.StoryAdapter;
-import com.example.travel_mobile_app.Manager.FirebaseManager;
 import com.example.travel_mobile_app.databinding.ActivityMainBinding;
 import com.example.travel_mobile_app.fragments.AccountFragment;
-import com.example.travel_mobile_app.fragments.FriendFollowingFragment;
 import com.example.travel_mobile_app.fragments.NotificationFragment;
 import com.example.travel_mobile_app.fragments.SocialFragment;
-import com.example.travel_mobile_app.fragments.SuggestionFragment;
 import com.example.travel_mobile_app.fragments.suggestion;
-import com.example.travel_mobile_app.models.CommentModel;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.Firebase;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
 import com.example.travel_mobile_app.models.NotificationModel;
-import com.google.firebase.auth.FirebaseAuth;
 import com.example.travel_mobile_app.models.PostModel;
 import com.example.travel_mobile_app.models.StoryModel;
 import com.example.travel_mobile_app.models.UserModel;
-import com.example.travel_mobile_app.models.UserStory;
 import com.example.travel_mobile_app.services.SharedPreferencesManager;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.example.travel_mobile_app.models.NotificationModel;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -44,10 +25,7 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.WriteBatch;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 

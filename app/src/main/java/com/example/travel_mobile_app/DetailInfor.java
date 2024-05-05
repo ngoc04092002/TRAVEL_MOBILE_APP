@@ -1,7 +1,5 @@
 package com.example.travel_mobile_app;
 
-import static android.content.ContentValues.TAG;
-
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 
@@ -19,22 +17,19 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.example.travel_mobile_app.fragments.SuggestionFragment;
 import com.example.travel_mobile_app.fragments.event;
-import com.example.travel_mobile_app.fragments.suggestion;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.type.Date;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -118,14 +113,13 @@ public class DetailInfor extends Fragment {
             TextView numbertv = view.findViewById(R.id.sdttv);
             // Lấy giá trị opentime từ locationData
 
-            int hours = (int) (opentime / 3600); // Tính số giờ
-            int minutes = (int) ((opentime % 3600) / 60); // Tính số phút
-            int sec = (int) (opentime % 60); // Tính số giây
-            String formattedopenTime = String.format("%02d:%02d:%02d", hours, minutes, sec);
-            int closehours = (int) (closetime / 3600); // Tính số giờ
-            int closeminutes = (int) ((closetime % 3600) / 60); // Tính số phút
-            int closesec = (int) (closetime % 60); // Tính số giây
-            String formattedcloseTime = String.format("%02d:%02d:%02d", closehours, closeminutes, closesec);
+            Date openTime = new Date(opentime);
+            SimpleDateFormat sdfopentime = new SimpleDateFormat("HH:mm:ss");
+            String formattedopenTime = sdfopentime.format(openTime);
+            Date closeTime = new Date(closetime);
+            SimpleDateFormat sdfclosetime = new SimpleDateFormat("HH:mm:ss");
+            String formattedcloseTime = sdfclosetime.format(closeTime);
+
             nameTextView.setText(name);
             addressTextView.setText(address);
             introTextView.setText(intro);
@@ -203,6 +197,13 @@ public class DetailInfor extends Fragment {
         // Lấy thời gian hiện tại
         long currentTime = System.currentTimeMillis();
 
+        System.out.println(currentTime);
+        Date currentDate = new Date(currentTime);
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+        String formattedDate = sdf.format(currentDate);
+
+        // Hiển thị chuỗi đã được chuyển đổi
+        Log.d("Current Date", formattedDate);
 
         // Tạo dữ liệu cho document
         Map<String, Object> userLocationData = new HashMap<>();
