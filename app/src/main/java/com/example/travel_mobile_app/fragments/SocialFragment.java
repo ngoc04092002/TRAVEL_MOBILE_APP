@@ -81,7 +81,7 @@ public class SocialFragment extends Fragment implements View.OnClickListener {
     private boolean isLoadMore = false;
 
     public SocialFragment() {
-        // Required empty public constructor
+        postList = new ArrayList<>();
     }
 
     public SocialFragment(ArrayList<PostModel> postList) {
@@ -166,7 +166,8 @@ public class SocialFragment extends Fragment implements View.OnClickListener {
         } else if (v.getId() == R.id.btnSearch) {
             Intent i = new Intent(getActivity(), SocialSearchPost.class);
             startActivity(i);
-            getActivity().overridePendingTransition(0, android.R.anim.slide_out_right);
+            getActivity().overridePendingTransition(R.anim.enter_animation, android.R.anim.fade_out);
+
         } else if (v.getId() == R.id.createStory) {
             ImagePicker.with(this)
                        .galleryOnly()
@@ -213,10 +214,12 @@ public class SocialFragment extends Fragment implements View.OnClickListener {
     private void replaceScreen(@IdRes int containerViewId, @NonNull Fragment fragment, String backTrackName) {
         FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
+        fragmentTransaction.setCustomAnimations(
+                R.anim.enter_animation,
+                R.anim.exit_animation,
+                R.anim.pop_enter_animation,
+                R.anim.pop_exit_animation);
         fragmentTransaction.replace(containerViewId, fragment);
-        // Thêm transaction vào back stack (nếu cần)
-        fragmentTransaction.addToBackStack(backTrackName);
         // Commit transaction
         fragmentTransaction.commit();
     }

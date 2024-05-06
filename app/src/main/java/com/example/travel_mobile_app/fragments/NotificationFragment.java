@@ -64,7 +64,7 @@ public class NotificationFragment extends Fragment {
         btnSearch = view.findViewById(R.id.search_notification);
 
         list = new ArrayList<>();
-        NotificationAdapter notificationAdapter = new NotificationAdapter(list, getContext(), db,requireActivity());
+        NotificationAdapter notificationAdapter = new NotificationAdapter(list, getContext(), db,requireActivity(), requireActivity().getSupportFragmentManager());
         setNotificationListData(notificationAdapter);
 
 

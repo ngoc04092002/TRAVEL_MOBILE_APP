@@ -63,7 +63,7 @@ public class SocialSearchPost extends AppCompatActivity implements View.OnClickL
 
         if (type != null && type.equals("notification")) {
             notifications = new ArrayList<>();
-            notificationAdapter = new NotificationAdapter(notifications, this, db, this);
+            notificationAdapter = new NotificationAdapter(notifications, this, db, this,getSupportFragmentManager());
             binding.searchPostRv.setAdapter(notificationAdapter);
         } else {
             posts = new ArrayList<>();
@@ -108,8 +108,8 @@ public class SocialSearchPost extends AppCompatActivity implements View.OnClickL
                 intent.putExtra("previous_fragment", "social_screen");
             }
 
+            overridePendingTransition(android.R.anim.fade_in,R.anim.pop_exit_animation);
             startActivity(intent);
-            overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
         }
     }
 

@@ -15,6 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.viewmodel.CreationExtras;
 
 import android.util.Log;
@@ -130,7 +131,15 @@ public class CreatePostFragment extends Fragment implements View.OnClickListener
     public void onClick(View v) {
         if (v.getId() == R.id.createPost_btnBack) {
             FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
-            fragmentManager.popBackStack("social_fragment", FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.setCustomAnimations(
+                    R.anim.pop_enter_animation,
+                    R.anim.pop_exit_animation,
+                    R.anim.enter_animation,
+                    R.anim.exit_animation);
+
+            fragmentTransaction.replace(R.id.container, new SocialFragment());
+            fragmentTransaction.commit();
         } else if (v.getId() == R.id.camera || (v.getId() == R.id.postimg && uri == null)) {
             ImagePicker.with(this)
                        .cameraOnly()

@@ -7,6 +7,7 @@ import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.viewmodel.CreationExtras;
 import androidx.viewpager.widget.ViewPager;
 
@@ -83,7 +84,15 @@ public class FriendsFragment extends Fragment implements View.OnClickListener {
     public void onClick(View v) {
         if (v.getId() == R.id.friend_btnBack) {
             FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
-            fragmentManager.popBackStack("social_fragment", FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.setCustomAnimations(
+                    R.anim.pop_enter_animation,
+                    R.anim.pop_exit_animation,
+                    R.anim.enter_animation,
+                    R.anim.exit_animation);
+
+            fragmentTransaction.replace(R.id.container, new SocialFragment());
+            fragmentTransaction.commit();
         }
     }
 

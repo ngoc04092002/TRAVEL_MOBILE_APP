@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Bundle;
 import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -17,14 +18,19 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.core.text.HtmlCompat;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.travel_mobile_app.DetailInfor;
 import com.example.travel_mobile_app.DetailPostInfo;
 import com.example.travel_mobile_app.R;
 import com.example.travel_mobile_app.SocialSearchPost;
 import com.example.travel_mobile_app.databinding.FragmentNotificationItemBinding;
+import com.example.travel_mobile_app.fragments.SocialUserDetailInfoFragment;
 import com.example.travel_mobile_app.models.CommentModel;
+import com.example.travel_mobile_app.models.Location;
 import com.example.travel_mobile_app.models.NotificationModel;
 import com.example.travel_mobile_app.models.UserModel;
 import com.example.travel_mobile_app.utils.CustomDateTime;
@@ -41,12 +47,14 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
     private Context context;
     private FirebaseFirestore db;
     private Activity activity;
+    FragmentManager fragmentManager;
 
-    public NotificationAdapter(List<NotificationModel> list, Context context, FirebaseFirestore db, Activity activity) {
+    public NotificationAdapter(List<NotificationModel> list, Context context, FirebaseFirestore db, Activity activity,FragmentManager fragmentManager) {
         this.list = list;
         this.context = context;
         this.db = db;
         this.activity = activity;
+        this.fragmentManager = fragmentManager;
     }
 
     @NonNull
@@ -79,7 +87,9 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         //fix 8c89d98007c54f34b44f2f619a8684b3 other userid
         String type = model.getType();
         String content = "<b>" + model.getNotificationBy() + "</b>";
-        if (type.equals("like")) {
+        if(type.equals("event")){
+            content = model.getNotificationBy();
+        }else if (type.equals("like")) {
             content += " Thích bài đăng của bạn";
         } else if (type.equals("comment")) {
             content += " Bình luận bài đăng của bạn";
@@ -109,16 +119,25 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
             return false;
         });
 
-
         //handle click
-        holder.binding.infoNotification.setOnClickListener(v -> {
-            navigateToDetailPostInfo(model.getPostId());
-        });
 
-        holder.binding.profileImage.setOnClickListener(v -> {
-            navigateToDetailPostInfo(model.getPostId());
-        });
-    }
+
+            holder.binding.infoNotification.setOnClickListener(v -> {
+                if (type.equals("event")){
+                    navigateToDetailEvent(model.getPostId());
+                }else{
+                    navigateToDetailPostInfo(model.getPostId());
+                }
+            });
+
+            holder.binding.profileImage.setOnClickListener(v -> {
+                if (type.equals("event")){
+                    navigateToDetailEvent(model.getPostId());
+                }else{
+                    navigateToDetailPostInfo(model.getPostId());
+                }
+            });
+        }
 
     private void navigateToDetailPostInfo(String postId) {
         Intent i = new Intent(context, DetailPostInfo.class);
@@ -126,6 +145,36 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         i.putExtra("postId", postId);
         context.startActivity(i);
         activity.overridePendingTransition(0, android.R.anim.slide_out_right);
+    }
+
+    private void navigateToDetailEvent(String locationId) {
+        db.collection("locations")
+          .document(locationId)
+          .get()
+          .addOnCompleteListener(task->{
+              if(task.isSuccessful()){
+                  Location loc = task.getResult().toObject(Location.class);
+                  FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                  Bundle bundle = new Bundle();
+                  bundle.putString("location_id", loc.getId());
+                  bundle.putString("location_name", loc.getName());
+                  bundle.putString("location_address", loc.getAddress());
+                  bundle.putString("location_intro", loc.getIntroduce());
+                  bundle.putString("location_imglink", loc.getImglink());
+                  bundle.putString("location_number", loc.getNumber());
+                  bundle.putString("location_price", loc.getPrice());
+                  bundle.putLong("location_opentime", loc.getOpentime());
+                  bundle.putLong("location_closetime", loc.getClosetime());
+
+                  DetailInfor detailFragment = new DetailInfor();
+                  detailFragment.setArguments(bundle);
+                  fragmentTransaction.replace(R.id.container, detailFragment);
+                  fragmentTransaction.addToBackStack(null);
+                  // Commit transaction
+                  fragmentTransaction.commit();
+              }
+          });
+
     }
 
     @Override

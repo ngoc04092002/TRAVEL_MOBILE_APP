@@ -349,9 +349,13 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.viewHolder> {
 
     private void replaceScreen(@IdRes int containerViewId, @NonNull Fragment fragment, String backTrackName) {
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.setCustomAnimations(
+                R.anim.enter_animation,
+                R.anim.exit_animation,
+                R.anim.pop_enter_animation,
+                R.anim.pop_exit_animation);
 
         fragmentTransaction.replace(containerViewId, fragment);
-        fragmentTransaction.addToBackStack(backTrackName);
         fragmentTransaction.commit();
     }
 
