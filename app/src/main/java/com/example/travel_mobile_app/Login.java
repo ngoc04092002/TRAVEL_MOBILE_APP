@@ -3,6 +3,7 @@ package com.example.travel_mobile_app;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
@@ -15,10 +16,10 @@ import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
+import com.example.travel_mobile_app.MainActivity;
+import com.example.travel_mobile_app.R;
+import com.example.travel_mobile_app.Register;
 import com.example.travel_mobile_app.models.UserModel;
 import com.example.travel_mobile_app.services.SharedPreferencesManager;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -30,6 +31,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 public class Login extends AppCompatActivity {
 
     EditText login_email, login_password;
@@ -40,16 +44,13 @@ public class Login extends AppCompatActivity {
     ProgressBar progressBar;
     FirebaseAuth fAuth;
 
+    private long lastLoginTime;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_login);
-//        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-//            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-//            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-//            return insets;
-//        });
 
         db = FirebaseFirestore.getInstance();
         login_email = findViewById(R.id.login_email);
@@ -61,17 +62,14 @@ public class Login extends AppCompatActivity {
 
         fAuth = FirebaseAuth.getInstance();
 
-        // Kiểm tra nếu đã đăng nhập trước đó
-        if (fAuth.getCurrentUser() != null) {
-            // Người dùng đã đăng nhập trước đó, chuyển sang MainActivity
-            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-            intent.putExtra("previous_fragment", "home_screen");
-            intent.putExtra("userId", fAuth.getCurrentUser().getUid());
-            startActivity(intent);
-            finish(); // Kết thúc activity hiện tại
+        // Lấy thời gian cuối cùng người dùng đăng nhập thành công từ SharedPreferences
+        lastLoginTime = SharedPreferencesManager.getLastLoginTime(getApplicationContext());
+
+        // Kiểm tra nếu đã đăng nhập trước đó và thời gian đã trôi qua từ lần đăng nhập cuối cùng
+        // vượt quá 30 phút, hiển thị hộp thoại yêu cầu đăng nhập lại
+        if (fAuth.getCurrentUser() != null && System.currentTimeMillis() - lastLoginTime > 1 * 60 * 1000) {
+            showLoginRequiredDialog();
         }
-
-
 
         login_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -103,10 +101,13 @@ public class Login extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             Toast.makeText(Login.this, "Đăng nhập thành công!", Toast.LENGTH_LONG).show();
                             setUserInfoToLocal(task.getResult().getUser().getUid());
+                            lastLoginTime = System.currentTimeMillis();
+                            SharedPreferencesManager.setLastLoginTime(getApplicationContext(), lastLoginTime);
                             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                             intent.putExtra("previous_fragment", "home_screen");
                             intent.putExtra("userId", task.getResult().getUser().getUid());
                             startActivity(intent);
+                            finish(); // Kết thúc activity hiện tại
                         } else {
                             Toast.makeText(Login.this, "Error! " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
                             progressBar.setVisibility(View.GONE);
@@ -169,22 +170,44 @@ public class Login extends AppCompatActivity {
                 alertDialog.show();
             }
         });
-
-
     }
 
+    private void showLoginRequiredDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Yêu cầu đăng nhập lại");
+        builder.setMessage("Bạn đã không hoạt động trong một khoảng thời gian dài, vui lòng đăng nhập lại.");
+        builder.setCancelable(true);
+        builder.setPositiveButton("Đăng nhập", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Toast.makeText(Login.this, "Vui lòng đăng nhập lại!", Toast.LENGTH_SHORT).show();
+                // Chuyển hướng đến màn hình đăng nhập
+//                Intent intent = new Intent(Login.this, Login.class);
+//                startActivity(intent);
+//                finish();
+                // Không kết thúc activity hiện tại ngay lập tức
+            }
+        });
+        builder.setNegativeButton("Thoát", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // Đóng ứng dụng
+                finishAffinity();
+            }
+        });
+        builder.show();
+    }
 
     private void setUserInfoToLocal(String uId) {
         SharedPreferencesManager.init(getApplicationContext());
         CollectionReference users = db.collection("users");
         users.document(uId)
-             .get()
-             .addOnCompleteListener(taskUser -> {
-                 if (taskUser.isSuccessful() && taskUser.getResult() != null) {
-                     UserModel userModel = taskUser.getResult().toObject(UserModel.class);
-                     SharedPreferencesManager.writeUserInfo(userModel);
-                 }
-             });
+                .get()
+                .addOnCompleteListener(taskUser -> {
+                    if (taskUser.isSuccessful() && taskUser.getResult() != null) {
+                        UserModel userModel = taskUser.getResult().toObject(UserModel.class);
+                        SharedPreferencesManager.writeUserInfo(userModel);
+                    }
+                });
     }
-
 }

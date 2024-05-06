@@ -14,6 +14,22 @@ import javax.annotation.Nullable;
 public class SharedPreferencesManager {
     private static SharedPreferences sharedPref;
 
+    // Hằng số SharedPreferences
+    private static final String LAST_LOGIN_TIME_KEY = "LAST_LOGIN_TIME";
+
+    // Phương thức để lấy thời gian cuối cùng người dùng đăng nhập thành công từ SharedPreferences
+    public static long getLastLoginTime(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(context.getPackageName(), Context.MODE_PRIVATE);
+        return sharedPreferences.getLong(LAST_LOGIN_TIME_KEY, 0); // Trả về giá trị mặc định là 0 nếu không có giá trị
+    }
+    // Phương thức để lưu thời gian cuối cùng người dùng đăng nhập thành công vào SharedPreferences
+    public static void setLastLoginTime(Context context, long lastLoginTime) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(context.getPackageName(), Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putLong(LAST_LOGIN_TIME_KEY, lastLoginTime);
+        editor.apply();
+    }
+
     private SharedPreferencesManager() {
     }
 
