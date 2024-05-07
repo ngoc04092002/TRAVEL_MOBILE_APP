@@ -51,13 +51,16 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 
 public class SocialFragment extends Fragment implements View.OnClickListener {
@@ -75,10 +78,13 @@ public class SocialFragment extends Fragment implements View.OnClickListener {
     private StoryAdapter storyAdapter;
     SwipeRefreshLayout mSwipeRefreshLayout;
     private PostAdapter postAdapter;
-    boolean isLoading = false;
     private Dialog pd;
     NestedScrollView nestedScrollView;
+    private DocumentSnapshot lastVisible;
     private boolean isLoadMore = false;
+    private Bundle bundle = new Bundle();
+    private Gson gson = new Gson();
+
 
     public SocialFragment() {
         postList = new ArrayList<>();
@@ -113,6 +119,13 @@ public class SocialFragment extends Fragment implements View.OnClickListener {
         progressBarLoadMore = view.findViewById(R.id.spin_kit_load_more);
         nestedScrollView = view.findViewById(R.id.NestedScrollView);
 
+        if(getArguments()!=null){
+            bundle = getArguments();
+            if(bundle.getStringArrayList("postList")!=null){
+                postList =(ArrayList<PostModel>) bundle.getStringArrayList("postList").stream().map(post->gson.fromJson(post,PostModel.class)).collect(Collectors.toList());
+            }
+        }
+
         storyRv = view.findViewById(R.id.storyRv);
         list = new ArrayList<>();
         storyAdapter = new StoryAdapter(list, getContext());
@@ -124,11 +137,14 @@ public class SocialFragment extends Fragment implements View.OnClickListener {
         dashboardRv.setHasFixedSize(true);
         dashboardRv.setLayoutManager(new StaggeredGridLayoutManager(1, LinearLayoutManager.VERTICAL));
 
+        dashboardRv.setNestedScrollingEnabled(false);
+        dashboardRv.setHasFixedSize(false);
+
 
         if (postList.size() != 0) {
             postAdapter = new PostAdapter(postList, getContext(), requireActivity().getSupportFragmentManager(), getActivity(), db);
         } else {
-            loadRecyclerViewData(0L);
+            loadRecyclerViewData();
         }
         initScrollListener();
 
@@ -142,7 +158,8 @@ public class SocialFragment extends Fragment implements View.OnClickListener {
 
         mSwipeRefreshLayout.setOnRefreshListener(() -> {
             mSwipeRefreshLayout.setRefreshing(false);
-            loadRecyclerViewData(0L);
+            lastVisible = null;
+            loadRecyclerViewData();
         });
 
         btnFriends = view.findViewById(R.id.friends);
@@ -159,10 +176,13 @@ public class SocialFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
+
         if (v.getId() == R.id.friends) {
-            replaceScreen(R.id.container, new FriendsFragment(), "social_fragment");
+            Fragment fragment = new FriendsFragment();
+            replaceScreen(R.id.container, fragment, "social_fragment");
         } else if (v.getId() == R.id.addButton) {
-            replaceScreen(R.id.container, new CreatePostFragment(), "social_fragment");
+            Fragment fragment = new CreatePostFragment();
+            replaceScreen(R.id.container, fragment, "social_fragment");
         } else if (v.getId() == R.id.btnSearch) {
             Intent i = new Intent(getActivity(), SocialSearchPost.class);
             startActivity(i);
@@ -180,7 +200,8 @@ public class SocialFragment extends Fragment implements View.OnClickListener {
 
     private void initScrollListener() {
         nestedScrollView.setOnScrollChangeListener((NestedScrollView.OnScrollChangeListener) (v, scrollX, scrollY, oldScrollX, oldScrollY) -> {
-            if (scrollY == v.getChildAt(0).getMeasuredHeight() - v.getMeasuredHeight()) {
+
+            if (scrollY ==v.getChildAt(0).getMeasuredHeight() - v.getMeasuredHeight()) {
                 if (!isLoadMore) {
                     isLoadMore = true;
                     loadMore();
@@ -191,27 +212,26 @@ public class SocialFragment extends Fragment implements View.OnClickListener {
 
     private void loadMore() {
         showProgressBarLoadMore();
-        Handler handler = new Handler();
-        handler.postDelayed(() -> {
-            long startAt = 0;
-            if (postList.size() != 0) {
-                startAt = postList.get(0).getPostedAt();
-            }
-            setPostListData(postAdapter, startAt);
-
-            isLoading = false;
-        }, 300);
-
-
+        setPostListData(postAdapter);
     }
 
-    private void loadRecyclerViewData(Long startAt) {
+    private void loadRecyclerViewData() {
         shimmerFrameLayout.setVisibility(View.VISIBLE);
         shimmerFrameLayout.startShimmer();
-        setPostListData(postAdapter, startAt);
+        setPostListData(postAdapter);
+    }
+
+    private void setBundle(List<PostModel> postModelList) {
+        ArrayList<String> newPostList;
+        newPostList = (ArrayList<String>) postModelList.stream().map(postModel -> gson.toJson(postModel)).collect(Collectors.toList());
+        bundle.putStringArrayList("postList", newPostList);
     }
 
     private void replaceScreen(@IdRes int containerViewId, @NonNull Fragment fragment, String backTrackName) {
+        if(bundle!=null&&bundle.getStringArrayList("postList")!=null){
+            fragment.setArguments(bundle);
+        }
+
         FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.setCustomAnimations(
@@ -224,38 +244,72 @@ public class SocialFragment extends Fragment implements View.OnClickListener {
         fragmentTransaction.commit();
     }
 
-    private void setPostListData(PostAdapter postAdapter, Long startAt) {
+    private void setPostListData(PostAdapter postAdapter) {
         CollectionReference postsRef = db.collection("posts");
 
         UserModel user = SharedPreferencesManager.readUserInfo();
         List<String> following = user.getFollowing();
 
-        if (startAt == 0L) {
+        if (lastVisible == null) {
             postList.clear();
-        }
-
-        postsRef
+            postsRef
 //                .whereIn("postedBy", following)
 .orderBy("postedAt", Query.Direction.DESCENDING)
-.whereGreaterThan("postedAt", startAt)
 .limit(30)
 .get()
 .addOnCompleteListener(task -> {
     if (task.isSuccessful()) {
-        for (QueryDocumentSnapshot document : task.getResult()) {
+        QuerySnapshot documents = task.getResult();
+        for (QueryDocumentSnapshot document : documents) {
             PostModel postModel = document.toObject(PostModel.class);
             postList.add(postModel);
+        }
+        if (documents != null && documents.size() != 0) {
+            lastVisible = documents.getDocuments().get(documents.size() - 1);
+            setBundle(postList);
+            isLoadMore = false;
+            postAdapter.notifyDataSetChanged();
+        }
+        shimmerFrameLayout.showShimmer(false);
+        shimmerFrameLayout.setVisibility(View.GONE);
+        dismissProgressBarLoadMore();
+    } else {
+        Log.d("record", "Error getting documents: ", task.getException());
+    }
+});
+        } else {
+            postsRef
+//                .whereIn("postedBy", following)
+.orderBy("postedAt", Query.Direction.DESCENDING)
+.startAfter(lastVisible)
+.limit(30)
+.get()
+.addOnCompleteListener(task -> {
+    if (task.isSuccessful()) {
+        QuerySnapshot documents = task.getResult();
+        for (QueryDocumentSnapshot document : documents) {
+            PostModel postModel = document.toObject(PostModel.class);
+            postList.add(postModel);
+        }
+
+        if (documents != null && documents.size() != 0) {
+            lastVisible = documents.getDocuments().get(documents.size() - 1);
+            isLoadMore = false;
+            setBundle(postList);
+            postAdapter.notifyDataSetChanged();
         }
 
         shimmerFrameLayout.showShimmer(false);
         shimmerFrameLayout.setVisibility(View.GONE);
         dismissProgressBarLoadMore();
-        isLoadMore = false;
-        postAdapter.notifyDataSetChanged();
+
     } else {
         Log.d("record", "Error getting documents: ", task.getException());
     }
 });
+        }
+
+
     }
 
     private void setStoryListData(StoryAdapter storyAdapter) {

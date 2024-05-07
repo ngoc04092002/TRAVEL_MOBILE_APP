@@ -57,13 +57,16 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.gson.Gson;
 
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class CreatePostFragment extends Fragment implements View.OnClickListener {
 
@@ -81,6 +84,9 @@ public class CreatePostFragment extends Fragment implements View.OnClickListener
     private String postId;
     private String oldUrl;
     private Dialog pd;
+
+    private Bundle bundle = new Bundle();
+    private Gson gson = new Gson();
 
     public CreatePostFragment() {
         // Required empty public constructor
@@ -121,6 +127,10 @@ public class CreatePostFragment extends Fragment implements View.OnClickListener
         videoView.setOnClickListener(this);
         postimg.setOnClickListener(this);
 
+        if(getArguments()!=null){
+            bundle = getArguments();
+        }
+
         if (this.postId != null) {
             fetchPreData();
         }
@@ -137,8 +147,9 @@ public class CreatePostFragment extends Fragment implements View.OnClickListener
                     R.anim.pop_exit_animation,
                     R.anim.enter_animation,
                     R.anim.exit_animation);
-
-            fragmentTransaction.replace(R.id.container, new SocialFragment());
+            Fragment fragment = new SocialFragment();
+            fragment.setArguments(bundle);
+            fragmentTransaction.replace(R.id.container, fragment);
             fragmentTransaction.commit();
         } else if (v.getId() == R.id.camera || (v.getId() == R.id.postimg && uri == null)) {
             ImagePicker.with(this)

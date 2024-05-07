@@ -595,12 +595,12 @@ public class SocialUserDetailInfoAdapter {
             posts.document(postId).set(newPost)
                  .addOnSuccessListener(unused -> {
                      Toast.makeText(context, "Chia sẻ thành công", Toast.LENGTH_SHORT).show();
-                     dialog.dismiss();
                  }).addOnFailureListener(e -> {
                      Log.e("ERROR", "[ERROR-CREATE-POST]", e);
                      Toast.makeText(context, "Đã có lỗi xảy ra.", Toast.LENGTH_SHORT).show();
-                     dialog.dismiss();
                  });
+
+            dialog.dismiss();
         });
 
         dialog.findViewById(R.id.btn_share_external).setOnClickListener(v -> {
