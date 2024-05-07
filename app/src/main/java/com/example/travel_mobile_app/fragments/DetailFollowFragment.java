@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
@@ -38,10 +39,12 @@ public class DetailFollowFragment extends Fragment {
     private List<UserModel> userModels;
     private RecyclerView detailFollowRv;
     private FirebaseFirestore db;
+    private String userId;
 
-    public DetailFollowFragment(String title, List<String> follow) {
+    public DetailFollowFragment(String title, List<String> follow,String userId) {
         this.title = title;
         this.follow = follow;
+        this.userId = userId;
     }
 
 
@@ -74,7 +77,15 @@ public class DetailFollowFragment extends Fragment {
 
         btnBack.setOnClickListener(v -> {
             FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
-            fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.setCustomAnimations(
+                    R.anim.pop_enter_animation,
+                    R.anim.pop_exit_animation,
+                    R.anim.enter_animation,
+                    R.anim.exit_animation);
+
+            fragmentTransaction.replace(R.id.container, new SocialUserDetailInfoFragment(userId));
+            fragmentTransaction.commit();
         });
 
         return view;

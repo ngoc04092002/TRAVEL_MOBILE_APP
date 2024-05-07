@@ -1,6 +1,7 @@
 package com.example.travel_mobile_app;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 
@@ -24,9 +25,12 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.WriteBatch;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -35,6 +39,8 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private ArrayList<PostModel> postList;
     private ArrayList<StoryModel> storyList;
+    private Gson gson = new Gson();
+    private Bundle bundle = new Bundle();
 
 
     @Override
@@ -54,7 +60,9 @@ public class MainActivity extends AppCompatActivity {
         if (previousFragment != null && previousFragment.equals("social_screen")) {
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             binding.readableBottomBar.setSelectedItemId(R.id.insta);
-            transaction.replace(R.id.container, new SocialFragment(postList));
+            Fragment socialFragment = new SocialFragment();
+            socialFragment.setArguments(bundle);
+            transaction.replace(R.id.container, socialFragment);
             transaction.commit();
         }
 
@@ -79,7 +87,9 @@ public class MainActivity extends AppCompatActivity {
             int itemId = item.getItemId();
 
             if (itemId == R.id.insta) { // Replace this with the correct ID for the social item
-                transaction.replace(R.id.container, new SocialFragment(postList));
+                Fragment socialFragment = new SocialFragment();
+                socialFragment.setArguments(bundle);
+                transaction.replace(R.id.container, socialFragment);
             } else if (itemId == R.id.bell) {
                 transaction.replace(R.id.container, new NotificationFragment());
                 updateNotificationCheckOpen();
@@ -93,7 +103,9 @@ public class MainActivity extends AppCompatActivity {
             return true;
         });
 
-        String userId = getIntent().getStringExtra("userId");
+        String userId = Optional.ofNullable(getIntent().getStringExtra("userId"))
+                                .orElseGet(() -> SharedPreferencesManager.readUserInfo().getId());
+
         if (userId != null) {
             setUserInfoToLocal(userId);
         }
@@ -137,6 +149,7 @@ public class MainActivity extends AppCompatActivity {
 });
     }
 
+
     private void updateNotificationCheckOpen() {
         UserModel user = SharedPreferencesManager.readUserInfo();
 
@@ -170,15 +183,15 @@ public class MainActivity extends AppCompatActivity {
                         .whereEqualTo("checkOpen", false);
 
         query.addSnapshotListener((value, e) -> {
-                 if (e != null) {
-                     Log.e("ERROR", "Error getting badge:", e);
-                     return;
-                 }
-                 int badgeNumber = value.getDocuments().size();
-                 if (badgeNumber > 0) {
-                     binding.readableBottomBar.getOrCreateBadge(R.id.bell).setNumber(badgeNumber);
-                 }
-             });
+            if (e != null) {
+                Log.e("ERROR", "Error getting badge:", e);
+                return;
+            }
+            int badgeNumber = value.getDocuments().size();
+            if (badgeNumber > 0) {
+                binding.readableBottomBar.getOrCreateBadge(R.id.bell).setNumber(badgeNumber);
+            }
+        });
     }
 
     @Override

@@ -133,8 +133,16 @@ public class SocialUserDetailInfoFragment extends Fragment implements View.OnCli
     public void onClick(View v) {
         if (v.getId() == R.id.uInfo_btnBack) {
             FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
-            fragmentManager.popBackStack("userDetailInfo_fragment", FragmentManager.POP_BACK_STACK_INCLUSIVE);
-            fragmentManager.popBackStack("account_fragment", FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+            fragmentTransaction.setCustomAnimations(
+                    R.anim.pop_enter_animation,
+                    R.anim.pop_exit_animation,
+                    R.anim.enter_animation,
+                    R.anim.exit_animation);
+
+            fragmentTransaction.replace(R.id.container, new SocialFragment());
+            fragmentTransaction.commit();
         }
     }
 
@@ -184,10 +192,10 @@ public class SocialUserDetailInfoFragment extends Fragment implements View.OnCli
         }
 
         binding.infoFollower.setOnClickListener(v -> {
-            replaceScreen(R.id.container, new DetailFollowFragment("Theo dõi", userModel.getFollowers()), null);
+            replaceScreen(R.id.container, new DetailFollowFragment("Theo dõi", userModel.getFollowers(),userModel.getId()), null);
         });
         binding.infoFollowing.setOnClickListener(v -> {
-            replaceScreen(R.id.container, new DetailFollowFragment("Đang theo dõi", userModel.getFollowing()), null);
+            replaceScreen(R.id.container, new DetailFollowFragment("Đang theo dõi", userModel.getFollowing(),userModel.getId()), null);
         });
     }
 
@@ -206,10 +214,12 @@ public class SocialUserDetailInfoFragment extends Fragment implements View.OnCli
     private void replaceScreen(@IdRes int containerViewId, @NonNull Fragment fragment, String backTrackName) {
         FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
+        fragmentTransaction.setCustomAnimations(
+                R.anim.enter_animation,
+                R.anim.exit_animation,
+                R.anim.pop_enter_animation,
+                R.anim.pop_exit_animation);
         fragmentTransaction.replace(containerViewId, fragment);
-        fragmentTransaction.addToBackStack(backTrackName);
-        // Commit transaction
         fragmentTransaction.commit();
     }
 

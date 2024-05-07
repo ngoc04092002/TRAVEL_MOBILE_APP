@@ -152,24 +152,23 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.viewHolder> {
             holder.binding.btns.setVisibility(View.GONE);
             setUserName(holder.binding.usernameShare, post.getShareBy(), holder.binding.profileImageShare);
 
-            holder.binding.timestamp.setText(CustomDateTime.formatDate(post.getShareAt()));
+            holder.binding.timestampShare.setText(CustomDateTime.formatDate(post.getShareAt()));
             btnLike = holder.binding.likeShare;
             btnComment = holder.binding.commentShare;
             btnShare = holder.binding.shareShare;
-        } else {
-            holder.binding.topbarShare.setVisibility(View.GONE);
+        }else{
             layoutParams.width = LinearLayout.LayoutParams.MATCH_PARENT;
+            btnLike = holder.binding.like;
+            btnComment = holder.binding.comment;
+            btnShare = holder.binding.share;
+            holder.binding.topbarShare.setVisibility(View.GONE);
             holder.binding.more.setVisibility(View.VISIBLE);
             holder.binding.moreShare.setVisibility(View.GONE);
             holder.binding.btnsShare.setVisibility(View.GONE);
             holder.binding.btns.setVisibility(View.VISIBLE);
-            setUserName(holder.binding.username, post.getPostedBy(), holder.binding.profileImage);
-            holder.binding.timestamp.setText(CustomDateTime.formatDate(post.getPostedAt()));
-            btnLike = holder.binding.like;
-            btnComment = holder.binding.comment;
-            btnShare = holder.binding.share;
-
         }
+        setUserName(holder.binding.username, post.getPostedBy(), holder.binding.profileImage);
+        holder.binding.timestamp.setText(CustomDateTime.formatDate(post.getPostedAt()));
         container.setLayoutParams(layoutParams);
 
 
@@ -349,9 +348,13 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.viewHolder> {
 
     private void replaceScreen(@IdRes int containerViewId, @NonNull Fragment fragment, String backTrackName) {
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.setCustomAnimations(
+                R.anim.enter_animation,
+                R.anim.exit_animation,
+                R.anim.pop_enter_animation,
+                R.anim.pop_exit_animation);
 
         fragmentTransaction.replace(containerViewId, fragment);
-        fragmentTransaction.addToBackStack(backTrackName);
         fragmentTransaction.commit();
     }
 
@@ -445,13 +448,13 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.viewHolder> {
         posts.document(savePostId)
              .set(itemModel)
              .addOnSuccessListener(unused -> {
-                 Toast.makeText(context, "Lưu thành công!", Toast.LENGTH_SHORT).show();
+                 Toast.makeText(activity, "Lưu thành công!", Toast.LENGTH_SHORT).show();
                  idSavePost.add(savePostId);
                  selectSavePost.setTitle("Bỏ lưu");
                  selectSavePostShare.setTitle("Bỏ lưu");
              })
              .addOnFailureListener(e -> {
-                 Toast.makeText(context, "Đã có lỗi xảy ra!", Toast.LENGTH_SHORT).show();
+                 Toast.makeText(activity, "Đã có lỗi xảy ra!", Toast.LENGTH_SHORT).show();
              });
     }
 
@@ -460,12 +463,12 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.viewHolder> {
         posts.document(post.getPostId())
              .delete()
              .addOnSuccessListener(unused -> {
-                 Toast.makeText(context, "Xóa thành công!", Toast.LENGTH_SHORT).show();
+                 Toast.makeText(activity, "Xóa thành công!", Toast.LENGTH_SHORT).show();
                  list = list.stream().filter(item -> !item.getPostId().equals(post.getPostId())).collect(Collectors.toList());
                  notifyDataSetChanged();
              })
              .addOnFailureListener(e -> {
-                 Toast.makeText(context, "Đã có lỗi xảy ra!", Toast.LENGTH_SHORT).show();
+                 Toast.makeText(activity, "Đã có lỗi xảy ra!", Toast.LENGTH_SHORT).show();
              });
     }
 
@@ -592,14 +595,13 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.viewHolder> {
             newPost.setFullname(user.getId());
             posts.document(postId).set(newPost)
                  .addOnSuccessListener(unused -> {
-                     Toast.makeText(context, "Chia sẻ thành công", Toast.LENGTH_SHORT).show();
-                     dialog.dismiss();
+                     Toast.makeText(activity, "Chia sẻ thành công", Toast.LENGTH_SHORT).show();
                      notifyDataSetChanged();
                  }).addOnFailureListener(e -> {
                      Log.e("ERROR", "[ERROR-CREATE-POST]", e);
-                     Toast.makeText(context, "Đã có lỗi xảy ra.", Toast.LENGTH_SHORT).show();
-                     dialog.dismiss();
+                     Toast.makeText(activity, "Đã có lỗi xảy ra.", Toast.LENGTH_SHORT).show();
                  });
+            dialog.dismiss();
         });
 
         dialog.findViewById(R.id.btn_share_external).setOnClickListener(v -> {
@@ -696,7 +698,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.viewHolder> {
                 addNotification(post, "comment");
                 sendNotification(post, "comment");
             }).addOnFailureListener(e -> {
-                Toast.makeText(context, "Mạng kém", Toast.LENGTH_SHORT).show();
+                Toast.makeText(activity, "Mạng kém", Toast.LENGTH_SHORT).show();
             });
         });
 
@@ -712,7 +714,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.viewHolder> {
         query.addSnapshotListener((value, e) -> {
             if (e != null) {
                 Log.e("ERROR", "Listen failed.", e);
-                Toast.makeText(context, "Mạng kém", Toast.LENGTH_SHORT).show();
+                Toast.makeText(activity, "Mạng kém", Toast.LENGTH_SHORT).show();
                 return;
             }
             // Convert query snapshot to a list of chats

@@ -7,6 +7,7 @@ import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.viewmodel.CreationExtras;
 import androidx.viewpager.widget.ViewPager;
 
@@ -18,10 +19,13 @@ import android.widget.ImageView;
 
 import com.example.travel_mobile_app.Adapter.FriendViewPageAdapter;
 import com.example.travel_mobile_app.R;
+import com.example.travel_mobile_app.models.PostModel;
 import com.google.android.material.tabs.TabLayout;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 public class FriendsFragment extends Fragment implements View.OnClickListener {
@@ -35,6 +39,8 @@ public class FriendsFragment extends Fragment implements View.OnClickListener {
 
     private SearchView searchView;
     FriendViewPageAdapter adapter;
+    private Bundle bundle = new Bundle();
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -76,14 +82,30 @@ public class FriendsFragment extends Fragment implements View.OnClickListener {
         ImageView btnBack = view.findViewById(R.id.friend_btnBack);
         btnBack.setOnClickListener(this);
 
+
+        if(getArguments()!=null){
+            bundle = getArguments();
+        }
+
         return view;
     }
 
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.friend_btnBack) {
+
             FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
-            fragmentManager.popBackStack("social_fragment", FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.setCustomAnimations(
+                    R.anim.pop_enter_animation,
+                    R.anim.pop_exit_animation,
+                    R.anim.enter_animation,
+                    R.anim.exit_animation);
+
+            Fragment fragment = new SocialFragment();
+            fragment.setArguments(bundle);
+            fragmentTransaction.replace(R.id.container, fragment);
+            fragmentTransaction.commit();
         }
     }
 
