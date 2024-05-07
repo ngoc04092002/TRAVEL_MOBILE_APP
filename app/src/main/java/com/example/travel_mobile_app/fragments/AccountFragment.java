@@ -153,7 +153,13 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
     private void updateUI(UserModel user) {
         System.out.println("NAME: " + user.getFullName());
         tvFullname.setText(user.getFullName());
-        tvUsername.setText("@" + user.getUsername());
+        if (user.getUsername() == null) {
+            tvUsername.setVisibility(View.GONE);
+        } else {
+            tvUsername.setVisibility(View.VISIBLE);
+            tvUsername.setText("@" + user.getUsername());
+        }
+
         tvEmail.setText(user.getEmail());
         tvFollower.setText(String.valueOf(user.getFollowers().size()));
         tvFollowing.setText(String.valueOf(user.getFollowing().size()));

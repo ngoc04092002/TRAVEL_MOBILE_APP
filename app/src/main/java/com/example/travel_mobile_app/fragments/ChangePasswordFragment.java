@@ -113,7 +113,13 @@ public class ChangePasswordFragment extends Fragment implements View.OnClickList
 
     private void setUpUI() {
         tvName.setText(currentUser.getFullName());
-        tvUsername.setText("@" + currentUser.getUsername());
+        if (currentUser.getUsername() == null) {
+            tvUsername.setVisibility(View.GONE);
+        } else {
+            tvUsername.setVisibility(View.VISIBLE);
+            tvUsername.setText("@" + currentUser.getUsername());
+
+        }
         Drawable defaultAvatar = getResources().getDrawable(R.drawable.avatar_men);
 
         Glide.with(requireContext())
