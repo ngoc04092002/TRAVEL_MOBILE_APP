@@ -69,6 +69,13 @@ public class Login extends AppCompatActivity {
         // vượt quá 30 phút, hiển thị hộp thoại yêu cầu đăng nhập lại
         if (fAuth.getCurrentUser() != null && System.currentTimeMillis() - lastLoginTime > 30 * 60 * 1000) {
             showLoginRequiredDialog();
+        } else if (fAuth.getCurrentUser() != null) {
+            // Người dùng đã đăng nhập trước đó, chuyển sang MainActivity
+            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+            intent.putExtra("previous_fragment", "home_screen");
+            intent.putExtra("userId", fAuth.getCurrentUser().getUid());
+            startActivity(intent);
+            finish(); // Kết thúc activity hiện tại
         }
 
         login_button.setOnClickListener(new View.OnClickListener() {
@@ -150,7 +157,7 @@ public class Login extends AppCompatActivity {
                             }).addOnFailureListener(new OnFailureListener() {
                                 @Override
                                 public void onFailure(@NonNull Exception e) {
-                                    Toast.makeText(Login.this, "Error! Link chưa được gửi đi." + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(Login.this, "Error! Link chưa được gửi đi. Vui lòng kiểm tra lại Email! " + e.getMessage(), Toast.LENGTH_SHORT).show();
                                     dialog.dismiss(); // Ẩn dialog khi gửi thất bại
                                 }
                             });
@@ -180,7 +187,16 @@ public class Login extends AppCompatActivity {
         builder.setPositiveButton("Đăng nhập", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                FirebaseAuth.getInstance().signOut();
                 Toast.makeText(Login.this, "Vui lòng đăng nhập lại!", Toast.LENGTH_SHORT).show();
+
+//                Intent intent = new Intent(Login.this, Login.class);
+
+//                intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+
+//                startActivity(intent);
+//                finish();
+
                 // Chuyển hướng đến màn hình đăng nhập
 //                Intent intent = new Intent(Login.this, Login.class);
 //                startActivity(intent);
