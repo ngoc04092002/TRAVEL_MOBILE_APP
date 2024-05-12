@@ -20,6 +20,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -98,6 +99,7 @@ public class SocialUserDetailInfoAdapter {
     MaterialButton like, comment, share;
     MaterialToolbar more;
     PostModel postModel;
+    FrameLayout bgVideo;
 
     public View onCreateView(@NonNull View itemView, PostModel postModel) {
         this.postModel = postModel;
@@ -110,6 +112,7 @@ public class SocialUserDetailInfoAdapter {
         share = itemView.findViewById(R.id.share);
         des = itemView.findViewById(R.id.des);
         more = itemView.findViewById(R.id.more);
+        bgVideo = itemView.findViewById(R.id.bg_video);
 
         CollectionReference users = db.collection("users");
         users.document(postModel.getPostedBy())
@@ -205,8 +208,14 @@ public class SocialUserDetailInfoAdapter {
             }
         });
 
+        String url = postModel.getPostImage();
+        if (url != null && url.contains("video")) {
+            bgVideo.setVisibility(View.VISIBLE);
+        } else {
+            bgVideo.setVisibility(View.GONE);
+        }
+
         postimg.setOnClickListener(v -> {
-            String url = postModel.getPostImage();
             if (url != null && url.contains("video")) {
                 showCenterDialog(postModel.getPostImage());
             } else {

@@ -21,6 +21,7 @@ import com.example.travel_mobile_app.MainActivity;
 import com.example.travel_mobile_app.R;
 import com.example.travel_mobile_app.Register;
 import com.example.travel_mobile_app.models.UserModel;
+import com.example.travel_mobile_app.services.MyFirebaseMessagingService;
 import com.example.travel_mobile_app.services.SharedPreferencesManager;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -202,12 +203,13 @@ public class Login extends AppCompatActivity {
         SharedPreferencesManager.init(getApplicationContext());
         CollectionReference users = db.collection("users");
         users.document(uId)
-                .get()
-                .addOnCompleteListener(taskUser -> {
-                    if (taskUser.isSuccessful() && taskUser.getResult() != null) {
-                        UserModel userModel = taskUser.getResult().toObject(UserModel.class);
-                        SharedPreferencesManager.writeUserInfo(userModel);
-                    }
-                });
+             .get()
+             .addOnCompleteListener(taskUser -> {
+                 if (taskUser.isSuccessful() && taskUser.getResult() != null) {
+                     UserModel userModel = taskUser.getResult().toObject(UserModel.class);
+                     MyFirebaseMessagingService.upDateDeviceToken(userModel.getId(), SharedPreferencesManager.readDeviceToken());
+                     SharedPreferencesManager.writeUserInfo(userModel);
+                 }
+             });
     }
 }

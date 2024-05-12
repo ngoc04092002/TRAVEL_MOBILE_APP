@@ -69,7 +69,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         UserToken userToken = new UserToken(userId, token, new Date().getTime());
         FirebaseFirestore.getInstance().collection("tokens")
                          .whereEqualTo("userId", userId)
-                         .whereEqualTo("token", token)
+                         .whereEqualTo("deviceToken", token)
                          .get()
                          .addOnCompleteListener(task -> {
                              if (task.isSuccessful() && task.getResult().size() == 0) {
@@ -78,6 +78,20 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                              }
                          });
 
+    }
+
+    public static void upDateDeviceToken(String userId, String token){
+        UserToken userToken = new UserToken(userId, token, new Date().getTime());
+        FirebaseFirestore.getInstance().collection("tokens")
+                         .whereEqualTo("userId", userId)
+                         .whereEqualTo("deviceToken", token)
+                         .get()
+                         .addOnCompleteListener(task -> {
+                             if (task.isSuccessful() && task.getResult().size() == 0) {
+                                 SharedPreferencesManager.writeDeviceToken(token);
+                                 FirebaseFirestore.getInstance().collection("tokens").document().set(userToken);
+                             }
+                         });
     }
 
     public String getCurrentDeviceToken() {

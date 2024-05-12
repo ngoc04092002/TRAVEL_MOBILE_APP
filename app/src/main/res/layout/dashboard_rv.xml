@@ -8,10 +8,10 @@
 
     <LinearLayout
         android:id="@+id/topbar_share"
-        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:visibility="gone">
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/profile_image_share"
@@ -52,6 +52,7 @@
                 android:text="" />
 
         </LinearLayout>
+
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/more_share"
             android:layout_width="wrap_content"
@@ -60,12 +61,12 @@
             app:menu="@menu/post_item_menu" />
     </LinearLayout>
 
-<!--    380dp-->
+    <!--    380dp-->
     <LinearLayout
+        android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:id="@+id/container"
         android:padding="10dp">
 
         <LinearLayout
@@ -143,6 +144,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="12dp"
             android:layout_marginRight="12dp">
+
             <com.makeramen.roundedimageview.RoundedImageView
                 android:id="@+id/postimg"
                 android:layout_width="match_parent"
@@ -154,6 +156,22 @@
                 app:riv_border_width="1dip"
                 app:riv_corner_radius="10dip"
                 app:riv_mutate_background="true" />
+
+            <FrameLayout
+                android:id="@+id/bg_video"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#7ECCCCCC"
+                android:visibility="gone"
+                >
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:background="@drawable/play_circle" />
+            </FrameLayout>
+
         </FrameLayout>
 
         <LinearLayout
@@ -210,14 +228,14 @@
                 app:iconTint="@color/black" />
         </LinearLayout>
     </LinearLayout>
-<!--    component share-->
+    <!--    component share-->
     <LinearLayout
         android:id="@+id/btns_share"
-        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="12dp"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:visibility="gone">
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/like_share"
