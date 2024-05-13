@@ -67,7 +67,7 @@ public class Login extends AppCompatActivity {
 
         // Kiểm tra nếu đã đăng nhập trước đó và thời gian đã trôi qua từ lần đăng nhập cuối cùng
         // vượt quá 30 phút, hiển thị hộp thoại yêu cầu đăng nhập lại
-        if (fAuth.getCurrentUser() != null && System.currentTimeMillis() - lastLoginTime > 30 * 60 * 1000) {
+        if (fAuth.getCurrentUser() != null && System.currentTimeMillis() - lastLoginTime > 90 * 60 * 1000) {
             showLoginRequiredDialog();
         } else if (fAuth.getCurrentUser() != null) {
             // Người dùng đã đăng nhập trước đó, chuyển sang MainActivity
