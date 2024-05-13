@@ -89,6 +89,30 @@ public class Register extends AppCompatActivity {
                 ArrayList<String> followers = new ArrayList<>();
                 ArrayList<String> following = new ArrayList<>();
 
+                // Kiểm tra trường Full name và Phone không được để trống
+                if (TextUtils.isEmpty(fullname)) {
+                    register_fullname.setError("Full name không được để trống");
+                    return;
+                }
+
+                if (TextUtils.isEmpty(phone)) {
+                    register_phone.setError("Phone không được để trống");
+                    return;
+                }
+
+                // Điều kiện cho trường email
+                if (!email.matches("[a-zA-Z0-9._%+-]+@gmail\\.com")) {
+                    register_email.setError("Email không hợp lệ, phải có định dạng @gmail.com");
+                    return;
+                }
+
+                // Điều kiện cho trường mật khẩu
+                if (!password.matches("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,15}$")) {
+                    register_password.setError("Mật khẩu phải từ 8 đến 15 ký tự, bao gồm số, chữ thường, chữ in hoa và ký tự đặc biệt, không mang ý nghĩa đi kèm");
+                    return;
+                }
+
+
                 if (TextUtils.isEmpty(email)) {
                     register_email.setError("Email không được để trống");
                     return;
