@@ -187,8 +187,8 @@ public class Login extends AppCompatActivity {
         builder.setPositiveButton("Đăng nhập", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                FirebaseAuth.getInstance().signOut();
                 Toast.makeText(Login.this, "Vui lòng đăng nhập lại!", Toast.LENGTH_SHORT).show();
+                FirebaseAuth.getInstance().signOut();
 
 //                Intent intent = new Intent(Login.this, Login.class);
 
