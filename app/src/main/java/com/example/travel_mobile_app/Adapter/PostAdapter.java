@@ -233,13 +233,20 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.viewHolder> {
         });
 
         String url = post.getPostImage();
-        if (url != null && url.contains("video")) {
+        if (url != null && (url.contains("video") || url.contains(".mp4"))) {
             holder.binding.bgVideo.setVisibility(View.VISIBLE);
         } else {
             holder.binding.bgVideo.setVisibility(View.GONE);
         }
+
+        holder.binding.bgVideo.setOnClickListener(v -> {
+            if (url != null && (url.contains("video") || url.contains(".mp4"))) {
+                showCenterDialog(post.getPostImage());
+            }
+        });
+
         holder.binding.postimg.setOnClickListener(v -> {
-            if (url != null && url.contains("video")) {
+            if (url != null && (url.contains("video") || url.contains(".mp4"))) {
                 showCenterDialog(post.getPostImage());
             } else {
                 showCenterDialog(holder.binding.postimg.getDrawable());

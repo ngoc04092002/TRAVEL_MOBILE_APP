@@ -31,14 +31,17 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 public class FollowAdapter extends RecyclerView.Adapter<FollowAdapter.viewHolder> {
 
     List<FollowDTO> list;
     Context context;
     final boolean[] isFollow;
+    Map<Integer, Boolean> checkFollow = new TreeMap<>();
     private FirebaseFirestore db;
     FragmentManager fragmentManager;
 
@@ -71,10 +74,12 @@ public class FollowAdapter extends RecyclerView.Adapter<FollowAdapter.viewHolder
                  .placeholder(R.drawable.image_empty)
                  .into(holder.profile);
         }
-
+        if(!checkFollow.containsKey(position)){
+            checkFollow.put(position, isFollow[0]);
+        }
         holder.username.setText(model.getUsername());
         holder.followers.setText(model.getNumberOfFollowers() + " người theo dõi");
-        if (!isFollow[0]) {
+        if (!checkFollow.get(position)) {
             holder.btnFollow.setText("Theo dõi");
             int color = ContextCompat.getColor(context, R.color.yellow);
             holder.btnFollow.setBackgroundColor(color);
@@ -84,12 +89,11 @@ public class FollowAdapter extends RecyclerView.Adapter<FollowAdapter.viewHolder
             holder.btnFollow.setBackgroundColor(color);
         }
 
-
         holder.btnFollow.setOnClickListener(v -> {
             UserModel user = SharedPreferencesManager.readUserInfo();
-            updateFollowMySelf(model, user);
-            updateFollowUser(model, user);
-            if (!isFollow[0]) {
+            updateFollowMySelf(model, user, checkFollow.get(position));
+            updateFollowUser(model, user, checkFollow.get(position));
+            if (!checkFollow.get(position)) {
                 holder.btnFollow.setText("Đang theo dõi");
                 int color = ContextCompat.getColor(context, R.color.gray);
                 holder.btnFollow.setBackgroundColor(color);
@@ -98,7 +102,7 @@ public class FollowAdapter extends RecyclerView.Adapter<FollowAdapter.viewHolder
                 int color = ContextCompat.getColor(context, R.color.yellow);
                 holder.btnFollow.setBackgroundColor(color);
             }
-            isFollow[0] = !isFollow[0];
+            checkFollow.put(position,!checkFollow.get(position));
         });
 
         holder.infoFriends.setOnClickListener(v->{
@@ -110,33 +114,33 @@ public class FollowAdapter extends RecyclerView.Adapter<FollowAdapter.viewHolder
     }
 
 
-    private void updateFollowMySelf(FollowDTO model, UserModel user) {
-
+    private void updateFollowMySelf(FollowDTO model, UserModel user,Boolean checkFollow) {
         DocumentReference userRef = db.collection("users").document(user.getId());
-
-        if (!isFollow[0]) {
+        if (!checkFollow) {
             user.getFollowing().add(model.getUserId());
         } else {
             user.getFollowing().remove(model.getUserId());
         }
-
         SharedPreferencesManager.writeUserInfo(user);
         userRef.set(user)
+                .addOnCompleteListener(task -> {
+                    System.out.println("ok");
+                })
                .addOnFailureListener(e -> {
                    Log.e("ERROR-FOLLOWING::", e.getMessage());
                });
     }
 
-    private void updateFollowUser(FollowDTO model, UserModel user) {
+    private void updateFollowUser(FollowDTO model, UserModel user,Boolean checkFollow) {
         DocumentReference userRef = db.collection("users").document(model.getUserId());
         userRef.get()
                .addOnCompleteListener(taskUser -> {
                    if (taskUser.isSuccessful() && taskUser.getResult() != null) {
                        UserModel userModel = taskUser.getResult().toObject(UserModel.class);
-                       if (!isFollow[0]) {
-                           userModel.getFollowers().remove(user.getId());
-                       } else {
+                       if (!checkFollow) {
                            userModel.getFollowers().add(user.getId());
+                       } else {
+                           userModel.getFollowers().remove(user.getId());
                        }
                        userRef.set(userModel);
                    }

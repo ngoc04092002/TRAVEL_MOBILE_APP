@@ -72,7 +72,7 @@ public class SocialFragment extends Fragment implements View.OnClickListener {
     private ImageButton btnFriends, btnAdd, btnSearch;
     private FirebaseFirestore db;
     private FirebaseStorage storage;
-    private ShimmerFrameLayout shimmerFrameLayout, shimmerFrameLayoutStory;
+    private ShimmerFrameLayout shimmerFrameLayout, shimmerFrameLayoutStory, shimmerFrameLayoutLoadmore;
     private FrameLayout createStory;
     private ProgressBar progressBarLoadMore;
     private StoryAdapter storyAdapter;
@@ -116,13 +116,13 @@ public class SocialFragment extends Fragment implements View.OnClickListener {
                                                     android.R.color.holo_blue_dark);
 
 
-        progressBarLoadMore = view.findViewById(R.id.spin_kit_load_more);
+        shimmerFrameLayoutLoadmore = view.findViewById(R.id.shimmer_load_more);
         nestedScrollView = view.findViewById(R.id.NestedScrollView);
 
-        if(getArguments()!=null){
+        if (getArguments() != null) {
             bundle = getArguments();
-            if(bundle.getStringArrayList("postList")!=null){
-                postList =(ArrayList<PostModel>) bundle.getStringArrayList("postList").stream().map(post->gson.fromJson(post,PostModel.class)).collect(Collectors.toList());
+            if (bundle.getStringArrayList("postList") != null) {
+                postList = (ArrayList<PostModel>) bundle.getStringArrayList("postList").stream().map(post -> gson.fromJson(post, PostModel.class)).collect(Collectors.toList());
             }
         }
 
@@ -201,7 +201,7 @@ public class SocialFragment extends Fragment implements View.OnClickListener {
     private void initScrollListener() {
         nestedScrollView.setOnScrollChangeListener((NestedScrollView.OnScrollChangeListener) (v, scrollX, scrollY, oldScrollX, oldScrollY) -> {
 
-            if (scrollY ==v.getChildAt(0).getMeasuredHeight() - v.getMeasuredHeight()) {
+            if (scrollY == v.getChildAt(0).getMeasuredHeight() - v.getMeasuredHeight()) {
                 if (!isLoadMore) {
                     isLoadMore = true;
                     loadMore();
@@ -228,7 +228,7 @@ public class SocialFragment extends Fragment implements View.OnClickListener {
     }
 
     private void replaceScreen(@IdRes int containerViewId, @NonNull Fragment fragment, String backTrackName) {
-        if(bundle!=null&&bundle.getStringArrayList("postList")!=null){
+        if (bundle != null && bundle.getStringArrayList("postList") != null) {
             fragment.setArguments(bundle);
         }
 
@@ -250,63 +250,62 @@ public class SocialFragment extends Fragment implements View.OnClickListener {
         UserModel user = SharedPreferencesManager.readUserInfo();
         List<String> following = user.getFollowing();
 
+        following.add(user.getId());
+        Query query = postsRef.whereIn("postedBy", following);
+
         if (lastVisible == null) {
             postList.clear();
-            postsRef
-//                .whereIn("postedBy", following)
-.orderBy("postedAt", Query.Direction.DESCENDING)
-.limit(30)
-.get()
-.addOnCompleteListener(task -> {
-    if (task.isSuccessful()) {
-        QuerySnapshot documents = task.getResult();
-        for (QueryDocumentSnapshot document : documents) {
-            PostModel postModel = document.toObject(PostModel.class);
-            postList.add(postModel);
-        }
-        if (documents != null && documents.size() != 0) {
-            lastVisible = documents.getDocuments().get(documents.size() - 1);
-            setBundle(postList);
-            isLoadMore = false;
-            postAdapter.notifyDataSetChanged();
-        }
-        shimmerFrameLayout.showShimmer(false);
-        shimmerFrameLayout.setVisibility(View.GONE);
-        dismissProgressBarLoadMore();
-    } else {
-        Log.d("record", "Error getting documents: ", task.getException());
-    }
-});
+            query.orderBy("postedAt", Query.Direction.DESCENDING)
+                 .limit(30)
+                 .get()
+                 .addOnCompleteListener(task -> {
+                     if (task.isSuccessful()) {
+                         QuerySnapshot documents = task.getResult();
+                         for (QueryDocumentSnapshot document : documents) {
+                             PostModel postModel = document.toObject(PostModel.class);
+                             postList.add(postModel);
+                         }
+                         if (documents != null && documents.size() != 0) {
+                             lastVisible = documents.getDocuments().get(documents.size() - 1);
+                             isLoadMore = false;
+                             setBundle(postList);
+                             postAdapter.notifyDataSetChanged();
+                         }
+                         shimmerFrameLayout.showShimmer(false);
+                         shimmerFrameLayout.setVisibility(View.GONE);
+                         dismissProgressBarLoadMore();
+                     } else {
+                         Log.d("record", "Error getting documents: ", task.getException());
+                     }
+                 });
         } else {
-            postsRef
-//                .whereIn("postedBy", following)
-.orderBy("postedAt", Query.Direction.DESCENDING)
-.startAfter(lastVisible)
-.limit(30)
-.get()
-.addOnCompleteListener(task -> {
-    if (task.isSuccessful()) {
-        QuerySnapshot documents = task.getResult();
-        for (QueryDocumentSnapshot document : documents) {
-            PostModel postModel = document.toObject(PostModel.class);
-            postList.add(postModel);
-        }
+            query.orderBy("postedAt", Query.Direction.DESCENDING)
+                 .startAfter(lastVisible)
+                 .limit(30)
+                 .get()
+                 .addOnCompleteListener(task -> {
+                     if (task.isSuccessful()) {
+                         QuerySnapshot documents = task.getResult();
+                         for (QueryDocumentSnapshot document : documents) {
+                             PostModel postModel = document.toObject(PostModel.class);
+                             postList.add(postModel);
+                         }
 
-        if (documents != null && documents.size() != 0) {
-            lastVisible = documents.getDocuments().get(documents.size() - 1);
-            isLoadMore = false;
-            setBundle(postList);
-            postAdapter.notifyDataSetChanged();
-        }
+                         if (documents != null && documents.size() != 0) {
+                             lastVisible = documents.getDocuments().get(documents.size() - 1);
+                             isLoadMore = false;
+                             setBundle(postList);
+                             postAdapter.notifyDataSetChanged();
+                         }
 
-        shimmerFrameLayout.showShimmer(false);
-        shimmerFrameLayout.setVisibility(View.GONE);
-        dismissProgressBarLoadMore();
+                         shimmerFrameLayout.showShimmer(false);
+                         shimmerFrameLayout.setVisibility(View.GONE);
+                         dismissProgressBarLoadMore();
 
-    } else {
-        Log.d("record", "Error getting documents: ", task.getException());
-    }
-});
+                     } else {
+                         Log.d("record", "Error getting documents: ", task.getException());
+                     }
+                 });
         }
 
 
@@ -316,10 +315,11 @@ public class SocialFragment extends Fragment implements View.OnClickListener {
         UserModel user = SharedPreferencesManager.readUserInfo();
         CollectionReference storiesRef = db.collection("stories");
         CollectionReference usersRef = db.collection("users");
+        List<String> following = user.getFollowing();
 
-
-        usersRef
-//                .whereIn("id", user.getFollowing())
+        following.add(user.getId());
+        Query query = usersRef.whereIn("id", following);
+        query
 .get()
 .addOnCompleteListener(task -> {
     if (task.isSuccessful() && task.getResult() != null) {
@@ -430,13 +430,11 @@ public class SocialFragment extends Fragment implements View.OnClickListener {
     }
 
     private void showProgressBarLoadMore() {
-        progressBarLoadMore.setVisibility(View.VISIBLE);
-        Sprite circle = new Circle();
-        progressBarLoadMore.setIndeterminateDrawable(circle);
+        shimmerFrameLayoutLoadmore.setVisibility(View.VISIBLE);
     }
 
     private void dismissProgressBarLoadMore() {
-        progressBarLoadMore.setVisibility(View.GONE);
+        shimmerFrameLayoutLoadmore.setVisibility(View.GONE);
     }
 
     @Override

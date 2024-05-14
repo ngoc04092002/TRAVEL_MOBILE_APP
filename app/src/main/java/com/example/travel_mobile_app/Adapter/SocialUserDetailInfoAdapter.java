@@ -209,14 +209,21 @@ public class SocialUserDetailInfoAdapter {
         });
 
         String url = postModel.getPostImage();
-        if (url != null && url.contains("video")) {
+        if (url != null && (url.contains("video") || url.contains(".mp4"))) {
             bgVideo.setVisibility(View.VISIBLE);
         } else {
             bgVideo.setVisibility(View.GONE);
         }
 
+
+        bgVideo.setOnClickListener(v -> {
+            if (url != null && (url.contains("video") || url.contains(".mp4"))) {
+                showCenterDialog(postModel.getPostImage());
+            }
+        });
+
         postimg.setOnClickListener(v -> {
-            if (url != null && url.contains("video")) {
+            if (url != null && (url.contains("video") || url.contains(".mp4"))) {
                 showCenterDialog(postModel.getPostImage());
             } else {
                 showCenterDialog(postimg.getDrawable());
