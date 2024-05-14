@@ -17,7 +17,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.example.travel_mobile_app.fragments.event;
 import com.example.travel_mobile_app.models.Location;
 import com.example.travel_mobile_app.models.PostModel;
 import com.example.travel_mobile_app.models.SaveItemModel;
@@ -106,8 +105,8 @@ public class DetailInfor extends Fragment {
             String imglink = bundle.getString("location_imglink");
             String number = bundle.getString("location_number");
             String price = bundle.getString("location_price");
-            Long opentime = bundle.getLong("location_opentime");
-            Long closetime = bundle.getLong("location_closetime");
+            long opentime = bundle.getLong("location_opentime");
+            long closetime = bundle.getLong("location_closetime");
 
             // Hiển thị thông tin chi tiết trong TextView hoặc các phần tử khác trong Fragment
             TextView nameTextView = view.findViewById(R.id.tenditich);
@@ -119,9 +118,11 @@ public class DetailInfor extends Fragment {
             ImageView loadimg = view.findViewById(R.id.anhditich);
             TextView numbertv = view.findViewById(R.id.sdttv);
             // Lấy giá trị opentime từ locationData
+            System.out.println(opentime);
 
             Date openTime = new Date(opentime);
             SimpleDateFormat sdfopentime = new SimpleDateFormat("HH:mm:ss");
+
             String formattedopenTime = sdfopentime.format(openTime);
             Date closeTime = new Date(closetime);
             SimpleDateFormat sdfclosetime = new SimpleDateFormat("HH:mm:ss");
@@ -147,18 +148,7 @@ public class DetailInfor extends Fragment {
                     transaction.commit();
                 }
             });
-            btnevent = view.findViewById(R.id.eventbtn);
-            btnevent.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Fragment otherFragment = new event();
-                    FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
-                    transaction.replace(R.id.container, otherFragment);
-                    transaction.addToBackStack(null); // Để cho phép người dùng quay lại Fragment trước đó
-                    transaction.commit();
-                }
-            }
-            );
+
             db = FirebaseFirestore.getInstance();
             currentUser = FirebaseAuth.getInstance().getCurrentUser();
             btnsave = view.findViewById(R.id.savebtn);

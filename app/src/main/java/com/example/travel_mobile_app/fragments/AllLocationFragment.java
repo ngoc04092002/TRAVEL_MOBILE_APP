@@ -7,6 +7,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -47,7 +48,7 @@ public class AllLocationFragment extends Fragment {
     private RecyclerView rcvSug;
     private AllLocationAdapter mSugAdapter;
     private ImageButton backbtn;
-    private ImageButton disbtn;
+    private ImageButton addlocbtn;
 
     public AllLocationFragment() {
         // Required empty public constructor
@@ -135,6 +136,17 @@ public class AllLocationFragment extends Fragment {
 
             }
         });
+         addlocbtn = view.findViewById(R.id.addlocationbtn);
+         addlocbtn.setOnClickListener(new View.OnClickListener() {
+             @Override
+             public void onClick(View v) {
+                 Fragment otherFragment = new AddLocationFragment();
+                 FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
+                 transaction.replace(R.id.container, otherFragment);
+                 transaction.addToBackStack(null); // Để cho phép người dùng quay lại Fragment trước đó
+                 transaction.commit();
+             }
+         });
 
 
         return view;

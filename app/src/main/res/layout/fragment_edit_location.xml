@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#FFDE89"
+    android:fillViewport="true"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@+id/imageView">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="@color/lightyellow"
+        tools:context=".fragments.AddLocationFragment">
+
+        <!-- TODO: Update blank fragment layout -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/titlebar"
+            android:fontFamily="@font/montserrat"
+            android:gravity="center"
+            android:paddingBottom="3dp"
+            android:text="SỬA ĐỊA DANH"
+            android:textColor="@color/black"
+            android:textSize="30dp"
+            />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Tên địa danh:"
+            android:textSize="18dp"
+            android:textColor="@color/black"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginTop="10dp"
+            android:fontFamily="@font/montserrat_bold"/>
+        <EditText
+            android:id="@+id/editnameloc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="15dp"
+            android:textColor="@color/black"
+            android:fontFamily="@font/montserrat"
+            android:layout_marginHorizontal="10dp"
+            android:hint="Nhập tên địa danh"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Địa chỉ:"
+            android:textSize="18dp"
+            android:textColor="@color/black"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginTop="10dp"
+            android:fontFamily="@font/montserrat_bold"/>
+        <EditText
+            android:id="@+id/editaddressloc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="15dp"
+            android:textColor="@color/black"
+            android:fontFamily="@font/montserrat"
+            android:layout_marginHorizontal="10dp"
+            android:hint="Nhập địa chỉ của địa danh"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Giới thiệu:"
+            android:textSize="18dp"
+            android:textColor="@color/black"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginTop="10dp"
+            android:fontFamily="@font/montserrat_bold"/>
+        <EditText
+            android:id="@+id/editintroloc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="15dp"
+            android:textColor="@color/black"
+            android:fontFamily="@font/montserrat"
+            android:layout_marginHorizontal="10dp"
+            android:hint="Nhập giới thiệu của địa danh"
+            tools:ignore="DuplicateIds" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Số điện thoại ban quản lý:"
+            android:textSize="18dp"
+            android:textColor="@color/black"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginTop="10dp"
+            android:fontFamily="@font/montserrat_bold"/>
+        <EditText
+            android:id="@+id/editnumberloc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="15dp"
+            android:textColor="@color/black"
+            android:fontFamily="@font/montserrat"
+            android:layout_marginHorizontal="10dp"
+            android:hint="Nhập số điện thoại của ban quản lý"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Giá vé:"
+            android:textSize="18dp"
+            android:textColor="@color/black"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginTop="10dp"
+            android:fontFamily="@font/montserrat_bold"/>
+        <EditText
+            android:id="@+id/editpriceloc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="15dp"
+            android:textColor="@color/black"
+            android:fontFamily="@font/montserrat"
+            android:layout_marginHorizontal="10dp"
+            android:hint="Nhập giá vé vào cửa của địa danh"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Giờ mở cửa:"
+            android:textSize="18dp"
+            android:textColor="@color/black"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginTop="10dp"
+            android:fontFamily="@font/montserrat_bold"/>
+        <EditText
+            android:id="@+id/editopentimeloc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="15dp"
+            android:textColor="@color/black"
+            android:fontFamily="@font/montserrat"
+            android:layout_marginHorizontal="10dp"
+            android:hint="Nhập giờ mở cửa của địa danh"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Giờ đóng cửa:"
+            android:textSize="18dp"
+            android:textColor="@color/black"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginTop="10dp"
+            android:fontFamily="@font/montserrat_bold"/>
+        <EditText
+            android:id="@+id/editclosetimeloc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="15dp"
+            android:textColor="@color/black"
+            android:fontFamily="@font/montserrat"
+            android:layout_marginHorizontal="10dp"
+            android:hint="Nhập giờ đóng cửa của địa danh"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Đường dẫn hình ảnh:"
+            android:textSize="18dp"
+            android:textColor="@color/black"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginTop="10dp"
+            android:fontFamily="@font/montserrat_bold"/>
+        <EditText
+            android:id="@+id/editimglinkloc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="15dp"
+            android:textColor="@color/black"
+            android:fontFamily="@font/montserrat"
+            android:layout_marginHorizontal="10dp"
+            android:hint="Nhập link ảnh của địa danh"/>
+
+        <Button
+            android:id="@+id/save_edit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"
+            android:backgroundTint="@color/yellow"
+            android:fontFamily="@font/montserrat_bold"
+            android:text="LƯU CHÍNH SỬA"
+            android:textColor="@color/black"
+            android:textSize="18dp"
+            app:cornerRadius="10dp"
+            app:strokeColor="#000000"
+            app:strokeWidth="1dp" />
+    </LinearLayout>
+</ScrollView>

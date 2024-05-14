@@ -8,22 +8,31 @@
     >
 
 
-    <ImageButton
+    <Button
         android:id="@+id/listlocationbtn"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:background="@drawable/discoverybtn"
+        android:layout_height="wrap_content"
         android:layout_margin="20dp"
+        android:layout_marginTop="24dp"
+        android:backgroundTint="@color/lightyellow"
+        android:fontFamily="@font/montserrat_bold"
+        android:scaleType="centerCrop"
+        android:text="DANH SÁCH ĐỊA DANH"
+        android:textColor="@color/black"
+        android:textSize="20dp"
+        app:cornerRadius="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/titlesuggesttion"
+        app:strokeColor="#000000"
+        app:strokeWidth="2dp"
         tools:ignore="MissingConstraints" />
 
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/viewpager"
         android:layout_width="match_parent"
-        android:layout_height="500dp"
-        android:layout_marginTop="80dp"
+        android:layout_height="550dp"
+        android:layout_marginTop="64dp"
         app:layout_constraintTop_toBottomOf="@+id/titlesuggesttion"
         tools:ignore="MissingConstraints"
         tools:layout_editor_absoluteX="0dp" />

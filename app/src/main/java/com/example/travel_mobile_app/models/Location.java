@@ -9,7 +9,6 @@ public class Location {
     private String number;
     private long opentime;
     private String price;
-
     private String id;
 
     public Location(String id, String address,  String imglink, String introduce, String name, String number, long opentime, long closetine, String price) {

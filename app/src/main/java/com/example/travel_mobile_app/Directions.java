@@ -2,6 +2,7 @@ package com.example.travel_mobile_app;
 
 import static androidx.databinding.DataBindingUtil.setContentView;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -12,7 +13,9 @@ import androidx.fragment.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import com.example.travel_mobile_app.fragments.suggestion;
 import com.google.firebase.FirebaseApp;
@@ -39,9 +42,9 @@ public class Directions extends Fragment {
     private String mParam2;
 
     private ImageButton btnback3;
-    private ImageButton btnmaps;
-    private ImageButton btnphone;
-    private ImageButton btntaxi;
+    private Button btnmaps;
+    private Button btnphone;
+    private Button btntaxi;
 
 
 
@@ -113,15 +116,16 @@ public class Directions extends Fragment {
 
             }
         });
-
+        String name = bundle.getString("location_name");
         btnmaps = view.findViewById(R.id.ggmapsbtn);
         btnmaps.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Thay đổi Uri bằng Uri của ứng dụng bạn muốn mở
-                Uri uri = Uri.parse("https://www.google.com/maps");
-                Intent intentmap = new Intent(Intent.ACTION_VIEW, uri);
-                startActivity(intentmap);
+                Uri gmmIntentUri = Uri.parse("geo:0,0?q=" + Uri.encode(name));
+                Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                mapIntent.setPackage("com.google.android.apps.maps");
+                startActivity(mapIntent);
             }
         });
 
@@ -129,12 +133,22 @@ public class Directions extends Fragment {
         btntaxi.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Thay đổi Uri bằng Uri của ứng dụng bạn muốn mở
-                Uri uri = Uri.parse("https://www.google.com/maps");
-                Intent intenttaxi = new Intent(Intent.ACTION_VIEW, uri);
-                startActivity(intenttaxi);
+                openApp(getContext());
             }
         });
         return view;
+    }
+    private void openApp(Context context) {
+        // Tạo Intent để mở ứng dụng trên Google Play Store
+        String packageId = "xyz.be.customer";
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(Uri.parse("market://details?id=" + packageId));
+
+        // Kiểm tra xem có ứng dụng Google Play Store đã cài đặt trên thiết bị không
+        if (intent.resolveActivity(context.getPackageManager()) != null) {
+            startActivity(intent);
+        } else {
+            Toast.makeText(context, "Ứng dụng Google Play Store không được cài đặt trên thiết bị của bạn", Toast.LENGTH_SHORT).show();
+        }
     }
 }
