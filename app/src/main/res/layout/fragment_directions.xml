@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/lightyellow"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".Directions">
 
@@ -34,40 +35,55 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageButton
+    <Button
         android:id="@+id/ggmapsbtn"
         android:layout_width="280dp"
         android:layout_height="100dp"
         android:layout_marginTop="56dp"
-        android:background="@color/transparent"
-        android:scaleType="fitXY"
-        android:src="@drawable/ggmap"
+        android:backgroundTint="@color/yellow"
+        android:textColor="@color/black"
+        android:text="TÌM KIẾM TRÊN MAPS"
+        android:fontFamily="@font/montserrat_bold"
+        android:textSize="30dp"
+        app:cornerRadius="10dp"
+        app:strokeColor="#000000"
+        app:strokeWidth="2dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/titledirection" />
 
-    <ImageButton
+    <Button
         android:id="@+id/phonebtn"
         android:layout_width="280dp"
         android:layout_height="100dp"
         android:layout_marginTop="12dp"
-        android:background="@color/transparent"
-        android:scaleType="fitXY"
-        android:src="@drawable/phonebtn"
+        android:backgroundTint="@color/yellow"
+        android:text="LIÊN LẠC VỚI BAN QUẢN LÝ"
+        android:textColor="@color/black"
+        android:fontFamily="@font/montserrat_bold"
+        android:textSize="30dp"
+        app:cornerRadius="10dp"
+        app:strokeColor="#000000"
+        app:strokeWidth="2dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ggmapsbtn" />
 
-    <ImageButton
+    <Button
         android:id="@+id/taxibtn"
         android:layout_width="280dp"
         android:layout_height="100dp"
         android:layout_marginTop="12dp"
-        android:background="@color/transparent"
-        android:scaleType="fitXY"
-        android:src="@drawable/bebtn"
+        android:backgroundTint="@color/yellow"
+        android:text="GỌI TAXI NGAY"
+        android:textColor="@color/black"
+        android:fontFamily="@font/montserrat_bold"
+        android:textSize="30dp"
+        app:cornerRadius="10dp"
+        app:strokeColor="#000000"
+        app:strokeWidth="2dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
